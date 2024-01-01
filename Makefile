@@ -3,4 +3,7 @@ all:
 	cd vgszero/tools && make
 	cd src && make
 
+clean:
+	cd src && make clean
+
 

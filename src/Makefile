@@ -1,4 +1,5 @@
 PROJECT = bmarine-zero
+SRC_FILES = 00_main.rel 01_palette.rel 02_title.rel
 CHR_FILES = bg.chr fg.chr sprite.chr
 WAV_FILES = se1.wav se2.wav
 BGM_FILES = song1.bgm
@@ -9,13 +10,20 @@ MAKEROM = ${VGSHOME}/tools/makerom/makerom
 MAKEBGM = ${VGSHOME}/tools/makebgm/makebgm
 MAKESE = ${VGSHOME}/tools/makese/makese
 MAKEPKG = ${VGSHOME}/tools/makepkg/makepkg
-SDCC_FLAGS = -mz80
-SDCC_FLAGS += --opt-code-size
-SDCC_FLAGS += --code-loc 0x100
-SDCC_FLAGS += --xram-loc 0xC000 
-SDCC_FLAGS += --xram-size 0x4000 
-SDCC_FLAGS += --no-std-crt0
-SDCC_FLAGS += -Wl${VGSHOME}/lib/sdcc/vgs0.lib
+COMMON_FLAGS = -mz80
+COMMON_FLAGS += --opt-code-size
+COMMON_FLAGS += --code-loc 0x100
+COMMON_FLAGS += --xram-loc 0xC000 
+COMMON_FLAGS += --xram-size 0x4000 
+COMMON_FLAGS += --no-std-crt0
+COMPILE = sdcc
+COMPILE += ${COMMON_FLAGS}
+COMPILE += -c
+LINK = sdcc
+LINK += ${COMMON_FLAGS}
+LINK += -Wl${VGSHOME}/lib/sdcc/vgs0.lib
+LINK += -o program.ihx
+LINK += ${SRC_FILES}
 
 all: build
 	cd ${VGSHOME}/src/sdl2 && make
@@ -46,8 +54,8 @@ game.pkg: ${PROJECT}.rom bgm.dat se.dat
 ${PROJECT}.rom: ${CHR_FILES} program.bin
 	${MAKEROM} ${PROJECT}.rom program.bin ${CHR_FILES}
 
-program.bin: program.c ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
-	sdcc ${SDCC_FLAGS} $<
+program.bin: ${SRC_FILES} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
+	${LINK}
 	makebin -s 32768 program.ihx $@
 
 se.dat: ${WAV_FILES}
@@ -55,6 +63,11 @@ se.dat: ${WAV_FILES}
 
 bgm.dat: ${BGM_FILES}
 	${MAKEBGM} $@ ${BGM_FILES}
+
+.SUFFIXES: .rel .src
+
+%.rel: %.c header.h
+	${COMPILE} $<
 
 .SUFFIXES: .chr .bmp
 
