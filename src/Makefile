@@ -1,7 +1,12 @@
 PROJECT = bmarine-zero
-SRC_FILES = 00_main.rel 01_palette.rel 02_title.rel
-CHR_FILES = bg.chr fg.chr sprite.chr
-WAV_FILES = se1.wav se2.wav
+SRC_FILES = 00_main.rel
+SRC_FILES += 01_tables.rel
+SRC_FILES += 02_title.rel
+CHR_FILES = bg.chr
+CHR_FILES += fg.chr
+CHR_FILES += sprite.chr
+WAV_FILES = se1.wav
+WAV_FILES += se2.wav
 BGM_FILES = song1.bgm
 VGSHOME = ../vgszero
 BMP2CHR = ${VGSHOME}/tools/bmp2chr/bmp2chr
