@@ -1,5 +1,5 @@
 PROJECT = bmarine-zero
-CHR_FILES = image1.chr
+CHR_FILES = bg.chr fg.chr sprite.chr
 WAV_FILES = se1.wav se2.wav
 BGM_FILES = song1.bgm
 VGSHOME = ../vgszero
