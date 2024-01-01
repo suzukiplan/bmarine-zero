@@ -1,0 +1,3 @@
+[submodule "vgszero"]
+	path = vgszero
+	url = https://github.com/suzukiplan/vgszero

@@ -1,0 +1,17 @@
+*.rel
+*.chr
+*.lst
+*.sym
+*.asm
+*.ihx
+*.map
+*.bin
+*.lk
+*.noi
+*.rom
+*.bgm
+game.pkg
+bgm.dat
+se.dat
+palette.h
+
