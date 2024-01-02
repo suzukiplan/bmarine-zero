@@ -16,7 +16,7 @@ void init_palette(void)
     vgs0_palette_set(0, 13, 31, 10, 31);
     vgs0_palette_set(0, 14, 31, 31, 10);
     vgs0_palette_set(0, 15, 31, 31, 31);
-    vgs0_palette_set(1, 0, 0, 0, 0);
+    vgs0_palette_set(1, 0, 0, 2, 5);
     vgs0_palette_set(1, 1, 0, 0, 10);
     vgs0_palette_set(1, 2, 0, 10, 0);
     vgs0_palette_set(1, 3, 0, 10, 10);
@@ -32,7 +32,7 @@ void init_palette(void)
     vgs0_palette_set(1, 13, 15, 5, 15);
     vgs0_palette_set(1, 14, 15, 15, 5);
     vgs0_palette_set(1, 15, 15, 15, 15);
-    vgs0_palette_set(2, 0, 0, 0, 0);
+    vgs0_palette_set(2, 0, 0, 2, 5);
     vgs0_palette_set(2, 1, 0, 0, 2);
     vgs0_palette_set(2, 2, 0, 0, 4);
     vgs0_palette_set(2, 3, 0, 0, 6);
@@ -48,7 +48,7 @@ void init_palette(void)
     vgs0_palette_set(2, 13, 0, 0, 28);
     vgs0_palette_set(2, 14, 0, 0, 30);
     vgs0_palette_set(2, 15, 0, 0, 31);
-    vgs0_palette_set(3, 0, 0, 0, 0);
+    vgs0_palette_set(3, 0, 0, 2, 5);
     vgs0_palette_set(3, 1, 0, 0, 0);
     vgs0_palette_set(3, 2, 0, 0, 0);
     vgs0_palette_set(3, 3, 0, 0, 0);
