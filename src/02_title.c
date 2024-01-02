@@ -97,8 +97,8 @@ void title(void)
             }
             if (start < 16) {
                 for (i = 0; i < 32; i++) {
-                    VGS0_ADDR_FG->attr[i][start] = 0x00;
-                    VGS0_ADDR_FG->attr[i][31 - start] = 0x00;
+                    VGS0_ADDR_FG->ptn[i][start] = 0x00;
+                    VGS0_ADDR_FG->ptn[i][31 - start] = 0x00;
                 }
             }
         }
@@ -130,17 +130,19 @@ void title(void)
         }
 
         // スプライトの泡を動かす
-        for (i = 0; i < 16; i++) {
-            VGS0_ADDR_OAM[i].y -= 1;
-            if (a & 1) {
-                VGS0_ADDR_OAM[i].ptn += 1;
-            }
-            if (16 == VGS0_ADDR_OAM[i].ptn) {
-                uint8_t x = random[GV->ridx];
-                GV->ridx++;
-                uint8_t y = random[GV->ridx] % 192;
-                GV->ridx++;
-                vgs0_oam_set(i, x, y, 0x82, 0);
+        if (start < 40) {
+            for (i = 0; i < 16; i++) {
+                VGS0_ADDR_OAM[i].y -= 1;
+                if (a & 1) {
+                    VGS0_ADDR_OAM[i].ptn += 1;
+                }
+                if (16 == VGS0_ADDR_OAM[i].ptn) {
+                    uint8_t x = random[GV->ridx];
+                    GV->ridx++;
+                    uint8_t y = random[GV->ridx] % 192;
+                    GV->ridx++;
+                    vgs0_oam_set(i, x, y, 0x82, 0);
+                }
             }
         }
 
@@ -153,19 +155,57 @@ void title(void)
         }
 
         // BGをラスタースクロール
-        for (i = 0; i < 192; i++) {
-            while (i != *VGS0_ADDR_COUNT_V) {
-                ;
+        if (start < 40) {
+            for (i = 0; i < 192; i++) {
+                while (i != *VGS0_ADDR_COUNT_V) {
+                    ;
+                }
+                *VGS0_ADDR_BG_SCROLL_X = rasterTable[(sidx + i) & 0x1F];
+                if (start && start < 16) {
+                    if (i & 1) {
+                        *VGS0_ADDR_FG_SCROLL_X = start << 3;
+                    } else {
+                        *VGS0_ADDR_FG_SCROLL_X = 0 - (start << 3);
+                    }
+                }
             }
-            *VGS0_ADDR_BG_SCROLL_X = rasterTable[(sidx + i) & 0x1F];
-            if (start && start < 16) {
-                if (i & 1) {
-                    *VGS0_ADDR_FG_SCROLL_X = start << 3;
-                } else {
-                    *VGS0_ADDR_FG_SCROLL_X = 0 - (start << 3);
+            sidx++;
+        }
+
+        // BGフェードアウト
+        if (24 == start) {
+            for (i = 1; i < 25; i++) {
+                for (j = 0; j < 32; j++) {
+                    VGS0_ADDR_FG->ptn[i][j] = 0x60;
+                    if (i & 1) {
+                        if (j & 1) {
+                            VGS0_ADDR_FG->attr[i][j] = 0x80 | 0x40;
+                        } else {
+                            VGS0_ADDR_FG->attr[i][j] = 0x80 | 0x40 | 0x20;
+                        }
+                    } else {
+                        if (j & 1) {
+                            VGS0_ADDR_FG->attr[i][j] = 0x80;
+                        } else {
+                            VGS0_ADDR_FG->attr[i][j] = 0x80 | 0x20;
+                        }
+                    }
+                }
+            } 
+        } else if (24 < start && start < 24 + 32) {
+            for (i = 1; i < 25; i++) {
+                for (j = 0; j < 32; j++) {
+                    VGS0_ADDR_FG->ptn[i][j] += 1;
                 }
             }
         }
-        sidx++;
+        if (40 == start) {
+            for (i = 0; i < 32; i++) {
+                for (j = 0; j < 32; j++) {
+                    VGS0_ADDR_BG->ptn[j][i] = 0x00;
+                }                
+                VGS0_ADDR_OAM[i].attr = 0x00;
+            }
+        }
     }
 }
