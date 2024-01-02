@@ -150,8 +150,12 @@ void title(void)
         vgs0_wait_vsync();
 
         // BGを縦スクロール
-        if (a & 1) {
-            *VGS0_ADDR_BG_SCROLL_Y += 1;
+        if (start < 40) {
+            if (a & 1) {
+                *VGS0_ADDR_BG_SCROLL_Y += 1;
+            }
+        } else if (40 == start) {
+            *VGS0_ADDR_BG_SCROLL_Y = 0;
         }
 
         // BGをラスタースクロール
@@ -201,9 +205,21 @@ void title(void)
         }
         if (40 == start) {
             for (i = 0; i < 32; i++) {
-                for (j = 0; j < 32; j++) {
-                    VGS0_ADDR_BG->ptn[j][i] = 0x00;
-                }                
+                if (24 == i) {
+                    for (j = 0; j < 32; j++) {
+                        VGS0_ADDR_BG->ptn[i][j] = 0x02 + (j & 1);
+                        VGS0_ADDR_BG->attr[i][j] = 0x83;
+                    }
+                } else if (25 == i) {
+                    for (j = 0; j < 32; j++) {
+                        VGS0_ADDR_BG->ptn[i][j] = 0x12 + (j & 1);
+                        VGS0_ADDR_BG->attr[i][j] = 0x83;
+                    }
+                } else {
+                    for (j = 0; j < 32; j++) {
+                        VGS0_ADDR_BG->ptn[i][j] = 0x00;
+                    }
+                }
                 VGS0_ADDR_OAM[i].attr = 0x00;
             }
         }
