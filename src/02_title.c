@@ -50,7 +50,7 @@ void title(void)
         }
     }
 
-    vgs0_fg_putstr(4, 2, 0x80, "SC      00    HI      00");
+    vgs0_fg_putstr(2, 2, 0x80, "SC        00    HI        00");
     vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
     vgs0_fg_putstr(7, 20, 0x80, "PRESS START BUTTON");
     vgs0_fg_putstr(3, 23, 0x80, "@COPYRIGHT 2024 SUZUKIPLAN");
@@ -204,16 +204,23 @@ void title(void)
             }
         }
         if (40 == start) {
+            *VGS0_ADDR_BG_SCROLL_X = 0;
+            *VGS0_ADDR_BG_SCROLL_Y = 0;
             for (i = 0; i < 32; i++) {
-                if (24 == i) {
+                if (23 == i) {
                     for (j = 0; j < 32; j++) {
                         VGS0_ADDR_BG->ptn[i][j] = 0x02 + (j & 1);
                         VGS0_ADDR_BG->attr[i][j] = 0x83;
                     }
-                } else if (25 == i) {
+                } else if (24 == i) {
                     for (j = 0; j < 32; j++) {
                         VGS0_ADDR_BG->ptn[i][j] = 0x12 + (j & 1);
                         VGS0_ADDR_BG->attr[i][j] = 0x83;
+                    }
+                } else if (8 < i) {
+                    for (j = 0; j < 32; j++) {
+                        VGS0_ADDR_BG->ptn[i][j] = 0x10;
+                        VGS0_ADDR_BG->attr[i][j] = 0x80;
                     }
                 } else {
                     for (j = 0; j < 32; j++) {
@@ -221,6 +228,16 @@ void title(void)
                     }
                 }
                 VGS0_ADDR_OAM[i].attr = 0x00;
+            }
+            vgs0_bg_putstr(2, 2, 0x80, "SC        00    HI        00");
+        }
+        if (40 <= start) {
+            j = a;
+            j &= 0x1F;
+            j >>= 2;
+            j |= 0x80;
+            for (i = 1; i < 31; i++) {
+                VGS0_ADDR_BG->ptn[9][i] = j;
             }
         }
     }
