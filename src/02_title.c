@@ -53,7 +53,7 @@ void title(void)
     vgs0_fg_putstr(2, 2, 0x80, "SC        00    HI        00");
     vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
     vgs0_fg_putstr(7, 20, 0x80, "PRESS START BUTTON");
-    vgs0_fg_putstr(3, 23, 0x80, "@COPYRIGHT 2024 SUZUKIPLAN");
+    vgs0_fg_putstr(4, 23, 0x80, "@2013-2024 BY SUZUKIPLAN");
 
     // BGを表示
     n = 0;
