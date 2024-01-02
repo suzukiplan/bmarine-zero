@@ -2,6 +2,7 @@ PROJECT = bmarine-zero
 SRC_FILES = 00_main.rel
 SRC_FILES += 01_tables.rel
 SRC_FILES += 02_title.rel
+SRC_FILES += 03_score.rel
 CHR_FILES = bg.chr
 CHR_FILES += fg.chr
 CHR_FILES += sprite.chr
@@ -71,7 +72,7 @@ bgm.dat: ${BGM_FILES}
 
 .SUFFIXES: .rel .src
 
-%.rel: %.c header.h
+%.rel: %.c header.h global.h
 	${COMPILE} $<
 
 .SUFFIXES: .chr .bmp
