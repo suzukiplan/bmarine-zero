@@ -1,6 +1,7 @@
 #include "header.h"
 
 
+// スコア表示（ハイスコア更新を含む）
 void score_print(NameTable* nam)
 {
     uint8_t detectS = 0;
@@ -29,5 +30,21 @@ void score_print(NameTable* nam)
         } else {
             nam->ptn[2][21 + i] = ' ';
         }
+    }
+}
+
+// 指定ケタ（0: 10の位, 7: 億の位）のスコアを加算
+void score_increment(uint8_t keta)
+{
+    if (7 < keta) {
+        for (uint8_t i = 0; i < 8; i++) {
+            GV->sc[i] = 9;
+        }
+        return;
+    }
+    GV->sc[keta] += 1;
+    if (9 < GV->sc[keta]) {
+        GV->sc[keta] = 0;
+        score_increment(keta + 1);
     }
 }

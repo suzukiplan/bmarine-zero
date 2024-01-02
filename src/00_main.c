@@ -8,5 +8,8 @@ void main(void)
         GV->hi[i] = 0;
         GV->sc[i] = 0;
     }
+    GV->hi[0] = 3;
+    GV->hi[1] = 7;
+    GV->hi[2] = 5;
     title();
 }

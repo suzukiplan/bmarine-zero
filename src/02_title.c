@@ -83,6 +83,8 @@ void title(void)
     while (1) {
         a++;
         if (0 == start) {
+            score_increment(0);
+            score_print(VGS0_ADDR_FG);
             // STARTボタンが押されたかチェック
             uint8_t pad = vgs0_joypad_get();
             if (pad & VGS0_JOYPAD_ST) {

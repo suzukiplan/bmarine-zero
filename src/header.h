@@ -5,3 +5,4 @@ extern const uint16_t random[256];
 void init_palette(void);
 void title(void);
 void score_print(NameTable* nam);
+void score_increment(uint8_t keta);
