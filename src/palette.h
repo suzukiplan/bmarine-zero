@@ -1,6 +1,6 @@
 void init_palette(void)
 {
-    vgs0_palette_set(0, 0, 0, 0, 0);
+    vgs0_palette_set(0, 0, 0, 2, 5);
     vgs0_palette_set(0, 1, 0, 0, 21);
     vgs0_palette_set(0, 2, 0, 21, 0);
     vgs0_palette_set(0, 3, 0, 21, 21);

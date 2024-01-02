@@ -230,6 +230,15 @@ void title(void)
                 VGS0_ADDR_OAM[i].attr = 0x00;
             }
             vgs0_bg_putstr(2, 2, 0x80, "SC        00    HI        00");
+            vgs0_oam_set(0x00, 116, 64 + 8, 0x80, 0x80);
+            vgs0_oam_set(0x01, 124, 64 + 8, 0x80, 0x80);
+            vgs0_oam_set(0x02, 132, 64 + 8, 0x80, 0x80);
+            vgs0_oam_set(0x03, 116, 64, 0x80, 0x10);
+            vgs0_oam_set(0x04, 124, 64, 0x80, 0x11);
+            vgs0_oam_set(0x05, 132, 64, 0x80, 0x12);
+            vgs0_oam_set(0x06, 116, 64 + 8, 0x80, 0x20);
+            vgs0_oam_set(0x07, 124, 64 + 8, 0x80, 0x21);
+            vgs0_oam_set(0x08, 132, 64 + 8, 0x80, 0x22);
         }
         if (40 <= start) {
             j = a;
@@ -239,6 +248,9 @@ void title(void)
             for (i = 1; i < 31; i++) {
                 VGS0_ADDR_BG->ptn[9][i] = j;
             }
+            VGS0_ADDR_OAM[0].ptn = j;
+            VGS0_ADDR_OAM[1].ptn = j;
+            VGS0_ADDR_OAM[2].ptn = j;
         }
     }
 }
