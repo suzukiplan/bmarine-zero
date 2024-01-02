@@ -2,7 +2,6 @@
 
 void main(void) 
 {
-    while (1) {
-        title();
-    }
+    init_palette();
+    title();
 }

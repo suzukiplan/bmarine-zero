@@ -25,9 +25,6 @@ static const int8_t rasterTable[32] = {
 
 void title(void)
 {
-    // パレットを初期化
-    init_palette();
-
     // DPM を設定
     *VGS0_ADDR_BG_DPM = 4;
     *VGS0_ADDR_FG_DPM = 5;
@@ -81,30 +78,55 @@ void title(void)
     // ループ
     uint8_t a = 0;
     uint8_t sidx = 0;
+    uint8_t start = 0;
     while (1) {
         a++;
-        // PRESS START BUTTON を点滅
-        switch (a & 0x3F) {
-            case 0:
+        if (0 == start) {
+            // STARTボタンが押されたかチェック
+            uint8_t pad = vgs0_joypad_get();
+            if (pad & VGS0_JOYPAD_ST) {
+                start = 1;
                 for (i = 0; i < 32; i++) {
                     VGS0_ADDR_FG->attr[20][i] = 0x80;
                 }
+            }
+        } else {
+            start += 1;
+            if (0 == start) {
                 break;
-            case 24:
+            }
+            if (start < 16) {
                 for (i = 0; i < 32; i++) {
-                    VGS0_ADDR_FG->attr[20][i] = 0x81;
+                    VGS0_ADDR_FG->attr[i][start] = 0x00;
+                    VGS0_ADDR_FG->attr[i][31 - start] = 0x00;
                 }
-                break;
-            case 32:
-                for (i = 0; i < 32; i++) {
-                    VGS0_ADDR_FG->attr[20][i] = 0x00;
-                }
-                break;
-            case 56:
-                for (i = 0; i < 32; i++) {
-                    VGS0_ADDR_FG->attr[20][i] = 0x81;
-                }
-                break;
+            }
+        }
+
+        // PRESS START BUTTON を点滅
+        if (0 == start) {
+            switch (a & 0x3F) {
+                case 0:
+                    for (i = 0; i < 32; i++) {
+                        VGS0_ADDR_FG->attr[20][i] = 0x80;
+                    }
+                    break;
+                case 24:
+                    for (i = 0; i < 32; i++) {
+                        VGS0_ADDR_FG->attr[20][i] = 0x81;
+                    }
+                    break;
+                case 32:
+                    for (i = 0; i < 32; i++) {
+                        VGS0_ADDR_FG->attr[20][i] = 0x00;
+                    }
+                    break;
+                case 56:
+                    for (i = 0; i < 32; i++) {
+                        VGS0_ADDR_FG->attr[20][i] = 0x81;
+                    }
+                    break;
+            }
         }
 
         // スプライトの泡を動かす
@@ -136,6 +158,13 @@ void title(void)
                 ;
             }
             *VGS0_ADDR_BG_SCROLL_X = rasterTable[(sidx + i) & 0x1F];
+            if (start && start < 16) {
+                if (i & 1) {
+                    *VGS0_ADDR_FG_SCROLL_X = start << 3;
+                } else {
+                    *VGS0_ADDR_FG_SCROLL_X = 0 - (start << 3);
+                }
+            }
         }
         sidx++;
     }
