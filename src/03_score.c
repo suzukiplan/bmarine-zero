@@ -7,11 +7,16 @@ void score_print(NameTable* nam)
     uint8_t detectS = 0;
     uint8_t detectH = 0;
     uint8_t updateH = 0;
+    uint8_t notUpdateH = 0;
     for (uint8_t i = 0; i < 8; i++) {
         // score
         if (!updateH) {
             if (GV->hi[7 - i] < GV->sc[7 - i]) {
-                updateH = 1;
+                if (0 == notUpdateH) {
+                    updateH = 1;
+                }
+            } else if (GV->sc[7 - i] < GV->hi[7 - i]) {
+                notUpdateH = 1;
             }
         }
         if (updateH) {
