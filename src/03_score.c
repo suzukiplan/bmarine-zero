@@ -1,6 +1,5 @@
 #include "header.h"
 
-
 // スコア表示（ハイスコア更新を含む）
 void score_print(NameTable* nam)
 {

@@ -55,6 +55,7 @@ void game_main(void)
     // グローバル変数初期化
     GV->player.spd = 0;
     GV->player.jmp = 0;
+    GV->player.flight = 0;
     GV->sprayIndex = 0;
     for (i = 0; i < 16; i++) {
         GV->spray[i].sn = 0;
@@ -65,7 +66,7 @@ void game_main(void)
         vgs0_wait_vsync();
         a++;
 
-        // プレイヤーの移動
+        // プレイヤー: 左右移動速度
         pad = vgs0_joypad_get();
         if (pad & VGS0_JOYPAD_LE) {
             if (-640 < GV->player.spd) {
@@ -83,6 +84,7 @@ void game_main(void)
             GV->player.spd += 64;
         }
 
+        // プレイヤー: ジャンプ
         if (pad & VGS0_JOYPAD_T1) {
             if (0 == GV->player.jmpKeep && 0 == GV->player.jmp) {
                 GV->player.jmp = -777;
@@ -94,17 +96,13 @@ void game_main(void)
             GV->player.jmpKeep = 0;
         }
 
+        // プレイヤー: 座標更新
         if (0 != GV->player.spd || 0 != GV->player.jmp) {
             if (0 != GV->player.jmp) {
                 GV->player.x.value += GV->player.spd;
                 GV->player.x.value += GV->player.spd / 2;
                 GV->player.y.value += GV->player.jmp;
-            } else {
-                GV->player.x.value += GV->player.spd;
-            }
-            if (0 == GV->player.jmp) {
-                GV->player.y.raw[1] = 0x41;
-            } else {
+                GV->player.flight++;
                 GV->player.y.value += GV->player.jmp;
                 if (GV->player.jmpKeep) {
                     GV->player.jmp += 55;
@@ -114,22 +112,26 @@ void game_main(void)
                 if (0x41 < GV->player.y.raw[1]) {
                     GV->player.y.raw[1] = 0x41;
                     GV->player.jmp = 0;
+                    GV->player.flight = 0;
+                }
+            } else {
+                GV->player.x.value += GV->player.spd;
+                GV->player.y.raw[1] = 0x41;
+                if (a & 0x01) {
+                    j = GV->player.y.raw[1] + 5;
+                    j += random[GV->ridx] & 0x01;
+                    GV->ridx++;
+                    j += random[GV->ridx] & 0x01;
+                    GV->ridx++;
+                    if (GV->player.spd < 0) {
+                        add_spray(GV->player.x.raw[1] + 16, j, 0x30, 0x83);
+                    } else {
+                        add_spray(GV->player.x.raw[1], j, 0x30, 0xC3);
+                    }
                 }
             }
             update_player_position();
-            if (0 == GV->player.jmp && (a & 0x01)) {
-                j = GV->player.y.raw[1] + 5;
-                j += random[GV->ridx] & 0x01;
-                GV->ridx++;
-                j += random[GV->ridx] & 0x01;
-                GV->ridx++;
-                if (GV->player.spd < 0) {
-                    add_spray(GV->player.x.raw[1] + 16, j, 0x30, 0x83);
-                } else {
-                    add_spray(GV->player.x.raw[1], j, 0x30, 0xC3);
-                }
-            }
-        } else if (GV->player.y.raw[1] != 0x40 && 0 == GV->player.jmp) {
+        } else if (GV->player.y.raw[1] != 0x40) {
             GV->player.y.raw[1] = 0x40;
             update_player_position();
         }

@@ -13,11 +13,12 @@ typedef struct {
 
     // プレイヤー
     struct Player {
-        Var16 x;
-        Var16 y;
-        int16_t spd;
-        int16_t jmp;
-        int8_t jmpKeep;
+        Var16 x;        // X座標
+        Var16 y;        // Y座標
+        int16_t spd;    // 移動スピード
+        int16_t jmp;    // ジャンプスピード
+        int8_t jmpKeep; // ジャンプ中のボタン押しっぱなしフラグ
+        uint8_t flight; // 対空時間（フレーム数）
     } player;
 
     // 水しぶき
