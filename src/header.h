@@ -17,6 +17,14 @@ typedef struct {
         Var16 y;
         int16_t spd;
     } player;
+
+    // 水しぶき
+    struct Spray {
+        uint8_t sn;     // 使用スプライトパターン兼activeフラグ（0 == not active）
+        uint8_t t;      // 1フレーム表示で+1（8でディアクティベート）
+    } spray[16];
+    uint8_t sprayIndex;
+
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 

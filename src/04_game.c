@@ -16,6 +16,19 @@ inline void update_player_position(void)
     VGS0_ADDR_OAM[5].y = GV->player.y.raw[1] + 8;
 }
 
+inline void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
+{
+    GV->sprayIndex &= 0x0F;
+    GV->spray[GV->sprayIndex].sn = sn;
+    GV->spray[GV->sprayIndex].t = 0;
+    uint8_t i = 6 + GV->sprayIndex;
+    VGS0_ADDR_OAM[i].x = x;
+    VGS0_ADDR_OAM[i].y = y;
+    VGS0_ADDR_OAM[i].ptn = sn;
+    VGS0_ADDR_OAM[i].attr = attr;
+    GV->sprayIndex += 1;
+}
+
 void game_main(void)
 {
     uint8_t i, j;
@@ -37,8 +50,14 @@ void game_main(void)
                 (uint16_t)&VGS0_ADDR_OAM[3],
                 sizeof(OAM) * 9);
 
-    // メインループ
+    // グローバル変数初期化
     GV->player.spd = 0;
+    GV->sprayIndex = 0;
+    for (i = 0; i < 16; i++) {
+        GV->spray[i].sn = 0;
+    }
+
+    // メインループ
     while (1) {
         vgs0_wait_vsync();
         a++;
@@ -65,9 +84,37 @@ void game_main(void)
             GV->player.x.value += GV->player.spd;
             GV->player.y.raw[1] = 0x41;
             update_player_position();
+            if (a & 0x01) {
+                j = GV->player.y.raw[1] + 5;
+                j += random[GV->ridx] & 0x01;
+                GV->ridx++;
+                j += random[GV->ridx] & 0x01;
+                GV->ridx++;
+                if (GV->player.spd < 0) {
+                    add_spray(GV->player.x.raw[1] + 16, j, 0x30, 0x83);
+                } else {
+                    add_spray(GV->player.x.raw[1], j, 0x30, 0xC3);
+                }
+            }
         } else if (GV->player.y.raw[1] != 0x40) {
             GV->player.y.raw[1] = 0x40;
             update_player_position();
+        }
+
+        // 水しぶき
+        for (i = 0; i < 16; i++) {
+            if (GV->spray[i].sn) {
+                GV->spray[i].t += 1;
+                if (GV->spray[i].t & 1) {
+                    GV->spray[i].sn += 1;
+                }
+                if (16 == GV->spray[i].t) {
+                    GV->spray[i].sn = 0;
+                    VGS0_ADDR_OAM[6 + i].attr = 0x00;
+                } else {
+                    VGS0_ADDR_OAM[6 + i].ptn = GV->spray[i].sn;
+                }
+            }
         }
 
         // 波のアニメーション
