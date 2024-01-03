@@ -234,15 +234,17 @@ void title(void)
             }
             vgs0_bg_putstr(2, 2, 0x80, "SC         0    HI         0");
             score_print(VGS0_ADDR_BG);
-            vgs0_oam_set(0x00, 116, 64 + 8, 0x80, 0x80);
-            vgs0_oam_set(0x01, 124, 64 + 8, 0x80, 0x80);
-            vgs0_oam_set(0x02, 132, 64 + 8, 0x80, 0x80);
-            vgs0_oam_set(0x03, 116, 64, 0x80, 0x10);
-            vgs0_oam_set(0x04, 124, 64, 0x80, 0x11);
-            vgs0_oam_set(0x05, 132, 64, 0x80, 0x12);
-            vgs0_oam_set(0x06, 116, 64 + 8, 0x80, 0x20);
-            vgs0_oam_set(0x07, 124, 64 + 8, 0x80, 0x21);
-            vgs0_oam_set(0x08, 132, 64 + 8, 0x80, 0x22);
+            GV->player.x = 116;
+            GV->player.y = 64;
+            vgs0_oam_set(0x00, GV->player.x, GV->player.y + 8, 0x80, 0x80);
+            vgs0_oam_set(0x01, GV->player.x + 8, GV->player.y + 8, 0x80, 0x80);
+            vgs0_oam_set(0x02, GV->player.x + 16, GV->player.y + 8, 0x80, 0x80);
+            vgs0_oam_set(0x03, GV->player.x, GV->player.y, 0x80, 0x10);
+            vgs0_oam_set(0x04, GV->player.x + 8, GV->player.y, 0x80, 0x11);
+            vgs0_oam_set(0x05, GV->player.x + 16, GV->player.y, 0x80, 0x12);
+            vgs0_oam_set(0x06, GV->player.x, GV->player.y + 8, 0x80, 0x20);
+            vgs0_oam_set(0x07, GV->player.x + 8, GV->player.y + 8, 0x80, 0x21);
+            vgs0_oam_set(0x08, GV->player.x + 16, GV->player.y + 8, 0x80, 0x22);
         }
         if (40 <= start) {
             j = a;

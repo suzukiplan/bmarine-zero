@@ -1,9 +1,26 @@
 #include "header.h"
 
+inline void update_player_position(void)
+{
+    VGS0_ADDR_OAM[0].x = GV->player.x;
+    VGS0_ADDR_OAM[0].y = GV->player.y;
+    VGS0_ADDR_OAM[1].x = GV->player.x + 8;
+    VGS0_ADDR_OAM[1].y = GV->player.y;
+    VGS0_ADDR_OAM[2].x = GV->player.x + 16;
+    VGS0_ADDR_OAM[2].y = GV->player.y;
+    VGS0_ADDR_OAM[3].x = GV->player.x;
+    VGS0_ADDR_OAM[3].y = GV->player.y + 8;
+    VGS0_ADDR_OAM[4].x = GV->player.x + 8;
+    VGS0_ADDR_OAM[4].y = GV->player.y + 8;
+    VGS0_ADDR_OAM[5].x = GV->player.x + 16;
+    VGS0_ADDR_OAM[5].y = GV->player.y + 8;
+}
+
 void game_main(void)
 {
     uint8_t i, j;
     uint8_t a = 12;
+    uint8_t pad;
 
     // スコアと波をBGからFGに描き直す
     vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
@@ -24,6 +41,25 @@ void game_main(void)
     while (1) {
         vgs0_wait_vsync();
         a++;
+
+        // プレイヤーの移動
+        pad = vgs0_joypad_get();
+        if (pad & VGS0_JOYPAD_LE) {
+            GV->player.y = 65;
+            GV->player.x--;
+            VGS0_ADDR_OAM[1].attr |= 0b01000000; 
+            update_player_position();
+        } else if (pad & VGS0_JOYPAD_RI) {
+            GV->player.y = 65;
+            GV->player.x++;
+            VGS0_ADDR_OAM[1].attr &= 0b10111111; 
+            update_player_position();
+        } else if (64 != GV->player.y) {
+            GV->player.y = 64;
+            update_player_position();
+        }
+
+
 
         // 波のアニメーション
         j = a;

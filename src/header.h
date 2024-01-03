@@ -5,6 +5,12 @@ typedef struct {
     uint8_t sc[8];  // スコア
     uint8_t hi[8];  // ハイスコア
     uint8_t ridx;   // 乱数インデクス
+
+    // プレイヤー
+    struct Player {
+        uint8_t x;
+        uint8_t y;
+    } player;
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 
