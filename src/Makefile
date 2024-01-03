@@ -72,7 +72,7 @@ bgm.dat: ${BGM_FILES}
 
 .SUFFIXES: .rel .src
 
-%.rel: %.c header.h global.h
+%.rel: %.c header.h
 	${COMPILE} $<
 
 .SUFFIXES: .chr .bmp
