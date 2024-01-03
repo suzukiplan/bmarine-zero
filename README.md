@@ -1,6 +1,10 @@
-# Battle Marine for VGS-Zero
+# WIP: Battle Marine for VGS-Zero
 
-2013 年リリースのスマートフォン向けとしてリリース、その後 2019 年にファミコン向けとして移植された固定画面弾幕海戦シューティング「Battle Marine」（バトルマリーン）が、VGS-Zero 対応のゲームとしてパワーアップして完全復活。
+「Battle Marine」（バトルマリーン）は、固定画面弾幕海戦シューティングです。
+
+2013 年にスマートフォン向けゲームとしてリリース、その後 2019 年に [ファミコンに移植](https://github.com/suzukiplan/battle-marine-fc) されました。
+
+今回、VGS-Zero 対応ソフト第1弾としてリニューアル移植。
 
 潜水艦、魚、カニを魚雷で DESTROY THEM ALL!
 
