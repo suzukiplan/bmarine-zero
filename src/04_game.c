@@ -38,6 +38,7 @@ void game_main(void)
                 sizeof(OAM) * 9);
 
     // メインループ
+    GV->player.spd = 0;
     while (1) {
         vgs0_wait_vsync();
         a++;
@@ -45,21 +46,29 @@ void game_main(void)
         // プレイヤーの移動
         pad = vgs0_joypad_get();
         if (pad & VGS0_JOYPAD_LE) {
-            GV->player.y.value = 0x4100;
-            GV->player.x.value -= 0x0180;
+            if (-640 < GV->player.spd) {
+                GV->player.spd -= 64;
+            }
             VGS0_ADDR_OAM[1].attr |= 0b01000000; 
-            update_player_position();
         } else if (pad & VGS0_JOYPAD_RI) {
-            GV->player.y.value = 0x4100;
-            GV->player.x.value += 0x0180;
+            if (GV->player.spd < 640) {
+                GV->player.spd += 64;
+            }
             VGS0_ADDR_OAM[1].attr &= 0b10111111; 
-            update_player_position();
-        } else if (0x40 != GV->player.y.raw[1]) {
-            GV->player.y.value = 0x4000;
-            update_player_position();
+        } else if (0 < GV->player.spd) {
+            GV->player.spd -= 64;
+        } else if (GV->player.spd < 0) {
+            GV->player.spd += 64;
         }
 
-
+        if (0 != GV->player.spd) {
+            GV->player.x.value += GV->player.spd;
+            GV->player.y.raw[1] = 0x41;
+            update_player_position();
+        } else if (GV->player.y.raw[1] != 0x40) {
+            GV->player.y.raw[1] = 0x40;
+            update_player_position();
+        }
 
         // 波のアニメーション
         j = a;

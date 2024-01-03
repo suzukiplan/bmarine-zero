@@ -15,6 +15,7 @@ typedef struct {
     struct Player {
         Var16 x;
         Var16 y;
+        int16_t spd;
     } player;
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
