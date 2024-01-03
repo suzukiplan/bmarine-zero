@@ -103,6 +103,7 @@ void game_main(void)
                 GV->player.x.value += GV->player.spd / 2;
                 GV->player.y.value += GV->player.jmp;
                 GV->player.flight++;
+                score_increment(0);
                 GV->player.y.value += GV->player.jmp;
                 if (GV->player.jmpKeep) {
                     GV->player.jmp += 55;
@@ -159,6 +160,11 @@ void game_main(void)
         j |= 0xA0;
         for (i = 0; i < 32; i++) {
             VGS0_ADDR_FG->ptn[9][i] =j;
+        }
+
+        // スコア加算がされた場合は再描画
+        if (GV->scoreAdded) {
+            score_print(VGS0_ADDR_FG);
         }
     }
 }

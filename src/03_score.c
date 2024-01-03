@@ -35,11 +35,13 @@ void score_print(NameTable* nam)
             nam->ptn[2][21 + i] = ' ';
         }
     }
+    GV->scoreAdded = 0;
 }
 
 // 指定ケタ（0: 10の位, 7: 億の位）のスコアを加算
 void score_increment(uint8_t keta)
 {
+    GV->scoreAdded = 1;
     if (7 < keta) {
         for (uint8_t i = 0; i < 8; i++) {
             GV->sc[i] = 9;

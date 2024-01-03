@@ -7,9 +7,10 @@ typedef union {
 
 // グローバル変数
 typedef struct {
-    uint8_t sc[8];  // スコア
-    uint8_t hi[8];  // ハイスコア
-    uint8_t ridx;   // 乱数インデクス
+    uint8_t sc[8];      // スコア
+    uint8_t hi[8];      // ハイスコア
+    uint8_t ridx;       // 乱数インデクス
+    uint8_t scoreAdded; // スコア加算フラグ（再描画判定用）
 
     // プレイヤー
     struct Player {
