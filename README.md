@@ -1,6 +1,6 @@
 # WIP: Battle Marine for VGS-Zero
 
-「Battle Marine」（バトルマリーン）は、固定画面弾幕海戦シューティングです。
+「Battle Marine」（バトルマリーン）は固定画面弾幕海戦シューティングゲームです。
 
 2013 年にスマートフォン向けゲームとしてリリース、その後 2019 年に [ファミコンに移植](https://github.com/suzukiplan/battle-marine-fc) されました。
 
