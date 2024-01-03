@@ -93,7 +93,7 @@ void title(void)
             }
         } else {
             start += 1;
-            if (0 == start) {
+            if (56 == start) {
                 break;
             }
             if (start < 16) {
