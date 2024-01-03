@@ -1,5 +1,10 @@
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
+typedef union {
+    uint16_t value;
+    uint8_t raw[2];
+} Var16;
+
 // グローバル変数
 typedef struct {
     uint8_t sc[8];  // スコア
@@ -8,8 +13,8 @@ typedef struct {
 
     // プレイヤー
     struct Player {
-        uint8_t x;
-        uint8_t y;
+        Var16 x;
+        Var16 y;
     } player;
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)

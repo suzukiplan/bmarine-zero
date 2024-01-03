@@ -2,18 +2,18 @@
 
 inline void update_player_position(void)
 {
-    VGS0_ADDR_OAM[0].x = GV->player.x;
-    VGS0_ADDR_OAM[0].y = GV->player.y;
-    VGS0_ADDR_OAM[1].x = GV->player.x + 8;
-    VGS0_ADDR_OAM[1].y = GV->player.y;
-    VGS0_ADDR_OAM[2].x = GV->player.x + 16;
-    VGS0_ADDR_OAM[2].y = GV->player.y;
-    VGS0_ADDR_OAM[3].x = GV->player.x;
-    VGS0_ADDR_OAM[3].y = GV->player.y + 8;
-    VGS0_ADDR_OAM[4].x = GV->player.x + 8;
-    VGS0_ADDR_OAM[4].y = GV->player.y + 8;
-    VGS0_ADDR_OAM[5].x = GV->player.x + 16;
-    VGS0_ADDR_OAM[5].y = GV->player.y + 8;
+    VGS0_ADDR_OAM[0].x = GV->player.x.raw[1];
+    VGS0_ADDR_OAM[0].y = GV->player.y.raw[1];
+    VGS0_ADDR_OAM[1].x = GV->player.x.raw[1] + 8;
+    VGS0_ADDR_OAM[1].y = GV->player.y.raw[1];
+    VGS0_ADDR_OAM[2].x = GV->player.x.raw[1] + 16;
+    VGS0_ADDR_OAM[2].y = GV->player.y.raw[1];
+    VGS0_ADDR_OAM[3].x = GV->player.x.raw[1];
+    VGS0_ADDR_OAM[3].y = GV->player.y.raw[1] + 8;
+    VGS0_ADDR_OAM[4].x = GV->player.x.raw[1] + 8;
+    VGS0_ADDR_OAM[4].y = GV->player.y.raw[1] + 8;
+    VGS0_ADDR_OAM[5].x = GV->player.x.raw[1] + 16;
+    VGS0_ADDR_OAM[5].y = GV->player.y.raw[1] + 8;
 }
 
 void game_main(void)
@@ -45,17 +45,17 @@ void game_main(void)
         // プレイヤーの移動
         pad = vgs0_joypad_get();
         if (pad & VGS0_JOYPAD_LE) {
-            GV->player.y = 65;
-            GV->player.x--;
+            GV->player.y.value = 0x4100;
+            GV->player.x.value -= 0x0180;
             VGS0_ADDR_OAM[1].attr |= 0b01000000; 
             update_player_position();
         } else if (pad & VGS0_JOYPAD_RI) {
-            GV->player.y = 65;
-            GV->player.x++;
+            GV->player.y.value = 0x4100;
+            GV->player.x.value += 0x0180;
             VGS0_ADDR_OAM[1].attr &= 0b10111111; 
             update_player_position();
-        } else if (64 != GV->player.y) {
-            GV->player.y = 64;
+        } else if (0x40 != GV->player.y.raw[1]) {
+            GV->player.y.value = 0x4000;
             update_player_position();
         }
 
