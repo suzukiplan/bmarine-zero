@@ -16,6 +16,8 @@ typedef struct {
         Var16 x;
         Var16 y;
         int16_t spd;
+        int16_t jmp;
+        int8_t jmpKeep;
     } player;
 
     // 水しぶき

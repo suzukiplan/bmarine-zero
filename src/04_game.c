@@ -54,6 +54,7 @@ void game_main(void)
 
     // グローバル変数初期化
     GV->player.spd = 0;
+    GV->player.jmp = 0;
     GV->sprayIndex = 0;
     for (i = 0; i < 16; i++) {
         GV->spray[i].sn = 0;
@@ -82,11 +83,39 @@ void game_main(void)
             GV->player.spd += 64;
         }
 
-        if (0 != GV->player.spd) {
-            GV->player.x.value += GV->player.spd;
-            GV->player.y.raw[1] = 0x41;
+        if (pad & VGS0_JOYPAD_T1) {
+            if (0 == GV->player.jmpKeep && 0 == GV->player.jmp) {
+                GV->player.jmp = -777;
+                GV->player.jmpKeep = 1;
+            }
+        } else {
+            GV->player.jmpKeep = 0;
+        }
+
+        if (0 != GV->player.spd || 0 != GV->player.jmp) {
+            if (0 != GV->player.jmp) {
+                GV->player.x.value += GV->player.spd;
+                GV->player.x.value += GV->player.spd / 2;
+                GV->player.y.value += GV->player.jmp;
+            } else {
+                GV->player.x.value += GV->player.spd;
+            }
+            if (0 == GV->player.jmp) {
+                GV->player.y.raw[1] = 0x41;
+            } else {
+                GV->player.y.value += GV->player.jmp;
+                if (GV->player.jmpKeep) {
+                    GV->player.jmp += 55;
+                } else {
+                    GV->player.jmp += 122;
+                }
+                if (0x41 < GV->player.y.raw[1]) {
+                    GV->player.y.raw[1] = 0x41;
+                    GV->player.jmp = 0;
+                }
+            }
             update_player_position();
-            if (a & 0x01) {
+            if (0 == GV->player.jmp && (a & 0x01)) {
                 j = GV->player.y.raw[1] + 5;
                 j += random[GV->ridx] & 0x01;
                 GV->ridx++;
@@ -98,7 +127,7 @@ void game_main(void)
                     add_spray(GV->player.x.raw[1], j, 0x30, 0xC3);
                 }
             }
-        } else if (GV->player.y.raw[1] != 0x40) {
+        } else if (GV->player.y.raw[1] != 0x40 && 0 == GV->player.jmp) {
             GV->player.y.raw[1] = 0x40;
             update_player_position();
         }
