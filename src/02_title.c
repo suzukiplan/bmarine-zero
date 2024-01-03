@@ -179,6 +179,8 @@ void title(void)
 
         // BGフェードアウト
         if (24 == start) {
+            *VGS0_ADDR_FG_SCROLL_X = 0;
+            *VGS0_ADDR_FG_SCROLL_Y = 0;
             for (i = 1; i < 25; i++) {
                 for (j = 0; j < 32; j++) {
                     VGS0_ADDR_FG->ptn[i][j] = 0x60;

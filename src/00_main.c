@@ -12,4 +12,5 @@ void main(void)
     GV->hi[1] = 7;
     GV->hi[2] = 5;
     title();
+    game_main();
 }

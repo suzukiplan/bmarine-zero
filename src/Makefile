@@ -3,6 +3,7 @@ SRC_FILES = 00_main.rel
 SRC_FILES += 01_tables.rel
 SRC_FILES += 02_title.rel
 SRC_FILES += 03_score.rel
+SRC_FILES += 04_game.rel
 CHR_FILES = bg.chr
 CHR_FILES += fg.chr
 CHR_FILES += sprite.chr

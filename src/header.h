@@ -16,3 +16,4 @@ void init_palette(void);
 void title(void);
 void score_print(NameTable* nam);
 void score_increment(uint8_t keta);
+void game_main(void);
