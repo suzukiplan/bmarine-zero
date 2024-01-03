@@ -87,6 +87,8 @@ void game_main(void)
             if (0 == GV->player.jmpKeep && 0 == GV->player.jmp) {
                 GV->player.jmp = -777;
                 GV->player.jmpKeep = 1;
+                add_spray(GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 5, 0x30, 0x83);
+                add_spray(GV->player.x.raw[1] + 4, GV->player.y.raw[1] + 5, 0x30, 0xC3);
             }
         } else {
             GV->player.jmpKeep = 0;
