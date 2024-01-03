@@ -56,6 +56,7 @@ void game_main(void)
     GV->player.spd = 0;
     GV->player.jmp = 0;
     GV->player.flight = 0;
+    GV->player.snock = 0;
     GV->sprayIndex = 0;
     for (i = 0; i < 16; i++) {
         GV->spray[i].sn = 0;
@@ -113,6 +114,10 @@ void game_main(void)
                 if (0x41 < GV->player.y.raw[1]) {
                     GV->player.y.raw[1] = 0x41;
                     GV->player.jmp = 0;
+                    GV->player.snock = GV->player.flight;
+                    GV->player.snock >>= 3;
+                    GV->player.slx = GV->player.x.raw[1] - 4;
+                    GV->player.srx = GV->player.x.raw[1] + 20;
                     GV->player.flight = 0;
                 }
             } else {
@@ -135,6 +140,15 @@ void game_main(void)
         } else if (GV->player.y.raw[1] != 0x40) {
             GV->player.y.raw[1] = 0x40;
             update_player_position();
+        }
+
+        // 着水時の衝撃波
+        if (GV->player.snock) {
+            GV->player.snock--;
+            add_spray(GV->player.slx, GV->player.y.raw[1] + 5, 0x30, 0xC3);
+            add_spray(GV->player.srx, GV->player.y.raw[1] + 5, 0x30, 0x83);
+            GV->player.slx -= 6;
+            GV->player.srx += 6;
         }
 
         // 水しぶき

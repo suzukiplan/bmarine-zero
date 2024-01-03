@@ -20,6 +20,9 @@ typedef struct {
         int16_t jmp;    // ジャンプスピード
         int8_t jmpKeep; // ジャンプ中のボタン押しっぱなしフラグ
         uint8_t flight; // 対空時間（フレーム数）
+        uint8_t snock;  // 着水時の衝撃波カウンター
+        uint8_t slx;    // 着水座標の左端
+        uint8_t srx;    // 着水座標の右端
     } player;
 
     // 水しぶき
