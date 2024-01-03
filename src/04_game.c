@@ -1,5 +1,7 @@
 #include "header.h"
 
+#define SP_SPRAY 240
+
 inline void update_player_position(void)
 {
     VGS0_ADDR_OAM[0].x = GV->player.x.raw[1];
@@ -21,7 +23,7 @@ inline void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
     GV->sprayIndex &= 0x0F;
     GV->spray[GV->sprayIndex].sn = sn;
     GV->spray[GV->sprayIndex].t = 0;
-    uint8_t i = 6 + GV->sprayIndex;
+    uint8_t i = SP_SPRAY + GV->sprayIndex;
     VGS0_ADDR_OAM[i].x = x;
     VGS0_ADDR_OAM[i].y = y;
     VGS0_ADDR_OAM[i].ptn = sn;
@@ -110,9 +112,9 @@ void game_main(void)
                 }
                 if (16 == GV->spray[i].t) {
                     GV->spray[i].sn = 0;
-                    VGS0_ADDR_OAM[6 + i].attr = 0x00;
+                    VGS0_ADDR_OAM[SP_SPRAY + i].attr = 0x00;
                 } else {
-                    VGS0_ADDR_OAM[6 + i].ptn = GV->spray[i].sn;
+                    VGS0_ADDR_OAM[SP_SPRAY + i].ptn = GV->spray[i].sn;
                 }
             }
         }
