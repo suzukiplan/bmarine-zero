@@ -42,6 +42,17 @@ typedef struct {
     } spray[16];
     uint8_t sprayIndex;
 
+    // ゴミ
+    struct Dust {
+        uint8_t flag;   // 存在フラグ
+        Var16 x;        // X座標
+        Var16 y;        // Y座標
+        uint16_t vx;    // フレームごとの座標移動量（X）
+        uint16_t vy;    // フレームごとの座標移動量（Y）
+        uint16_t sx;    // フレーム毎のvx加算値
+        uint16_t sy;    // フレーム毎のvy加算値
+    } dust[16];
+
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 

@@ -1,5 +1,6 @@
 #include "header.h"
 
+#define SP_DUST 208
 #define SP_SHOT 224
 #define SP_SPRAY 240
 
