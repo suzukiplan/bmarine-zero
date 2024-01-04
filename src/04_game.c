@@ -104,8 +104,12 @@ void game_main(void)
                     VGS0_ADDR_OAM[j].attr = 0x00;
                     VGS0_ADDR_OAM[j + 1].attr = 0x00;
                 } else {
+                    GV->shot[i].flag++;
                     VGS0_ADDR_OAM[j].y = GV->shot[i].y.raw[1];
                     VGS0_ADDR_OAM[j + 1].y = GV->shot[i].y.raw[1] + 8;
+                    if (0 == (GV->shot[i].flag & 0x03)) {
+                        add_spray(GV->shot[i].x, GV->shot[i].y.raw[1], 0x40, 0x80);
+                    }
                 }
             }
         }
@@ -204,7 +208,7 @@ void game_main(void)
             GV->player.srx += 6;
         }
 
-        // 水しぶき
+        // 水しぶき & けむり
         for (i = 0; i < 16; i++) {
             if (GV->spray[i].sn) {
                 GV->spray[i].t += 1;
