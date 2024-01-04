@@ -23,7 +23,16 @@ typedef struct {
         uint8_t snock;  // 着水時の衝撃波カウンター
         uint8_t slx;    // 着水座標の左端
         uint8_t srx;    // 着水座標の右端
+        uint8_t shot;   // ショット発射フラグ
     } player;
+
+    // プレイヤーショット
+    struct Shot {
+        uint8_t flag;   // 存在フラグ
+        uint8_t x;      // X座標
+        Var16 y;        // Y座標
+        int16_t spd;    // 落下スピード
+    } shot[16];
 
     // 水しぶき
     struct Spray {
