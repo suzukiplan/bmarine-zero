@@ -1,5 +1,6 @@
 #include "header.h"
 
+#define SP_SHOT 224
 #define SP_SPRAY 240
 
 inline void update_player_position(void)
@@ -31,6 +32,24 @@ inline void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
     GV->sprayIndex += 1;
 }
 
+inline void add_shot(uint8_t x, uint16_t y)
+{
+    if (GV->shot[GV->shotIndex].flag) {
+        return;
+    }
+    GV->shot[GV->shotIndex].flag = 1;
+    GV->shot[GV->shotIndex].x = x;
+    GV->shot[GV->shotIndex].y.value = y;
+    GV->shot[GV->shotIndex].spd = 0;
+    uint8_t sn = GV->shotIndex;
+    sn <<= 1;
+    sn += SP_SHOT;
+    vgs0_oam_set(sn, x, GV->shot[GV->shotIndex].y.raw[1], 0x80, 0x13);
+    vgs0_oam_set(sn + 1, x, GV->shot[GV->shotIndex].y.raw[1] + 8, 0x80, 0x23);
+    GV->shotIndex++;
+    GV->shotIndex &= 0x07;
+}
+
 void game_main(void)
 {
     uint8_t i, j;
@@ -57,15 +76,39 @@ void game_main(void)
     GV->player.jmp = 0;
     GV->player.flight = 0;
     GV->player.snock = 0;
+    GV->player.shot = 0;
     GV->sprayIndex = 0;
+    GV->shotIndex = 0;
     for (i = 0; i < 16; i++) {
         GV->spray[i].sn = 0;
+    }
+    for (i = 0; i < 8; i++) {
+        GV->shot[i].flag = 0;
     }
 
     // メインループ
     while (1) {
         vgs0_wait_vsync();
         a++;
+
+        // プレイヤーショットの移動
+        for (i = 0; i < 8; i++) {
+            if (GV->shot[i].flag) {
+                GV->shot[i].spd += 44;
+                GV->shot[i].y.value += GV->shot[i].spd;
+                j = i;
+                j <<= 1;
+                j += SP_SHOT;
+                if (176 < GV->shot[i].y.raw[1]) {
+                    GV->shot[i].flag = 0;
+                    VGS0_ADDR_OAM[j].attr = 0x00;
+                    VGS0_ADDR_OAM[j + 1].attr = 0x00;
+                } else {
+                    VGS0_ADDR_OAM[j].y = GV->shot[i].y.raw[1];
+                    VGS0_ADDR_OAM[j + 1].y = GV->shot[i].y.raw[1] + 8;
+                }
+            }
+        }
 
         // プレイヤー: 左右移動速度
         pad = vgs0_joypad_get();
@@ -95,6 +138,16 @@ void game_main(void)
             }
         } else {
             GV->player.jmpKeep = 0;
+        }
+
+        // プレイヤー: ショット
+        if (pad & VGS0_JOYPAD_T2) {
+            if (0 == GV->player.shot) {
+                add_shot(GV->player.x.raw[1] + 8, GV->player.y.value + 0x0B00);
+                GV->player.shot = 1;
+            }
+        } else {
+            GV->player.shot = 0;
         }
 
         // プレイヤー: 座標更新

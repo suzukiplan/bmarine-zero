@@ -32,7 +32,8 @@ typedef struct {
         uint8_t x;      // X座標
         Var16 y;        // Y座標
         int16_t spd;    // 落下スピード
-    } shot[16];
+    } shot[8];
+    uint8_t shotIndex;
 
     // 水しぶき
     struct Spray {
