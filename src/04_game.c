@@ -4,7 +4,7 @@
 #define SP_SHOT 224
 #define SP_SPRAY 240
 
-inline void update_player_position(void)
+void update_player_position(void)
 {
     VGS0_ADDR_OAM[0].x = GV->player.x.raw[1];
     VGS0_ADDR_OAM[0].y = GV->player.y.raw[1];
@@ -20,7 +20,7 @@ inline void update_player_position(void)
     VGS0_ADDR_OAM[5].y = GV->player.y.raw[1] + 8;
 }
 
-inline void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
+void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
 {
     GV->sprayIndex &= 0x0F;
     GV->spray[GV->sprayIndex].sn = sn;
@@ -33,7 +33,49 @@ inline void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
     GV->sprayIndex += 1;
 }
 
-inline void add_shot(uint8_t x, uint16_t y)
+void add_dust_ground(uint8_t x, uint8_t y)
+{
+    GV->dustIndex &= 0x0F;
+    GV->dust[GV->dustIndex].flag = 1;
+    GV->dust[GV->dustIndex].x.raw[1] = x;
+    GV->dust[GV->dustIndex].y.raw[1] = y;
+    GV->dust[GV->dustIndex].vx = 0;
+
+    uint8_t r;
+
+    r = random[GV->ridx] & 0x1F;
+    GV->ridx++;
+    GV->dust[GV->dustIndex].sx = r;
+
+    r = random[GV->ridx];
+    GV->ridx++;
+    if (GV->dustIndex & 0x01) {
+        GV->dust[GV->dustIndex].sx = -GV->dust[GV->dustIndex].sx;
+    }
+
+    r = random[GV->ridx] & 0x1F;
+    GV->ridx++;
+    GV->dust[GV->dustIndex].sy = r;
+
+    r = random[GV->ridx];
+    GV->ridx++;
+    if (r < 0xC0) {
+        GV->dust[GV->dustIndex].sy = -GV->dust[GV->dustIndex].sy;
+    }
+
+    r = random[GV->ridx];
+    GV->ridx++;
+    GV->dust[GV->dustIndex].vy = r;
+    GV->dust[GV->dustIndex].vy <<= 1;
+    GV->dust[GV->dustIndex].vy = -GV->dust[GV->dustIndex].vy;
+
+    uint8_t s = GV->dustIndex;
+    s += SP_DUST;
+    vgs0_oam_set(s, x, y, 0x83, 0x14);
+    GV->dustIndex++;
+}
+
+void add_shot(uint8_t x, uint16_t y)
 {
     if (GV->shot[GV->shotIndex].flag) {
         return;
@@ -81,8 +123,10 @@ void game_main(void)
     GV->player.shot = 0;
     GV->sprayIndex = 0;
     GV->shotIndex = 0;
+    GV->dustIndex = 0;
     for (i = 0; i < 16; i++) {
         GV->spray[i].sn = 0;
+        GV->dust[i].flag = 0;
     }
     for (i = 0; i < 8; i++) {
         GV->shot[i].flag = 0;
@@ -106,6 +150,10 @@ void game_main(void)
                     GV->shot[i].flag = 0;
                     VGS0_ADDR_OAM[j].attr = 0x00;
                     VGS0_ADDR_OAM[j + 1].attr = 0x00;
+                    add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
+                    add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
+                    add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
+                    add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
                 } else {
                     GV->shot[i].flag++;
                     VGS0_ADDR_OAM[j].y = GV->shot[i].y.raw[1];
@@ -215,8 +263,8 @@ void game_main(void)
             GV->player.srx += 6;
         }
 
-        // 水しぶき & けむり
         for (i = 0; i < 16; i++) {
+            // 水しぶき & けむり
             if (GV->spray[i].sn) {
                 GV->spray[i].t += 1;
                 if (GV->spray[i].t & 1) {
@@ -227,6 +275,24 @@ void game_main(void)
                     VGS0_ADDR_OAM[SP_SPRAY + i].attr = 0x00;
                 } else {
                     VGS0_ADDR_OAM[SP_SPRAY + i].ptn = GV->spray[i].sn;
+                }
+            }
+            // ゴミ
+            if (GV->dust[i].flag) {
+                GV->dust[i].flag++;
+                GV->dust[i].flag &= 0x1F;
+                GV->dust[i].x.value += GV->dust[i].vx;
+                GV->dust[i].y.value += GV->dust[i].vy;
+                j = i;
+                j += SP_DUST;
+                if (0 == GV->dust[i].flag || 248 <= GV->dust[i].x.raw[1] || 192 <= GV->dust[i].y.raw[1]) {
+                    GV->dust[i].flag = 0;
+                    VGS0_ADDR_OAM[j].attr = 0x00;
+                } else {
+                    GV->dust[i].vx += GV->dust[i].sx;
+                    GV->dust[i].vy += GV->dust[i].sy;
+                    VGS0_ADDR_OAM[j].x = GV->dust[i].x.raw[1];
+                    VGS0_ADDR_OAM[j].y = GV->dust[i].y.raw[1];
                 }
             }
         }
