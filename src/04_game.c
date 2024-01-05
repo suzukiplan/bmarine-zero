@@ -99,6 +99,40 @@ void add_star()
     GV->starIndex &= 0x0F;
 }
 
+void add_bubble()
+{
+    if (GV->bubble[GV->bubbleIndex].flag) {
+        return;
+    }
+    uint8_t r;
+
+    r = random[GV->ridx];
+    GV->ridx += 1;
+    uint8_t y = r & 0x1F;
+    if (y < 9 || 22 < y) {
+        return;
+    }
+
+    r = random[GV->ridx];
+    GV->ridx += 1;
+    uint8_t x = r & 0x1F;
+    if (0 == x || 31 == x) {
+        return;
+    }
+
+    if (VGS0_ADDR_BG->ptn[y][x] != 0x10) {
+        return;
+    }
+    VGS0_ADDR_BG->ptn[y][x] = 0x90;
+    VGS0_ADDR_BG->attr[y][x] = 0x84;
+    GV->bubble[GV->bubbleIndex].flag = 1;
+    GV->bubble[GV->bubbleIndex].x = x;
+    GV->bubble[GV->bubbleIndex].y = y;
+    GV->bubble[GV->bubbleIndex].ptn = 0x90;
+    GV->bubbleIndex += 1;
+    GV->bubbleIndex &= 0x0F;
+}
+
 void add_shot(uint8_t x, uint16_t y)
 {
     if (GV->shot[GV->shotIndex].flag) {
@@ -149,10 +183,12 @@ void game_main(void)
     GV->shotIndex = 0;
     GV->dustIndex = 0;
     GV->starIndex = 0;
+    GV->bubbleIndex = 0;
     for (i = 0; i < 16; i++) {
         GV->spray[i].sn = 0;
         GV->dust[i].flag = 0;
         GV->star[i].flag = 0;
+        GV->bubble[i].flag = 0;
     }
     for (i = 0; i < 8; i++) {
         GV->shot[i].flag = 0;
@@ -163,8 +199,9 @@ void game_main(void)
         vgs0_wait_vsync();
         a++;
 
-        // 追加可能なら星を追加
+        // 追加可能なら星と泡を追加
         add_star();
+        add_bubble();
 
         // プレイヤーショットの移動
         for (i = 0; i < 8; i++) {
@@ -335,6 +372,18 @@ void game_main(void)
                         GV->star[i].flag = 0;
                         VGS0_ADDR_BG->ptn[GV->star[i].y][GV->star[i].x] = 0x00;
                     }
+                }
+            }
+            // 泡
+            if (GV->bubble[i].flag) {
+                GV->bubble[i].flag++;
+                GV->bubble[i].flag &= 0x1F;
+                if (0 == GV->bubble[i].flag) {
+                    VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] = 0x10;
+                    VGS0_ADDR_BG->attr[GV->bubble[i].y][GV->bubble[i].x] = 0x00;
+                } else  if (0 == (GV->bubble[i].flag & 0x03)) {
+                    GV->bubble[i].ptn += 1;
+                    VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] = GV->bubble[i].ptn;
                 }
             }
         }

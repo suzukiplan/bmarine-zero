@@ -63,6 +63,15 @@ typedef struct {
     } star[16];
     uint8_t starIndex;
 
+    // 泡
+    struct Bubble {
+        uint8_t flag;   // 存在フラグ
+        uint8_t x;      // X座標（nametable）
+        uint8_t y;      // X座標（nametable）
+        uint8_t ptn;    // パターン
+    } bubble[16];
+    uint8_t bubbleIndex;
+
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 
