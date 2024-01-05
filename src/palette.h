@@ -64,11 +64,11 @@ void init_palette(void)
     vgs0_palette_set(3, 13, 23, 11, 0);
     vgs0_palette_set(3, 14, 26, 13, 0);
     vgs0_palette_set(3, 15, 31, 15, 0);
-    vgs0_palette_set(4, 0, 0, 0, 0);
-    vgs0_palette_set(4, 1, 0, 0, 0);
-    vgs0_palette_set(4, 2, 0, 0, 0);
-    vgs0_palette_set(4, 3, 0, 0, 0);
-    vgs0_palette_set(4, 4, 0, 0, 0);
+    vgs0_palette_set(4, 0, 0, 2, 5);
+    vgs0_palette_set(4, 1, 9, 9, 1);
+    vgs0_palette_set(4, 2, 17, 17, 4);
+    vgs0_palette_set(4, 3, 25, 25, 8);
+    vgs0_palette_set(4, 4, 31, 31, 10);
     vgs0_palette_set(4, 5, 0, 0, 0);
     vgs0_palette_set(4, 6, 0, 0, 0);
     vgs0_palette_set(4, 7, 0, 0, 0);

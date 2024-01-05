@@ -75,6 +75,30 @@ void add_dust_ground(uint8_t x, uint8_t y)
     GV->dustIndex++;
 }
 
+void add_star()
+{
+    if (GV->star[GV->starIndex].flag) {
+        return;
+    }
+    uint8_t r = random[GV->ridx];
+    GV->ridx += 1;
+    uint8_t x = r & 0x1F;
+    r = random[GV->ridx];
+    GV->ridx += 1;
+    uint8_t y = r & 0x07;
+    if (VGS0_ADDR_BG->ptn[y][x] != 0) {
+        return;
+    }
+    VGS0_ADDR_BG->ptn[y][x] = 0x70;
+    VGS0_ADDR_BG->attr[y][x] = 0x84;
+    GV->star[GV->starIndex].flag = 1;
+    GV->star[GV->starIndex].x = x;
+    GV->star[GV->starIndex].y = y;
+    GV->star[GV->starIndex].ptn = 0x70;
+    GV->starIndex += 1;
+    GV->starIndex &= 0x0F;
+}
+
 void add_shot(uint8_t x, uint16_t y)
 {
     if (GV->shot[GV->shotIndex].flag) {
@@ -124,9 +148,11 @@ void game_main(void)
     GV->sprayIndex = 0;
     GV->shotIndex = 0;
     GV->dustIndex = 0;
+    GV->starIndex = 0;
     for (i = 0; i < 16; i++) {
         GV->spray[i].sn = 0;
         GV->dust[i].flag = 0;
+        GV->star[i].flag = 0;
     }
     for (i = 0; i < 8; i++) {
         GV->shot[i].flag = 0;
@@ -136,6 +162,9 @@ void game_main(void)
     while (1) {
         vgs0_wait_vsync();
         a++;
+
+        // 追加可能なら星を追加
+        add_star();
 
         // プレイヤーショットの移動
         for (i = 0; i < 8; i++) {
@@ -293,6 +322,19 @@ void game_main(void)
                     GV->dust[i].vy += GV->dust[i].sy;
                     VGS0_ADDR_OAM[j].x = GV->dust[i].x.raw[1];
                     VGS0_ADDR_OAM[j].y = GV->dust[i].y.raw[1];
+                }
+            }
+            // 星
+            if (GV->star[i].flag) {
+                GV->star[i].flag++;
+                if (0 == (GV->star[i].flag & 0x03)) {
+                    GV->star[i].ptn += 1;
+                    if (GV->star[i].ptn < 0x78) {
+                        VGS0_ADDR_BG->ptn[GV->star[i].y][GV->star[i].x] = GV->star[i].ptn;
+                    } else {
+                        GV->star[i].flag = 0;
+                        VGS0_ADDR_BG->ptn[GV->star[i].y][GV->star[i].x] = 0x00;
+                    }
                 }
             }
         }

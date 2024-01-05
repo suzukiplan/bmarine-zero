@@ -54,6 +54,15 @@ typedef struct {
     } dust[16];
     uint8_t dustIndex;
 
+    // 星
+    struct Star {
+        uint8_t flag;   // 存在フラグ
+        uint8_t x;      // X座標（nametable）
+        uint8_t y;      // X座標（nametable）
+        uint8_t ptn;    // パターン
+    } star[16];
+    uint8_t starIndex;
+
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 
