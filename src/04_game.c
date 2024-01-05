@@ -38,6 +38,7 @@ inline void add_shot(uint8_t x, uint16_t y)
     if (GV->shot[GV->shotIndex].flag) {
         return;
     }
+    vgs0_se_play(1);
     GV->shot[GV->shotIndex].flag = 1;
     GV->shot[GV->shotIndex].x = x;
     GV->shot[GV->shotIndex].y.value = y;
@@ -101,6 +102,7 @@ void game_main(void)
                 j <<= 1;
                 j += SP_SHOT;
                 if (176 < GV->shot[i].y.raw[1]) {
+                    vgs0_se_play(3);
                     GV->shot[i].flag = 0;
                     VGS0_ADDR_OAM[j].attr = 0x00;
                     VGS0_ADDR_OAM[j + 1].attr = 0x00;
@@ -136,6 +138,7 @@ void game_main(void)
         // プレイヤー: ジャンプ
         if (pad & VGS0_JOYPAD_T1) {
             if (0 == GV->player.jmpKeep && 0 == GV->player.jmp) {
+                vgs0_se_play(4);
                 GV->player.jmp = -777;
                 GV->player.jmpKeep = 1;
                 add_spray(GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 5, 0x30, 0x83);
@@ -170,6 +173,7 @@ void game_main(void)
                     GV->player.jmp += 122;
                 }
                 if (0x41 < GV->player.y.raw[1]) {
+                    vgs0_se_play(5);
                     GV->player.y.raw[1] = 0x41;
                     GV->player.jmp = 0;
                     GV->player.snock = GV->player.flight;
@@ -192,6 +196,8 @@ void game_main(void)
                     } else {
                         add_spray(GV->player.x.raw[1], j, 0x30, 0xC3);
                     }
+                } else if (0 == (a & 3)) {
+                    vgs0_se_play(2);
                 }
             }
             update_player_position();

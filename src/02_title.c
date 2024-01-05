@@ -76,6 +76,9 @@ void title(void)
         vgs0_oam_set(i, x, y, 0x82, i);
     }
 
+    // BGMを再生
+    vgs0_bgm_play(0);
+
     // ループ
     uint8_t a = 0;
     uint8_t sidx = 0;
@@ -86,6 +89,8 @@ void title(void)
             // STARTボタンが押されたかチェック
             uint8_t pad = vgs0_joypad_get();
             if (pad & VGS0_JOYPAD_ST) {
+                vgs0_bgm_fadeout();
+                vgs0_se_play(0);
                 start = 1;
                 for (i = 0; i < 32; i++) {
                     VGS0_ADDR_FG->attr[20][i] = 0x80;
