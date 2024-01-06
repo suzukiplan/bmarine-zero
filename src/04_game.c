@@ -22,25 +22,9 @@ void game_main(void)
                 sizeof(OAM) * 9);
 
     // グローバル変数初期化
-    GV->player.spd = 0;
-    GV->player.jmp = 0;
-    GV->player.flight = 0;
-    GV->player.snock = 0;
-    GV->player.shot = 0;
-    GV->sprayIndex = 0;
-    GV->shotIndex = 0;
-    GV->dustIndex = 0;
-    GV->starIndex = 0;
-    GV->bubbleIndex = 0;
-    for (i = 0; i < 16; i++) {
-        GV->spray[i].sn = 0;
-        GV->dust[i].flag = 0;
-        GV->star[i].flag = 0;
-        GV->bubble[i].flag = 0;
-    }
-    for (i = 0; i < 8; i++) {
-        GV->shot[i].flag = 0;
-    }
+    vgs0_memset(0xC000 + 16, 0x00, sizeof(GlobalVariables) - 16);
+    GV->player.x.value = 0x7400;
+    GV->player.y.value = 0x4000;
 
     vgs0_bgm_play(1);
 
@@ -196,6 +180,7 @@ void game_main(void)
             GV->player.srx += 6;
         }
 
+        // 16要素のオブジェクト群の処理ループ
         for (i = 0; i < 16; i++) {
             // 水しぶき & けむり
             if (GV->spray[i].sn) {
