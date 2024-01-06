@@ -1,26 +1,5 @@
 #include "header.h"
 
-void update_player_position(void)  __z88dk_fastcall
-{
-    if (GV->player.x.raw[1] < 8) {
-        GV->player.x.raw[1] = 8;
-    } else if (224 < GV->player.x.raw[1]) {
-        GV->player.x.raw[1] = 224;
-    }
-    VGS0_ADDR_OAM[0].x = GV->player.x.raw[1];
-    VGS0_ADDR_OAM[0].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[1].x = GV->player.x.raw[1] + 8;
-    VGS0_ADDR_OAM[1].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[2].x = GV->player.x.raw[1] + 16;
-    VGS0_ADDR_OAM[2].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[3].x = GV->player.x.raw[1];
-    VGS0_ADDR_OAM[3].y = GV->player.y.raw[1] + 8;
-    VGS0_ADDR_OAM[4].x = GV->player.x.raw[1] + 8;
-    VGS0_ADDR_OAM[4].y = GV->player.y.raw[1] + 8;
-    VGS0_ADDR_OAM[5].x = GV->player.x.raw[1] + 16;
-    VGS0_ADDR_OAM[5].y = GV->player.y.raw[1] + 8;
-}
-
 void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
 {
     GV->sprayIndex &= 0x0F;
@@ -119,26 +98,72 @@ void add_bubble(void)  __z88dk_fastcall
     GV->bubbleIndex &= 0x0F;
 }
 
-void add_shot(uint8_t x, uint16_t y)
+void screen_effect_proc(uint8_t a) __z88dk_fastcall
 {
-    if (GV->shot[GV->shotIndex].flag) {
-        return;
+    uint8_t i, j;
+    for (i = 0; i < 16; i++) {
+        // 水しぶき & けむり
+        if (GV->spray[i].sn) {
+            GV->spray[i].t += 1;
+            if (GV->spray[i].t & 1) {
+                GV->spray[i].sn += 1;
+            }
+            if (16 == GV->spray[i].t) {
+                GV->spray[i].sn = 0;
+                VGS0_ADDR_OAM[SP_SPRAY + i].attr = 0x00;
+            } else {
+                VGS0_ADDR_OAM[SP_SPRAY + i].ptn = GV->spray[i].sn;
+            }
+        }
+        // ゴミ
+        if (GV->dust[i].flag) {
+            GV->dust[i].flag++;
+            GV->dust[i].flag &= 0x1F;
+            GV->dust[i].x.value += GV->dust[i].vx;
+            GV->dust[i].y.value += GV->dust[i].vy;
+            j = i;
+            j += SP_DUST;
+            if (0 == GV->dust[i].flag || 248 <= GV->dust[i].x.raw[1] || 192 <= GV->dust[i].y.raw[1]) {
+                GV->dust[i].flag = 0;
+                VGS0_ADDR_OAM[j].attr = 0x00;
+            } else {
+                GV->dust[i].vx += GV->dust[i].sx;
+                GV->dust[i].vy += GV->dust[i].sy;
+                VGS0_ADDR_OAM[j].x = GV->dust[i].x.raw[1];
+                VGS0_ADDR_OAM[j].y = GV->dust[i].y.raw[1];
+            }
+        }
+        // 星
+        if (GV->star[i].flag) {
+            GV->star[i].flag++;
+            if (0 == (GV->star[i].flag & 0x03)) {
+                GV->star[i].ptn += 1;
+                if (GV->star[i].ptn < 0x78) {
+                    VGS0_ADDR_BG->ptn[GV->star[i].y][GV->star[i].x] = GV->star[i].ptn;
+                } else {
+                    GV->star[i].flag = 0;
+                    VGS0_ADDR_BG->ptn[GV->star[i].y][GV->star[i].x] = 0x00;
+                }
+            }
+        }
+        // 泡
+        if (GV->bubble[i].flag) {
+            GV->bubble[i].flag++;
+            GV->bubble[i].flag &= 0x1F;
+            if (0 == GV->bubble[i].flag) {
+                VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] = 0x10;
+                VGS0_ADDR_BG->attr[GV->bubble[i].y][GV->bubble[i].x] = 0x00;
+            } else  if (0 == (GV->bubble[i].flag & 0x03)) {
+                VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] += 1;
+            }
+        }
     }
-    vgs0_se_play(1);
-    GV->shot[GV->shotIndex].flag = 1;
-    GV->shot[GV->shotIndex].x = x;
-    GV->shot[GV->shotIndex].y.value = y;
-    GV->shot[GV->shotIndex].spd = 0;
-    if (y < 0x4800) {
-        GV->shot[GV->shotIndex].onair = 1;
-    } else {
-        GV->shot[GV->shotIndex].onair = 0;
+
+    // 波のアニメーション
+    a &= 0x1F;
+    a >>= 2;
+    a |= 0xA0;
+    for (i = 0; i < 32; i++) {
+        VGS0_ADDR_FG->ptn[9][i] = a;
     }
-    uint8_t sn = GV->shotIndex;
-    sn <<= 1;
-    sn += SP_SHOT;
-    vgs0_oam_set(sn, x, GV->shot[GV->shotIndex].y.raw[1], 0x80, 0x13);
-    vgs0_oam_set(sn + 1, x, GV->shot[GV->shotIndex].y.raw[1] + 8, 0x80, 0x23);
-    GV->shotIndex++;
-    GV->shotIndex &= 0x07;
 }
