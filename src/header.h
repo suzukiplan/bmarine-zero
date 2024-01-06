@@ -32,6 +32,7 @@ typedef struct {
         uint8_t x;      // X座標
         Var16 y;        // Y座標
         int16_t spd;    // 落下スピード
+        uint8_t onair;  // 空中フラグ
     } shot[8];
     uint8_t shotIndex;
 

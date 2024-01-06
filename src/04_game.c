@@ -143,6 +143,11 @@ void add_shot(uint8_t x, uint16_t y)
     GV->shot[GV->shotIndex].x = x;
     GV->shot[GV->shotIndex].y.value = y;
     GV->shot[GV->shotIndex].spd = 0;
+    if (y < 0x4800) {
+        GV->shot[GV->shotIndex].onair = 1;
+    } else {
+        GV->shot[GV->shotIndex].onair = 0;
+    }
     uint8_t sn = GV->shotIndex;
     sn <<= 1;
     sn += SP_SHOT;
@@ -226,6 +231,22 @@ void game_main(void)
                     VGS0_ADDR_OAM[j + 1].y = GV->shot[i].y.raw[1] + 8;
                     if (0 == (GV->shot[i].flag & 0x03)) {
                         add_spray(GV->shot[i].x, GV->shot[i].y.raw[1], 0x40, 0x80);
+                    }
+                    // 空中ショットの場合は着水判定
+                    if (GV->shot[i].onair) {
+                        GV->shot[i].onair += 1;
+                        if (0x44 < GV->shot[i].y.raw[1]) {
+                            vgs0_se_play(5);
+                            // 対空時間に比例して衝撃の水しぶきの間隔を広げる
+                            j = GV->shot[i].onair >> 1;
+                            add_spray(GV->shot[i].x - 5 - j, 0x46, 0x30, 0xC3);
+                            add_spray(GV->shot[i].x + 5 + j, 0x46, 0x30, 0x83);
+                            // 滞空時間に比例してバウンド（水の抵抗値）を大きくする
+                            GV->shot[i].spd = GV->shot[i].onair;
+                            GV->shot[i].spd <<= 4;
+                            GV->shot[i].spd = -GV->shot[i].spd;
+                            GV->shot[i].onair = 0;
+                        }
                     }
                 }
             }
