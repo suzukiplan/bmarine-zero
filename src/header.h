@@ -1,5 +1,10 @@
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
+// スプライトの初期位置
+#define SP_DUST 208     // 土埃
+#define SP_SHOT 224     // 自機ショット
+#define SP_SPRAY 240    // 水しぶき & ショットの煙
+
 typedef union {
     uint16_t value;
     uint8_t raw[2];
@@ -85,3 +90,10 @@ void score_print(NameTable* nam);
 void score_increment(uint8_t keta);
 void game_main(void);
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
+
+void update_player_position(void)  __z88dk_fastcall;
+void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr);
+void add_dust_ground(uint8_t x, uint8_t y);
+void add_star(void) __z88dk_fastcall;
+void add_bubble(void)  __z88dk_fastcall;
+void add_shot(uint8_t x, uint16_t y);
