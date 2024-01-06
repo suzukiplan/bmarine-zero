@@ -238,7 +238,7 @@ void game_main(void)
                     if (GV->shot[i].onair) {
                         GV->shot[i].onair += 1;
                         if (0x44 < GV->shot[i].y.raw[1]) {
-                            vgs0_se_play(5);
+                            vgs0_se_play(6);
                             // 対空時間に比例して衝撃の水しぶきの間隔を広げる
                             j = GV->shot[i].onair >> 1;
                             add_spray(GV->shot[i].x - 5 - j, 0x46, 0x30, 0xC3);
