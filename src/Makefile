@@ -14,6 +14,7 @@ WAV_FILES += se003_missshot.wav
 WAV_FILES += se004_jump.wav
 WAV_FILES += se005_landing.wav
 BGM_FILES = song1.bgm
+BGM_FILES += song2.bgm
 VGSHOME = ../vgszero
 BMP2CHR = ${VGSHOME}/tools/bmp2chr/bmp2chr
 VGSMML = ${VGSHOME}/tools/vgsmml/vgsmml

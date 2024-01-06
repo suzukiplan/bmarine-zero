@@ -199,6 +199,8 @@ void game_main(void)
         GV->shot[i].flag = 0;
     }
 
+    vgs0_bgm_play(1);
+
     // メインループ
     while (1) {
         vgs0_wait_vsync();
