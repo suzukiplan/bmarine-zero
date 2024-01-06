@@ -110,12 +110,15 @@ void add_bubble()
     if (VGS0_ADDR_BG->ptn[y][x] != 0x10) {
         return;
     }
-    VGS0_ADDR_BG->ptn[y][x] = 0x90;
+    if (GV->bubbleIndex == 0x0F || GV->bubbleIndex == 0x07) {
+        VGS0_ADDR_BG->ptn[y][x] = 0xA0;
+    } else {
+        VGS0_ADDR_BG->ptn[y][x] = 0x90;
+    }
     VGS0_ADDR_BG->attr[y][x] = 0x84;
     GV->bubble[GV->bubbleIndex].flag = 1;
     GV->bubble[GV->bubbleIndex].x = x;
     GV->bubble[GV->bubbleIndex].y = y;
-    GV->bubble[GV->bubbleIndex].ptn = 0x90;
     GV->bubbleIndex += 1;
     GV->bubbleIndex &= 0x0F;
 }
@@ -393,8 +396,7 @@ void game_main(void)
                     VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] = 0x10;
                     VGS0_ADDR_BG->attr[GV->bubble[i].y][GV->bubble[i].x] = 0x00;
                 } else  if (0 == (GV->bubble[i].flag & 0x03)) {
-                    GV->bubble[i].ptn += 1;
-                    VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] = GV->bubble[i].ptn;
+                    VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] += 1;
                 }
             }
         }

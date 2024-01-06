@@ -73,9 +73,9 @@ void init_palette(void)
     vgs0_palette_set(4, 6, 0, 0, 11);
     vgs0_palette_set(4, 7, 0, 0, 15);
     vgs0_palette_set(4, 8, 0, 0, 21);
-    vgs0_palette_set(4, 9, 0, 0, 0);
-    vgs0_palette_set(4, 10, 0, 0, 0);
-    vgs0_palette_set(4, 11, 0, 0, 0);
+    vgs0_palette_set(4, 9, 6, 6, 21);
+    vgs0_palette_set(4, 10, 14, 14, 21);
+    vgs0_palette_set(4, 11, 21, 21, 21);
     vgs0_palette_set(4, 12, 0, 0, 0);
     vgs0_palette_set(4, 13, 0, 0, 0);
     vgs0_palette_set(4, 14, 0, 0, 0);
