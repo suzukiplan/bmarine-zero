@@ -6,6 +6,11 @@
 
 void update_player_position(void)
 {
+    if (GV->player.x.raw[1] < 8) {
+        GV->player.x.raw[1] = 8;
+    } else if (224 < GV->player.x.raw[1]) {
+        GV->player.x.raw[1] = 224;
+    }
     VGS0_ADDR_OAM[0].x = GV->player.x.raw[1];
     VGS0_ADDR_OAM[0].y = GV->player.y.raw[1];
     VGS0_ADDR_OAM[1].x = GV->player.x.raw[1] + 8;
@@ -322,19 +327,22 @@ void game_main(void)
             } else {
                 GV->player.x.value += GV->player.spd;
                 GV->player.y.raw[1] = 0x41;
-                if (a & 0x01) {
-                    j = GV->player.y.raw[1] + 5;
-                    j += random[GV->ridx] & 0x01;
-                    GV->ridx++;
-                    j += random[GV->ridx] & 0x01;
-                    GV->ridx++;
-                    if (GV->player.spd < 0) {
-                        add_spray(GV->player.x.raw[1] + 16, j, 0x30, 0x83);
-                    } else {
-                        add_spray(GV->player.x.raw[1], j, 0x30, 0xC3);
+
+                if (8 < GV->player.x.raw[1] && GV->player.x.raw[1] < 224) {
+                    if (a & 0x01) {
+                        j = GV->player.y.raw[1] + 5;
+                        j += random[GV->ridx] & 0x01;
+                        GV->ridx++;
+                        j += random[GV->ridx] & 0x01;
+                        GV->ridx++;
+                        if (GV->player.spd < 0) {
+                            add_spray(GV->player.x.raw[1] + 16, j, 0x30, 0x83);
+                        } else {
+                            add_spray(GV->player.x.raw[1], j, 0x30, 0xC3);
+                        }
+                    } else if (0 == (a & 3)) {
+                        vgs0_se_play(2);
                     }
-                } else if (0 == (a & 3)) {
-                    vgs0_se_play(2);
                 }
             }
             update_player_position();
