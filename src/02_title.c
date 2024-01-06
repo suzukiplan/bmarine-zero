@@ -69,10 +69,8 @@ void title(void)
 
     // 泡を初期化
     for (i = 0; i < 16; i++) {
-        uint8_t x = random[GV->ridx];
-        GV->ridx++;
-        uint8_t y = random[GV->ridx] % 192;
-        GV->ridx++;
+        uint8_t x = get_random(&GV->ridx);
+        uint8_t y = get_random(&GV->ridx) % 192;
         vgs0_oam_set(i, x, y, 0x82, i);
     }
 
@@ -143,10 +141,8 @@ void title(void)
                     VGS0_ADDR_OAM[i].ptn += 1;
                 }
                 if (16 == VGS0_ADDR_OAM[i].ptn) {
-                    uint8_t x = random[GV->ridx];
-                    GV->ridx++;
-                    uint8_t y = random[GV->ridx] % 192;
-                    GV->ridx++;
+                    uint8_t x = get_random(&GV->ridx);
+                    uint8_t y = get_random(&GV->ridx) % 192;
                     vgs0_oam_set(i, x, y, 0x82, 0);
                 }
             }

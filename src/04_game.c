@@ -46,30 +46,22 @@ void add_dust_ground(uint8_t x, uint8_t y)
     GV->dust[GV->dustIndex].y.raw[1] = y;
     GV->dust[GV->dustIndex].vx = 0;
 
-    uint8_t r;
-
-    r = random[GV->ridx] & 0x1F;
-    GV->ridx++;
+    uint8_t r = get_random(&GV->ridx) & 0x1F;
     GV->dust[GV->dustIndex].sx = r;
 
-    r = random[GV->ridx];
-    GV->ridx++;
     if (GV->dustIndex & 0x01) {
         GV->dust[GV->dustIndex].sx = -GV->dust[GV->dustIndex].sx;
     }
 
-    r = random[GV->ridx] & 0x1F;
-    GV->ridx++;
+    r = get_random(&GV->ridx) & 0x1F;
     GV->dust[GV->dustIndex].sy = r;
 
-    r = random[GV->ridx];
-    GV->ridx++;
+    r = get_random(&GV->ridx);
     if (r < 0xC0) {
         GV->dust[GV->dustIndex].sy = -GV->dust[GV->dustIndex].sy;
     }
 
-    r = random[GV->ridx];
-    GV->ridx++;
+    r = get_random(&GV->ridx);
     GV->dust[GV->dustIndex].vy = r;
     GV->dust[GV->dustIndex].vy <<= 1;
     GV->dust[GV->dustIndex].vy = -GV->dust[GV->dustIndex].vy;
@@ -85,12 +77,8 @@ void add_star()
     if (GV->star[GV->starIndex].flag) {
         return;
     }
-    uint8_t r = random[GV->ridx];
-    GV->ridx += 1;
-    uint8_t x = r & 0x1F;
-    r = random[GV->ridx];
-    GV->ridx += 1;
-    uint8_t y = r & 0x07;
+    uint8_t x = get_random(&GV->ridx) & 0x1F;
+    uint8_t y = get_random(&GV->ridx) & 0x07;
     if (VGS0_ADDR_BG->ptn[y][x] != 0) {
         return;
     }
@@ -109,18 +97,12 @@ void add_bubble()
     if (GV->bubble[GV->bubbleIndex].flag) {
         return;
     }
-    uint8_t r;
-
-    r = random[GV->ridx];
-    GV->ridx += 1;
-    uint8_t y = r & 0x1F;
+    uint8_t y = get_random(&GV->ridx) & 0x1F;
     if (y < 9 || 22 < y) {
         return;
     }
 
-    r = random[GV->ridx];
-    GV->ridx += 1;
-    uint8_t x = r & 0x1F;
+    uint8_t x = get_random(&GV->ridx) & 0x1F;
     if (0 == x || 31 == x) {
         return;
     }
@@ -331,10 +313,8 @@ void game_main(void)
                 if (8 < GV->player.x.raw[1] && GV->player.x.raw[1] < 224) {
                     if (a & 0x01) {
                         j = GV->player.y.raw[1] + 5;
-                        j += random[GV->ridx] & 0x01;
-                        GV->ridx++;
-                        j += random[GV->ridx] & 0x01;
-                        GV->ridx++;
+                        j += get_random(&GV->ridx) & 0x01;
+                        j += get_random(&GV->ridx) & 0x01;
                         if (GV->player.spd < 0) {
                             add_spray(GV->player.x.raw[1] + 16, j, 0x30, 0x83);
                         } else {
