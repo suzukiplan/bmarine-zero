@@ -32,6 +32,10 @@ void game_main(void)
         vgs0_wait_vsync();
         a++;
 
+        if (a == 0x40) {
+            add_enemy(1, 0, (get_random(&GV->ridx) & 0x3F) + 0x48);
+        }
+
         // 追加可能なら星と泡を追加
         add_star();
         add_bubble();
@@ -41,6 +45,9 @@ void game_main(void)
 
         // プレイヤーの移動
         move_player(a);
+
+        // 敵キャラの移動
+        move_enemy();
 
         // 画面エフェクトの処理を実行
         screen_effect_proc(a);

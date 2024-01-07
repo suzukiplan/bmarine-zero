@@ -1,9 +1,9 @@
 #include "header.h"
 
 // 敵の種別コード
-#define ET_BOMBER 0         // 爆発
-#define ET_SUBMARINE_LR 1   // 潜水艦
-#define ET_SUBMARINE_RL 2   // 潜水艦
+#define ET_BOMBER 0     // 爆発
+#define ET_MARINE_LR 1  // 潜水艦
+#define ET_MARINE_RL 2  // 潜水艦
 
 // 敵種別毎の使用スプライト数
 const uint8_t tbl_init_sn[9] = {
@@ -56,15 +56,16 @@ static uint8_t* get_init_attr(uint8_t type)
 // スプライトの初期座法設定テーブル
 const uint8_t ofx_bomb[9] = { 0x00, 0x08, 0x10, 0x00, 0x08, 0x10, 0x00, 0x08, 0x10 };
 const uint8_t ofy_bomb[9] = { 0x00, 0x00, 0x00, 0x08, 0x08, 0x08, 0x10, 0x10, 0x10 };
-const uint8_t ofx_marine[8] = { 0x00, 0x00, 0x08, 0x08, 0x10, 0x10, 0x18, 0x18 };
+const uint8_t ofx_marineLR[8] = { 0, 0, 6, 6, 14, 14, 22, 22 };
+const uint8_t ofx_marineRL[8] = { 0x00, 0x00, 0x08, 0x08, 0x10, 0x10, 0x18, 0x18 };
 const uint8_t ofy_marine[8] = { 0x00, 0x08, 0x00, 0x08, 0x00, 0x08, 0x00, 0x08 };
 
 static uint8_t* get_init_ofx(uint8_t type)
 {
     switch (type) {
         case 0: return ofx_bomb;
-        case 1: return ofx_marine;
-        case 2: return ofy_marine;
+        case 1: return ofx_marineLR;
+        case 2: return ofx_marineRL;
         default: return (uint8_t*)0;
     }
 }
@@ -89,9 +90,10 @@ const Rect tbl_init_hit[3] = {
 void add_enemy(uint8_t type, uint8_t x, uint8_t y)
 {
     uint8_t i, j;
+    Enemy* enemy = &GV->enemy[GV->enemyIndex];
 
     // 追加可能なテーブルがあるかチェック
-    if (GV->enemy[GV->enemyIndex].flag) {
+    if (enemy->flag) {
         return;
     }
 
@@ -99,20 +101,22 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     j = GV->espIndex;
     for (i = 0; i < tbl_init_sn[type]; i++, j++) {
         j &= 0x7F;
-        if (VGS0_ADDR_OAM[SP_ENEMY + j].attr != 0x00) {
+        if (VGS0_ADDR_OAM[SP_ENEMY + j].ptn != 0x00) {
             return; // 空きなし
         }
     }
 
     // テーブルに初期値を設定
-    vgs0_memset((uint16_t)&GV->enemy[GV->enemyIndex], 0x00, sizeof(struct Enemy));
-    GV->enemy[GV->enemyIndex].flag = 1;
-    GV->enemy[GV->enemyIndex].type = type;
-    GV->enemy[GV->enemyIndex].x.raw[1] = x;
-    GV->enemy[GV->enemyIndex].y.raw[1] = y;
-    GV->enemy[GV->enemyIndex].si = GV->espIndex;
-    GV->enemy[GV->enemyIndex].sn = tbl_init_sn[type];
-    vgs0_memcpy((uint16_t)&GV->enemy[GV->enemyIndex].hit, (uint16_t)&tbl_init_hit[type], sizeof(Rect));
+    enemy->flag = 1;
+    enemy->n8[0] = 0;
+    enemy->n8[1] = 0;
+    enemy->n16.value = 0;
+    enemy->type = type;
+    enemy->x.raw[1] = x;
+    enemy->y.raw[1] = y;
+    enemy->si = GV->espIndex;
+    enemy->sn = tbl_init_sn[type];
+    vgs0_memcpy((uint16_t)&enemy->hit, (uint16_t)&tbl_init_hit[type], sizeof(Rect));
 
     // OAMに初期値を設定
     uint8_t* ptn = get_init_ptn(type);
@@ -124,10 +128,54 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
         GV->espIndex += 1;
         GV->espIndex &= 0x7F;
     }
+    score_increment(0);
     GV->enemyIndex += 1;
     GV->enemyIndex &= 0x1F;
 }
 
+void move_marineLR(Enemy* enemy) __z88dk_fastcall
+{
+    enemy->vx.value = 0x00C0;
+}
+
 void move_enemy(void) __z88dk_fastcall
 {
+    uint8_t i, j, k, si;
+    uint8_t dx, dy;
+    for (i = 0; i < 32; i++) {
+        if (GV->enemy[i].flag) {
+            switch (GV->enemy[i].type) {
+                case ET_MARINE_LR: move_marineLR(&GV->enemy[i]); break;
+            }
+            if (GV->enemy[i].flag) {
+                // 座標更新
+                dx = GV->enemy[i].x.raw[1];
+                dy = GV->enemy[i].y.raw[1];
+                GV->enemy[i].x.value += GV->enemy[i].vx.value;
+                GV->enemy[i].y.value += GV->enemy[i].vy.value;
+                dx = GV->enemy[i].x.raw[1] - dx;
+                dy = GV->enemy[i].y.raw[1] - dy;
+                // 表示座標に変化があればスプライトを動かす
+                if (0 != dx || 0 != dy) {
+                    si = GV->enemy[i].si;
+                    for (j = 0; j < GV->enemy[i].sn; j++) {
+                        k = SP_ENEMY + si;
+                        VGS0_ADDR_OAM[k].x += dx;
+                        VGS0_ADDR_OAM[k].y += dy;
+                        si += 1;
+                        si &= 0x7F;
+                    }
+                }
+            } else {
+                si = GV->enemy[i].si;
+                for (j = 0; j < GV->enemy[i].sn; j++) {
+                    k = SP_ENEMY + si;
+                    VGS0_ADDR_OAM[k].ptn = 0x00;
+                    VGS0_ADDR_OAM[k].attr = 0x00;
+                    si += 1;
+                    si &= 0x7F;
+                }
+            }
+        }
+    }
 }

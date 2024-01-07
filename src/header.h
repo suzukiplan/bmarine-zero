@@ -6,11 +6,13 @@
 #define SP_SHOT 224     // 自機ショット (16)
 #define SP_SPRAY 240    // 水しぶき & ショットの煙 (16)
 
+// 固定小数点数
 typedef union {
     uint16_t value;
     uint8_t raw[2];
 } Var16;
 
+// 矩形
 typedef struct {
     uint8_t x;
     uint8_t y;
@@ -18,89 +20,96 @@ typedef struct {
     uint8_t height;
 } Rect;
 
+// プレイヤー
+typedef struct {
+    Var16 x;        // X座標
+    Var16 y;        // Y座標
+    int16_t spd;    // 移動スピード
+    int16_t jmp;    // ジャンプスピード
+    int8_t jmpKeep; // ジャンプ中のボタン押しっぱなしフラグ
+    uint8_t flight; // 対空時間（フレーム数）
+    uint8_t snock;  // 着水時の衝撃波カウンター
+    uint8_t slx;    // 着水座標の左端
+    uint8_t srx;    // 着水座標の右端
+    uint8_t shot;   // ショット発射フラグ
+} Player;
+
+// プレイヤーショット
+typedef struct {
+    uint8_t flag;   // 存在フラグ
+    uint8_t x;      // X座標
+    Var16 y;        // Y座標
+    int16_t spd;    // 落下スピード
+    uint8_t onair;  // 空中フラグ
+} Shot;
+
+// 水しぶき & 煙
+typedef struct {
+    uint8_t sn;     // 使用スプライトパターン兼activeフラグ（0 == not active）
+    uint8_t t;      // 1フレーム表示で+1（8でディアクティベート）
+} Spray;
+
+// ゴミ
+typedef struct {
+    uint8_t flag;   // 存在フラグ
+    Var16 x;        // X座標
+    Var16 y;        // Y座標
+    int16_t vx;     // フレームごとの座標移動量（X）
+    int16_t vy;     // フレームごとの座標移動量（Y）
+    int16_t sx;     // フレーム毎のvx加算値
+    int16_t sy;     // フレーム毎のvy加算値
+} Dust;
+
+// 星
+typedef struct {
+    uint8_t flag;   // 存在フラグ
+    uint8_t x;      // X座標（nametable）
+    uint8_t y;      // X座標（nametable）
+    uint8_t ptn;    // パターン
+} Star;
+
+// 泡
+typedef struct {
+    uint8_t flag;   // 存在フラグ
+    uint8_t x;      // X座標（nametable）
+    uint8_t y;      // X座標（nametable）
+} Bubble;
+
+// 敵
+typedef struct {
+    uint8_t flag;   // 存在フラグ
+    uint8_t type;   // 種別フラグ
+    uint8_t n8[2];  // 汎用変数（8bit）
+    Var16 n16;      // 汎用変数 (16bit)
+    uint8_t si;     // スプライト・インデクス
+    uint8_t sn;     // スプライト数
+    Var16 x;        // X座標
+    Var16 y;        // Y座標
+    Var16 vx;       // 移動速度(X)
+    Var16 vy;       // 移動速度(Y)
+    Rect hit;       // 当たり判定
+} Enemy;
+
 // グローバル変数
 typedef struct {
-    uint8_t hi[8];      // ハイスコア
-    uint8_t sc[8];      // スコア
-    uint8_t ridx;       // 乱数インデクス
-    uint8_t scoreAdded; // スコア加算フラグ（再描画判定用）
-
-    // プレイヤー
-    struct Player {
-        Var16 x;        // X座標
-        Var16 y;        // Y座標
-        int16_t spd;    // 移動スピード
-        int16_t jmp;    // ジャンプスピード
-        int8_t jmpKeep; // ジャンプ中のボタン押しっぱなしフラグ
-        uint8_t flight; // 対空時間（フレーム数）
-        uint8_t snock;  // 着水時の衝撃波カウンター
-        uint8_t slx;    // 着水座標の左端
-        uint8_t srx;    // 着水座標の右端
-        uint8_t shot;   // ショット発射フラグ
-    } player;
-
-    // プレイヤーショット
-    struct Shot {
-        uint8_t flag;   // 存在フラグ
-        uint8_t x;      // X座標
-        Var16 y;        // Y座標
-        int16_t spd;    // 落下スピード
-        uint8_t onair;  // 空中フラグ
-    } shot[8];
-    uint8_t shotIndex;
-
-    // 水しぶき
-    struct Spray {
-        uint8_t sn;     // 使用スプライトパターン兼activeフラグ（0 == not active）
-        uint8_t t;      // 1フレーム表示で+1（8でディアクティベート）
-    } spray[16];
-    uint8_t sprayIndex;
-
-    // ゴミ
-    struct Dust {
-        uint8_t flag;   // 存在フラグ
-        Var16 x;        // X座標
-        Var16 y;        // Y座標
-        int16_t vx;     // フレームごとの座標移動量（X）
-        int16_t vy;     // フレームごとの座標移動量（Y）
-        int16_t sx;     // フレーム毎のvx加算値
-        int16_t sy;     // フレーム毎のvy加算値
-    } dust[16];
-    uint8_t dustIndex;
-
-    // 星
-    struct Star {
-        uint8_t flag;   // 存在フラグ
-        uint8_t x;      // X座標（nametable）
-        uint8_t y;      // X座標（nametable）
-        uint8_t ptn;    // パターン
-    } star[16];
-    uint8_t starIndex;
-
-    // 泡
-    struct Bubble {
-        uint8_t flag;   // 存在フラグ
-        uint8_t x;      // X座標（nametable）
-        uint8_t y;      // X座標（nametable）
-    } bubble[16];
-    uint8_t bubbleIndex;
-
-    // 敵
-    struct Enemy {
-        uint8_t flag;   // 存在フラグ
-        uint8_t type;   // 種別フラグ
-        uint8_t n8[4];  // 汎用変数（8bit）
-        Var16 n16[4];   // 汎用変数 (16bit)
-        uint8_t si;     // スプライト・インデクス
-        uint8_t sn;     // スプライト数
-        Var16 x;        // X座標
-        Var16 y;        // Y座標
-        Var16 vx;       // 移動速度(X)
-        Var16 vy;       // 移動速度(Y)
-        Rect hit;       // 当たり判定
-    } enemy[32];
-    uint8_t enemyIndex;
-    uint8_t espIndex;
+    uint8_t hi[8];          // ハイスコア
+    uint8_t sc[8];          // スコア
+    uint8_t ridx;           // 乱数インデクス
+    uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
+    Player player;          // プレイヤー
+    Shot shot[8];           // プレイヤーショット
+    uint8_t shotIndex;      // プレイヤーショット index
+    Spray spray[16];        // 水しぶき
+    uint8_t sprayIndex;     // 水しぶき index
+    Dust dust[16];          // ゴミ
+    uint8_t dustIndex;      // ゴミ index
+    Star star[16];          // 星
+    uint8_t starIndex;      // 星 index
+    Bubble bubble[16];      // 泡
+    uint8_t bubbleIndex;    // 泡 index
+    Enemy enemy[32];        // 敵
+    uint8_t enemyIndex;     // 敵 index
+    uint8_t espIndex;       // 敵スプライト index
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 
