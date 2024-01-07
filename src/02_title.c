@@ -71,7 +71,7 @@ void title(void)
     for (i = 0; i < 16; i++) {
         uint8_t x = get_random(&GV->ridx);
         uint8_t y = get_random(&GV->ridx) % 192;
-        vgs0_oam_set(i, x, y, 0x82, i);
+        vgs0_oam_set(i, x, y, 0x82, i, 0, 0);
     }
 
     // BGMを再生
@@ -143,7 +143,7 @@ void title(void)
                 if (16 == VGS0_ADDR_OAM[i].ptn) {
                     uint8_t x = get_random(&GV->ridx);
                     uint8_t y = get_random(&GV->ridx) % 192;
-                    vgs0_oam_set(i, x, y, 0x82, 0);
+                    vgs0_oam_set(i, x, y, 0x82, 0, 0, 0);
                 }
             }
         }
@@ -237,15 +237,15 @@ void title(void)
             score_print(VGS0_ADDR_BG);
             GV->player.x.value = 0x7400;
             GV->player.y.value = 0x4000;
-            vgs0_oam_set(0x00, GV->player.x.raw[1], GV->player.y.raw[1] + 8, 0x80, 0x80);
-            vgs0_oam_set(0x01, GV->player.x.raw[1] + 8, GV->player.y.raw[1] + 8, 0x80, 0x80);
-            vgs0_oam_set(0x02, GV->player.x.raw[1] + 16, GV->player.y.raw[1] + 8, 0x80, 0x80);
-            vgs0_oam_set(0x03, GV->player.x.raw[1], GV->player.y.raw[1], 0x80, 0x10);
-            vgs0_oam_set(0x04, GV->player.x.raw[1] + 8, GV->player.y.raw[1], 0x80, 0x11);
-            vgs0_oam_set(0x05, GV->player.x.raw[1] + 16, GV->player.y.raw[1], 0x80, 0x12);
-            vgs0_oam_set(0x06, GV->player.x.raw[1], GV->player.y.raw[1] + 8, 0x80, 0x20);
-            vgs0_oam_set(0x07, GV->player.x.raw[1] + 8, GV->player.y.raw[1] + 8, 0x80, 0x21);
-            vgs0_oam_set(0x08, GV->player.x.raw[1] + 16, GV->player.y.raw[1] + 8, 0x80, 0x22);
+            vgs0_oam_set(0x00, GV->player.x.raw[1], GV->player.y.raw[1] + 8, 0x80, 0x80, 0, 0);
+            vgs0_oam_set(0x01, GV->player.x.raw[1] + 8, GV->player.y.raw[1] + 8, 0x80, 0x80, 0, 0);
+            vgs0_oam_set(0x02, GV->player.x.raw[1] + 16, GV->player.y.raw[1] + 8, 0x80, 0x80, 0, 0);
+            vgs0_oam_set(0x03, GV->player.x.raw[1], GV->player.y.raw[1], 0x80, 0x10, 0, 0);
+            vgs0_oam_set(0x04, GV->player.x.raw[1] + 8, GV->player.y.raw[1], 0x80, 0x11, 0, 0);
+            vgs0_oam_set(0x05, GV->player.x.raw[1] + 16, GV->player.y.raw[1], 0x80, 0x12, 0, 0);
+            vgs0_oam_set(0x06, GV->player.x.raw[1], GV->player.y.raw[1] + 8, 0x80, 0x20, 0, 0);
+            vgs0_oam_set(0x07, GV->player.x.raw[1] + 8, GV->player.y.raw[1] + 8, 0x80, 0x21, 0, 0);
+            vgs0_oam_set(0x08, GV->player.x.raw[1] + 16, GV->player.y.raw[1] + 8, 0x80, 0x22, 0, 0);
         }
         if (40 <= start) {
             j = a;

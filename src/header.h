@@ -1,9 +1,9 @@
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
 // スプライトの初期位置
-#define SP_ENEMY 80     // 敵 (128)
-#define SP_DUST 208     // 土埃 (16)
-#define SP_SHOT 224     // 自機ショット (16)
+#define SP_ENEMY 88     // 敵 (128)
+#define SP_DUST 216     // 土埃 (16)
+#define SP_SHOT 232     // 自機ショット (8)
 #define SP_SPRAY 240    // 水しぶき & ショットの煙 (16)
 
 // 固定小数点数

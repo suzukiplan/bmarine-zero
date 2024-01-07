@@ -43,7 +43,7 @@ void add_dust_ground(uint8_t x, uint8_t y)
 
     uint8_t s = GV->dustIndex;
     s += SP_DUST;
-    vgs0_oam_set(s, x, y, 0x83, 0x14);
+    vgs0_oam_set(s, x, y, 0x83, 0x14, 0, 0);
     GV->dustIndex++;
 }
 

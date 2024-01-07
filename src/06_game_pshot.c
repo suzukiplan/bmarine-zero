@@ -16,10 +16,8 @@ void add_pshot(uint8_t x, uint16_t y)
         GV->shot[GV->shotIndex].onair = 0;
     }
     uint8_t sn = GV->shotIndex;
-    sn <<= 1;
     sn += SP_SHOT;
-    vgs0_oam_set(sn, x, GV->shot[GV->shotIndex].y.raw[1], 0x80, 0x13);
-    vgs0_oam_set(sn + 1, x, GV->shot[GV->shotIndex].y.raw[1] + 8, 0x80, 0x23);
+    vgs0_oam_set(sn, x, GV->shot[GV->shotIndex].y.raw[1], 0x80, 0x13, 0, 1);
     GV->shotIndex++;
     GV->shotIndex &= 0x07;
 }
@@ -32,13 +30,11 @@ void move_pshot(void) __z88dk_fastcall
             GV->shot[i].spd += 44;
             GV->shot[i].y.value += GV->shot[i].spd;
             j = i;
-            j <<= 1;
             j += SP_SHOT;
             if (176 < GV->shot[i].y.raw[1]) {
                 vgs0_se_play(3);
                 GV->shot[i].flag = 0;
                 VGS0_ADDR_OAM[j].attr = 0x00;
-                VGS0_ADDR_OAM[j + 1].attr = 0x00;
                 add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
                 add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
                 add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
@@ -46,7 +42,6 @@ void move_pshot(void) __z88dk_fastcall
             } else {
                 GV->shot[i].flag++;
                 VGS0_ADDR_OAM[j].y = GV->shot[i].y.raw[1];
-                VGS0_ADDR_OAM[j + 1].y = GV->shot[i].y.raw[1] + 8;
                 if (0 == (GV->shot[i].flag & 0x03)) {
                     add_spray(GV->shot[i].x, GV->shot[i].y.raw[1], 0x40, 0x80);
                 }

@@ -124,7 +124,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     uint8_t* ofx = get_init_ofx(type);
     uint8_t* ofy = get_init_ofy(type);
     for (i = 0; i < tbl_init_sn[type]; i++) {
-        vgs0_oam_set(GV->espIndex + SP_ENEMY, x + ofx[i], y + ofy[i], attr[i], ptn[i]);
+        vgs0_oam_set(GV->espIndex + SP_ENEMY, x + ofx[i], y + ofy[i], attr[i], ptn[i], 0, 0);
         GV->espIndex += 1;
         GV->espIndex &= 0x7F;
     }
