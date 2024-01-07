@@ -4,7 +4,6 @@ void game_main(void)
 {
     uint8_t i;
     uint8_t a = 12;
-    uint8_t pad;
 
     // スコアと波をBGからFGに描き直す
     vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
