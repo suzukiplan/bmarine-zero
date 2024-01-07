@@ -7,6 +7,7 @@ SRC_FILES += 04_game.rel
 SRC_FILES += 05_game_player.rel
 SRC_FILES += 06_game_pshot.rel
 SRC_FILES += 07_game_effect.rel
+SRC_FILES += 08_enemy.rel
 CHR_FILES = bg.chr
 CHR_FILES += fg.chr
 CHR_FILES += sprite.chr

@@ -6,20 +6,17 @@
 #define SP_SHOT 224     // 自機ショット (16)
 #define SP_SPRAY 240    // 水しぶき & ショットの煙 (16)
 
-// 敵の種別コード
-#define ET_BOMBER 0     // 爆発
-#define ET_SUBMARINE 1  // 潜水艦
-#define ET_THUNDER 2    // サンダー（潜水艦のショット）
-#define ET_FISH 3       // 魚
-#define ET_BIRD 4       // 鳥
-#define ET_BIRDDROP 5   // 鳥の糞
-#define ET_CRAB 6       // カニ
-#define ET_CRABFIRE 7   // カニタマ
-
 typedef union {
     uint16_t value;
     uint8_t raw[2];
 } Var16;
+
+typedef struct {
+    uint8_t x;
+    uint8_t y;
+    uint8_t width;
+    uint8_t height;
+} Rect;
 
 // グローバル変数
 typedef struct {
@@ -100,8 +97,10 @@ typedef struct {
         Var16 y;        // Y座標
         Var16 vx;       // 移動速度(X)
         Var16 vy;       // 移動速度(Y)
-    } enemy[16];
+        Rect hit;       // 当たり判定
+    } enemy[32];
     uint8_t enemyIndex;
+    uint8_t espIndex;
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 
@@ -126,3 +125,6 @@ void add_dust_ground(uint8_t x, uint8_t y);
 void add_star(void) __z88dk_fastcall;
 void add_bubble(void)  __z88dk_fastcall;
 void screen_effect_proc(uint8_t a) __z88dk_fastcall;
+
+void add_enemy(uint8_t type, uint8_t x, uint8_t y);
+void move_enemy(void) __z88dk_fastcall;
