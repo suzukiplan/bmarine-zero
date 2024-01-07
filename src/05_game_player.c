@@ -23,7 +23,7 @@ static void update_player_position(void)  __z88dk_fastcall
 
 void move_player(uint8_t a) __z88dk_fastcall
 {
-    uint8_t i, j;
+    uint8_t i;
     uint8_t pad = vgs0_joypad_get();
 
     // 左右の加速度処理
@@ -96,13 +96,13 @@ void move_player(uint8_t a) __z88dk_fastcall
 
             if (8 < GV->player.x.raw[1] && GV->player.x.raw[1] < 224) {
                 if (a & 0x01) {
-                    j = GV->player.y.raw[1] + 5;
-                    j += get_random(&GV->ridx) & 0x01;
-                    j += get_random(&GV->ridx) & 0x01;
+                    i = GV->player.y.raw[1] + 5;
+                    i += get_random(&GV->ridx) & 0x01;
+                    i += get_random(&GV->ridx) & 0x01;
                     if (GV->player.spd < 0) {
-                        add_spray(GV->player.x.raw[1] + 16, j, 0x30, 0x83);
+                        add_spray(GV->player.x.raw[1] + 16, i, 0x30, 0x83);
                     } else {
-                        add_spray(GV->player.x.raw[1], j, 0x30, 0xC3);
+                        add_spray(GV->player.x.raw[1], i, 0x30, 0xC3);
                     }
                 } else if (0 == (a & 3)) {
                     vgs0_se_play(2);
