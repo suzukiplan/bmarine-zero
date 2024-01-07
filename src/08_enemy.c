@@ -154,15 +154,13 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
 void move_marineLR(Enemy* enemy) __z88dk_fastcall
 {
     enemy->vx.value = 0x00C0;
+    enemy->n8[0]++;
 
     // プロペラを回転
-    enemy->n8[0]++;
-    enemy->n8[0] &= 3;
-    if (0 == enemy->n8[0]) {
+    if (0 == (enemy->n8[0] & 3)) {
         enemy->n8[1]++;
         enemy->n8[1] &= 0x03;
-        uint8_t sn = enemy->si;
-        VGS0_ADDR_OAM[SP_ENEMY + sn].ptn = 0x18 + enemy->n8[1];
+        VGS0_ADDR_OAM[SP_ENEMY + enemy->si].ptn = 0x18 + enemy->n8[1];
     }
 }
 
