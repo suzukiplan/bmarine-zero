@@ -10,20 +10,28 @@
 typedef union {
     uint16_t value;
     uint8_t raw[2];
-} Var16;
+} var16_t;
 
-// 矩形
+// 矩形 (signed)
+typedef struct {
+    int8_t x;
+    int8_t y;
+    uint8_t width;
+    uint8_t height;
+} rect_t;
+
+// 矩形 (unsigned)
 typedef struct {
     uint8_t x;
     uint8_t y;
     uint8_t width;
     uint8_t height;
-} Rect;
+} urect_t;
 
 // プレイヤー
 typedef struct {
-    Var16 x;        // X座標
-    Var16 y;        // Y座標
+    var16_t x;      // X座標
+    var16_t y;      // Y座標
     int16_t spd;    // 移動スピード
     int16_t jmp;    // ジャンプスピード
     int8_t jmpKeep; // ジャンプ中のボタン押しっぱなしフラグ
@@ -38,7 +46,7 @@ typedef struct {
 typedef struct {
     uint8_t flag;   // 存在フラグ
     uint8_t x;      // X座標
-    Var16 y;        // Y座標
+    var16_t y;      // Y座標
     int16_t spd;    // 落下スピード
     uint8_t onair;  // 空中フラグ
 } Shot;
@@ -52,8 +60,8 @@ typedef struct {
 // ゴミ
 typedef struct {
     uint8_t flag;   // 存在フラグ
-    Var16 x;        // X座標
-    Var16 y;        // Y座標
+    var16_t x;      // X座標
+    var16_t y;      // Y座標
     int16_t vx;     // フレームごとの座標移動量（X）
     int16_t vy;     // フレームごとの座標移動量（Y）
     int16_t sx;     // フレーム毎のvx加算値
@@ -80,14 +88,14 @@ typedef struct {
     uint8_t flag;   // 存在フラグ
     uint8_t type;   // 種別フラグ
     uint8_t n8[2];  // 汎用変数（8bit）
-    Var16 n16;      // 汎用変数 (16bit)
+    var16_t n16;    // 汎用変数 (16bit)
     uint8_t si;     // スプライト・インデクス
     uint8_t sn;     // スプライト数
-    Var16 x;        // X座標
-    Var16 y;        // Y座標
-    Var16 vx;       // 移動速度(X)
-    Var16 vy;       // 移動速度(Y)
-    Rect hit;       // 当たり判定
+    var16_t x;      // X座標
+    var16_t y;      // Y座標
+    var16_t vx;     // 移動速度(X)
+    var16_t vy;     // 移動速度(Y)
+    rect_t hit;     // 当たり判定
 } Enemy;
 
 // グローバル変数

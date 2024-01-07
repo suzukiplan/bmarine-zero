@@ -96,7 +96,7 @@ static uint8_t* get_init_height(uint8_t type)
 }
 
 // 当たり判定定義テーブル
-const Rect tbl_init_hit[3] = {
+const rect_t tbl_init_hit[3] = {
     { 8, 8, 8, 8 },     // 0: 爆発
     { 0, 0, 28, 16 },   // 1: 潜水艦 (左から右)
     { 0, 0, 28, 16 }    // 2: 潜水艦 (右から左)
@@ -131,7 +131,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     enemy->y.raw[1] = y;
     enemy->si = GV->espIndex;
     enemy->sn = tbl_init_sn[type];
-    vgs0_memcpy((uint16_t)&enemy->hit, (uint16_t)&tbl_init_hit[type], sizeof(Rect));
+    vgs0_memcpy((uint16_t)&enemy->hit, (uint16_t)&tbl_init_hit[type], sizeof(rect_t));
 
     // OAMに初期値を設定
     uint8_t* ptn = get_init_ptn(type);
