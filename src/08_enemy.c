@@ -13,12 +13,9 @@ const uint8_t tbl_init_sn[9] = {
 };
 
 // パターン定義
-const uint8_t ptn_bomb[10]= {
-    0xA0, 0xA3, 0xA6, 0xA9, 0xAC,
-    0xD0, 0xD3, 0xD6, 0xD9, 0xDC
-};
-const uint8_t ptn_marineLR[3] = { 0x18, 0x15, 0x16 };
-const uint8_t ptn_marineRL[3] = { 0x16, 0x15, 0x18 };
+static const uint8_t ptn_bomb[10]= { 0xA0, 0xA3, 0xA6, 0xA9, 0xAC, 0xD0, 0xD3, 0xD6, 0xD9, 0xDC };
+static const uint8_t ptn_marineLR[3] = { 0x18, 0x15, 0x16 };
+static const uint8_t ptn_marineRL[3] = { 0x16, 0x15, 0x18 };
 
 static uint8_t* get_init_ptn(uint8_t type)
 {
@@ -31,9 +28,9 @@ static uint8_t* get_init_ptn(uint8_t type)
 }
 
 // 属性定義
-const uint8_t attr_bomb[1] = { 0x85 };
-const uint8_t attr_marineLR[3] = { 0x00, 0x00, 0x00 };
-const uint8_t attr_marineRL[3] = { 0xC0, 0xC0, 0xC0 };
+static const uint8_t attr_bomb[1] = { 0x85 };
+static const uint8_t attr_marineLR[3] = { 0x00, 0x00, 0x00 };
+static const uint8_t attr_marineRL[3] = { 0xC0, 0xC0, 0xC0 };
 
 static uint8_t* get_init_attr(uint8_t type)
 {
@@ -46,14 +43,14 @@ static uint8_t* get_init_attr(uint8_t type)
 }
 
 // スプライトの初期座法設定テーブル
-const int8_t ofxy_zero[1] = { 0x00 };
-const int8_t wh_size2[1] = { 2 };
-const int8_t ofx_marineLR[3] = { -28, -24, -16 };
-const int8_t ofx_marineRL[3] = { 0, 16, 22 };
-const int8_t ofy_marine[3] = { 0, 0, 0 };
-const int8_t w_marineLR[3] = { 0, 0, 1 };
-const int8_t w_marineRL[3] = { 1, 0, 0 };
-const int8_t h_marine[3] = { 1, 1, 1 };
+static const int8_t ofxy_zero[1] = { 0x00 };
+static const int8_t wh_size2[1] = { 2 };
+static const int8_t ofx_marineLR[3] = { -28, -24, -16 };
+static const int8_t ofx_marineRL[3] = { 0, 16, 22 };
+static const int8_t ofy_marine[3] = { 0, 0, 0 };
+static const int8_t w_marineLR[3] = { 0, 0, 1 };
+static const int8_t w_marineRL[3] = { 1, 0, 0 };
+static const int8_t h_marine[3] = { 1, 1, 1 };
 
 static uint8_t* get_init_ofx(uint8_t type)
 {
@@ -96,7 +93,7 @@ static uint8_t* get_init_height(uint8_t type)
 }
 
 // 当たり判定定義テーブル
-const rect_t tbl_init_hit[3] = {
+static const rect_t hittbl[3] = {
     { 8, 8, 8, 8 },     // 0: 爆発
     { -24, 0, 24, 16 },   // 1: 潜水艦 (左から右)
     { 0, 0, 24, 16 }    // 2: 潜水艦 (右から左)
@@ -159,7 +156,31 @@ void move_enemy(void) __z88dk_fastcall
             switch (GV->enemy[i].type) {
                 case ET_MARINE_LR: move_marineLR(&GV->enemy[i]); break;
             }
-            if (GV->enemy[i].flag) {
+            // 自機ショットとの当たり判定チェック
+            if (GV->enemy[i].flag && GV->enemy[i].check) {
+                for (j = 0; j < 8; j++) {
+                    if (GV->shot[j].flag) {
+                        // Y座標が範囲内かチェック
+                        uint8_t et = GV->enemy[i].y.raw[1];
+                        et += hittbl[GV->enemy[i].type].y;
+                        uint8_t eb = et;
+                        eb += hittbl[GV->enemy[i].type].height;
+                        if (GV->shot[j].y.raw[1] < eb && et < GV->shot[j].y.raw[1] + 8) {
+                            // X座標が範囲内ならヒット
+                            uint8_t el = GV->enemy[i].x.raw[1];
+                            el += hittbl[GV->enemy[i].type].x;
+                            uint8_t er = el;
+                            er += hittbl[GV->enemy[i].type].width;
+                            if (GV->shot[j].x < er && el < GV->shot[j].x + 8) {
+                                GV->enemy[i].flag = 0;
+                                GV->shot[j].flag = 0;
+                                VGS0_ADDR_OAM[SP_SHOT + j].attr = 0x00;
+                            }
+                        }
+                    }
+                }
+            }
+            if (0 != GV->enemy[i].flag) {
                 // 座標更新
                 dx = GV->enemy[i].x.raw[1];
                 dy = GV->enemy[i].y.raw[1];
@@ -179,6 +200,7 @@ void move_enemy(void) __z88dk_fastcall
                     }
                 }
             } else {
+                // 削除
                 si = GV->enemy[i].si;
                 for (j = 0; j < GV->enemy[i].sn; j++) {
                     k = SP_ENEMY + si;
