@@ -3,42 +3,46 @@
 // 1: 潜水艦 (左から右)
 void move_marineLR(Enemy* enemy) __z88dk_fastcall
 {
-    enemy->vx.value = 0x00C0;
+    if (1 == enemy->flag) {
+        enemy->flag = 2;
+        enemy->vx.value = get_random(&GV->ridx);
+        enemy->vx.value += 0x0040;
+    }
     enemy->n8[0]++;
 
     // クリッピング
     switch (enemy->flag) {
-        case 1:
+        case 2:
             if (8 <= enemy->x.raw[1]) {
                 VGS0_ADDR_OAM[SP_ENEMY + enemy->si + 2].attr = 0x80;
                 enemy->flag++;
             }
             break;
-        case 2:
+        case 3:
             if (24 <= enemy->x.raw[1]) {
                 VGS0_ADDR_OAM[SP_ENEMY + enemy->si + 1].attr = 0x80;
                 enemy->check = 1;
                 enemy->flag++;
             }
             break;
-        case 3:
+        case 4:
             if (28 <= enemy->x.raw[1]) {
                 VGS0_ADDR_OAM[SP_ENEMY + enemy->si].attr = 0x80;
                 enemy->flag++;
             }
             break;
-        case 4:
+        case 5:
             if (enemy->x.raw[1] < 28) {
                 enemy->flag++;
             }
             break;
-        case 5:
+        case 6:
             if (8 <= enemy->x.raw[1]) {
                 VGS0_ADDR_OAM[SP_ENEMY + enemy->si + 2].attr = 0x00;
                 enemy->flag++;
             }
             break;
-        case 6:
+        case 7:
             if (16 <= enemy->x.raw[1]) {
                 enemy->flag = 0; // 画面アウト
             }

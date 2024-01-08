@@ -122,6 +122,8 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     enemy->flag = 1;
     enemy->n8[0] = 0;
     enemy->n8[1] = 0;
+    enemy->n8[2] = 0;
+    enemy->n8[3] = 0;
     enemy->n16.value = 0;
     enemy->check = 0;
     enemy->type = type;

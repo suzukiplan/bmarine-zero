@@ -87,7 +87,7 @@ typedef struct {
 typedef struct {
     uint8_t flag;   // 存在フラグ
     uint8_t type;   // 種別フラグ
-    uint8_t n8[2];  // 汎用変数（8bit）
+    uint8_t n8[4];  // 汎用変数（8bit）
     var16_t n16;    // 汎用変数 (16bit)
     uint8_t si;     // スプライト・インデクス
     uint8_t sn;     // スプライト数
