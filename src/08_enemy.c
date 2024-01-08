@@ -12,8 +12,8 @@ const uint8_t tbl_init_sn[9] = {
     3,  // 2: 潜水艦 (右から左)
 };
 
-// パターン定義
-static const uint8_t ptn_bomb[10]= { 0xA0, 0xA3, 0xA6, 0xA9, 0xAC, 0xD0, 0xD3, 0xD6, 0xD9, 0xDC };
+// 初期パターン定義
+static const uint8_t ptn_bomb[1]= { 0xA0 };
 static const uint8_t ptn_marineLR[3] = { 0x18, 0x15, 0x16 };
 static const uint8_t ptn_marineRL[3] = { 0x16, 0x15, 0x18 };
 
@@ -127,6 +127,8 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     enemy->type = type;
     enemy->x.raw[1] = x;
     enemy->y.raw[1] = y;
+    enemy->vx.value = 0;
+    enemy->vy.value = 0;
     enemy->si = GV->espIndex;
     enemy->sn = tbl_init_sn[type];
 
@@ -154,6 +156,7 @@ void move_enemy(void) __z88dk_fastcall
     for (i = 0; i < 32; i++) {
         if (GV->enemy[i].flag) {
             switch (GV->enemy[i].type) {
+                case ET_BOMBER: move_bomber(&GV->enemy[i]); break;
                 case ET_MARINE_LR: move_marineLR(&GV->enemy[i]); break;
             }
             // 自機ショットとの当たり判定チェック
@@ -172,9 +175,12 @@ void move_enemy(void) __z88dk_fastcall
                             uint8_t er = el;
                             er += hittbl[GV->enemy[i].type].width;
                             if (GV->shot[j].x < er && el < GV->shot[j].x + 8) {
-                                GV->enemy[i].flag = 0;
+                                if (0 != GV->enemy[i].type) {
+                                    GV->enemy[i].flag = 0;
+                                }
                                 GV->shot[j].flag = 0;
                                 VGS0_ADDR_OAM[SP_SHOT + j].attr = 0x00;
+                                add_enemy(ET_BOMBER, GV->shot[j].x - 8, GV->shot[j].y.raw[1] - 8);
                             }
                         }
                     }

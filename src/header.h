@@ -145,4 +145,5 @@ void screen_effect_proc(uint8_t a) __z88dk_fastcall;
 
 void add_enemy(uint8_t type, uint8_t x, uint8_t y);
 void move_enemy(void) __z88dk_fastcall;
+void move_bomber(Enemy* enemy) __z88dk_fastcall;
 void move_marineLR(Enemy* enemy) __z88dk_fastcall;

@@ -8,6 +8,7 @@ SRC_FILES += 05_game_player.rel
 SRC_FILES += 06_game_pshot.rel
 SRC_FILES += 07_game_effect.rel
 SRC_FILES += 08_enemy.rel
+SRC_FILES += 08-00_bomber.rel
 SRC_FILES += 08-01_marine.rel
 CHR_FILES = bg.chr
 CHR_FILES += fg.chr
