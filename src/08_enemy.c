@@ -132,7 +132,6 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     enemy->y.raw[1] = y;
     enemy->si = GV->espIndex;
     enemy->sn = tbl_init_sn[type];
-    vgs0_memcpy((uint16_t)&enemy->hit, (uint16_t)&tbl_init_hit[type], sizeof(rect_t));
 
     // OAMに初期値を設定
     uint8_t* ptn = get_init_ptn(type);

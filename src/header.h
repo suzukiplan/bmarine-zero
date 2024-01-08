@@ -95,7 +95,6 @@ typedef struct {
     var16_t y;      // Y座標
     var16_t vx;     // 移動速度(X)
     var16_t vy;     // 移動速度(Y)
-    rect_t hit;     // 当たり判定
     uint8_t check;  // 当たり判定有効化フラグ
 } Enemy;
 
