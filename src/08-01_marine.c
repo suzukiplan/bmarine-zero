@@ -17,6 +17,7 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
         case 2:
             if (24 <= enemy->x.raw[1]) {
                 VGS0_ADDR_OAM[SP_ENEMY + enemy->si + 1].attr = 0x80;
+                enemy->check = 1;
                 enemy->flag++;
             }
             break;
