@@ -98,8 +98,8 @@ static uint8_t* get_init_height(uint8_t type)
 // 当たり判定定義テーブル
 const rect_t tbl_init_hit[3] = {
     { 8, 8, 8, 8 },     // 0: 爆発
-    { 0, 0, 28, 16 },   // 1: 潜水艦 (左から右)
-    { 0, 0, 28, 16 }    // 2: 潜水艦 (右から左)
+    { -24, 0, 24, 16 },   // 1: 潜水艦 (左から右)
+    { 0, 0, 24, 16 }    // 2: 潜水艦 (右から左)
 };
 
 void add_enemy(uint8_t type, uint8_t x, uint8_t y)
