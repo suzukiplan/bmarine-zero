@@ -139,6 +139,7 @@ void add_pshot(uint8_t x, uint16_t y);
 
 void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr);
 void add_dust_ground(uint8_t x, uint8_t y);
+void add_dust_air(uint8_t x, uint8_t y);
 void add_star(void) __z88dk_fastcall;
 void add_bubble(void)  __z88dk_fastcall;
 void screen_effect_proc(uint8_t a) __z88dk_fastcall;

@@ -47,6 +47,36 @@ void add_dust_ground(uint8_t x, uint8_t y)
     GV->dustIndex++;
 }
 
+void add_dust_air(uint8_t x, uint8_t y)
+{
+    GV->dustIndex &= 0x0F;
+    GV->dust[GV->dustIndex].flag = 1;
+    GV->dust[GV->dustIndex].x.raw[1] = x;
+    GV->dust[GV->dustIndex].y.raw[1] = y;
+    GV->dust[GV->dustIndex].vx = 0;
+
+    GV->dust[GV->dustIndex].sx = get_random(&GV->ridx) & 0x1F;
+    if (get_random(&GV->ridx) < 0x80) {
+        GV->dust[GV->dustIndex].sx = -GV->dust[GV->dustIndex].sx;
+    }
+    GV->dust[GV->dustIndex].sy = get_random(&GV->ridx) & 0x1F;
+    if (get_random(&GV->ridx) < 0x80) {
+        GV->dust[GV->dustIndex].sy = -GV->dust[GV->dustIndex].sy;
+    }
+    GV->dust[GV->dustIndex].vx = get_random(&GV->ridx);
+    GV->dust[GV->dustIndex].vy = get_random(&GV->ridx);
+
+    uint8_t s = GV->dustIndex;
+    s += SP_DUST;
+    switch (GV->dustIndex & 3) {
+        case 0: vgs0_oam_set(s, x, y, 0x83, 0x14, 0, 0); break;
+        case 1: vgs0_oam_set(s, x, y, 0x80, 0x40, 0, 0); break;
+        case 2: vgs0_oam_set(s, x, y, 0x80, 0x50, 0, 0); break;
+        case 3: vgs0_oam_set(s, x, y, 0x84, 0x60, 0, 0); break;
+    }
+    GV->dustIndex++;
+}
+
 void add_star(void) __z88dk_fastcall
 {
     if (GV->star[GV->starIndex].flag) {

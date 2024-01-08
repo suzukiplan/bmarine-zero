@@ -11,6 +11,9 @@ void move_bomber(Enemy* enemy) __z88dk_fastcall
         enemy->vx.value = vx;
         enemy->vy.value = vy;
     }
+    if (0 == (enemy->flag & 3)) {
+        add_dust_air(enemy->x.raw[1] + 8, enemy->y.raw[1] + 8);
+    }
     enemy->flag++;
     if (0 == (enemy->flag & 3)) {
         enemy->check = 1;
