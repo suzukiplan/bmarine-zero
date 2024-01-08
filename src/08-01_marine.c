@@ -34,6 +34,10 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
         case 5:
             if (enemy->x.raw[1] < 28) {
                 enemy->flag++;
+            } else {
+                if (0 == (enemy->n8[0] & 0x03)) {
+                    add_spray(enemy->x.raw[1] - 28, enemy->y.raw[1] + 4, 0x38, 0x83);
+                }
             }
             break;
         case 6:
