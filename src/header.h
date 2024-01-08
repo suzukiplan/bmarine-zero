@@ -40,6 +40,7 @@ typedef struct {
     uint8_t slx;    // 着水座標の左端
     uint8_t srx;    // 着水座標の右端
     uint8_t shot;   // ショット発射フラグ
+    uint8_t sa;     // ショット発射アニメーション
 } Player;
 
 // プレイヤーショット

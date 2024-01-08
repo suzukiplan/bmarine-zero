@@ -61,6 +61,7 @@ void move_player(uint8_t a) __z88dk_fastcall
         if (0 == GV->player.shot) {
             add_pshot(GV->player.x.raw[1] + 8, GV->player.y.value + 0x0B00);
             GV->player.shot = 1;
+            GV->player.sa = 16;
         }
     } else {
         GV->player.shot = 0;
@@ -113,6 +114,21 @@ void move_player(uint8_t a) __z88dk_fastcall
     } else if (GV->player.y.raw[1] != 0x40) {
         GV->player.y.raw[1] = 0x40;
         update_player_position();
+    }
+
+    // ショット発射アニメーション
+    if (GV->player.sa) {
+        GV->player.sa--;
+        if (GV->player.sa) {
+            i = a;
+            i >>= 1;
+            i &= 0x03;
+            i <<= 1;
+            i += 0x48;
+            vgs0_oam_set(6, GV->player.x.raw[1] + 3, GV->player.y.raw[1] + 7, 0x84, i, 1, 1);
+        } else {
+            VGS0_ADDR_OAM[6].attr = 0;
+        }
     }
 
     // 着水時の衝撃波
