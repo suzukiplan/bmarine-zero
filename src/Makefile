@@ -86,6 +86,7 @@ bgm.dat: ${BGM_FILES}
 .SUFFIXES: .rel .src
 
 %.rel: %.c header.h
+	make execute-format FILENAME=$<
 	${COMPILE} $<
 
 .SUFFIXES: .chr .bmp
@@ -97,3 +98,8 @@ bgm.dat: ${BGM_FILES}
 
 %.bgm: %.mml
 	${VGSMML} $< $@
+
+execute-format:
+	clang-format -style=file < ${FILENAME} > ${FILENAME}.bak
+	cat ${FILENAME}.bak > ${FILENAME}
+	rm ${FILENAME}.bak

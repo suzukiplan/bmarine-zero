@@ -1,6 +1,6 @@
 #include "header.h"
 
-void main(void) 
+void main(void)
 {
     init_palette();
 

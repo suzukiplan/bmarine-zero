@@ -1,6 +1,6 @@
 #include "header.h"
 
-static void update_player_position(void)  __z88dk_fastcall
+static void update_player_position(void) __z88dk_fastcall
 {
     if (GV->player.x.raw[1] < 8) {
         GV->player.x.raw[1] = 8;
@@ -31,12 +31,12 @@ void move_player(uint8_t a) __z88dk_fastcall
         if (-640 < GV->player.spd) {
             GV->player.spd -= 64;
         }
-        VGS0_ADDR_OAM[1].attr |= 0b01000000; 
+        VGS0_ADDR_OAM[1].attr |= 0b01000000;
     } else if (pad & VGS0_JOYPAD_RI) {
         if (GV->player.spd < 640) {
             GV->player.spd += 64;
         }
-        VGS0_ADDR_OAM[1].attr &= 0b10111111; 
+        VGS0_ADDR_OAM[1].attr &= 0b10111111;
     } else if (0 < GV->player.spd) {
         GV->player.spd -= 64;
     } else if (GV->player.spd < 0) {

@@ -1,26 +1,26 @@
 #include "header.h"
 
 // 敵の種別コード
-#define ET_BOMBER 0     // 爆発
-#define ET_MARINE_LR 1  // 潜水艦
-#define ET_MARINE_RL 2  // 潜水艦
+#define ET_BOMBER 0    // 爆発
+#define ET_MARINE_LR 1 // 潜水艦
+#define ET_MARINE_RL 2 // 潜水艦
 
 // 敵種別毎の使用スプライト数
 const uint8_t tbl_init_sn[9] = {
-    1,  // 0: 爆発
-    3,  // 1: 潜水艦 (左から右)
-    3,  // 2: 潜水艦 (右から左)
+    1, // 0: 爆発
+    3, // 1: 潜水艦 (左から右)
+    3, // 2: 潜水艦 (右から左)
 };
 
 // 初期パターン定義
-static const uint8_t ptn_bomb[1]= { 0xA0 };
-static const uint8_t ptn_marineLR[3] = { 0x18, 0x15, 0x16 };
-static const uint8_t ptn_marineRL[3] = { 0x16, 0x15, 0x18 };
+static const uint8_t ptn_bomb[1] = {0xA0};
+static const uint8_t ptn_marineLR[3] = {0x18, 0x15, 0x16};
+static const uint8_t ptn_marineRL[3] = {0x16, 0x15, 0x18};
 
 static uint8_t* get_init_ptn(uint8_t type)
 {
     switch (type) {
-        case 0: return ptn_bomb; // 0: 爆発
+        case 0: return ptn_bomb;     // 0: 爆発
         case 1: return ptn_marineLR; // 1: 潜水艦 (左から右)
         case 2: return ptn_marineRL;
         default: return (uint8_t*)0;
@@ -28,14 +28,14 @@ static uint8_t* get_init_ptn(uint8_t type)
 }
 
 // 属性定義
-static const uint8_t attr_bomb[1] = { 0x85 };
-static const uint8_t attr_marineLR[3] = { 0x00, 0x00, 0x00 };
-static const uint8_t attr_marineRL[3] = { 0xC0, 0xC0, 0xC0 };
+static const uint8_t attr_bomb[1] = {0x85};
+static const uint8_t attr_marineLR[3] = {0x00, 0x00, 0x00};
+static const uint8_t attr_marineRL[3] = {0xC0, 0xC0, 0xC0};
 
 static uint8_t* get_init_attr(uint8_t type)
 {
     switch (type) {
-        case 0: return attr_bomb; // 0: 爆発
+        case 0: return attr_bomb;     // 0: 爆発
         case 1: return attr_marineLR; // 1: 潜水艦 (左から右)
         case 2: return attr_marineRL;
         default: return (uint8_t*)0;
@@ -43,19 +43,19 @@ static uint8_t* get_init_attr(uint8_t type)
 }
 
 // スプライトの初期座法設定テーブル
-static const int8_t ofxy_zero[1] = { 0x00 };
-static const int8_t wh_size2[1] = { 2 };
-static const int8_t ofx_marineLR[3] = { -28, -24, -16 };
-static const int8_t ofx_marineRL[3] = { 0, 16, 22 };
-static const int8_t ofy_marine[3] = { 0, 0, 0 };
-static const int8_t w_marineLR[3] = { 0, 0, 1 };
-static const int8_t w_marineRL[3] = { 1, 0, 0 };
-static const int8_t h_marine[3] = { 1, 1, 1 };
+static const int8_t ofxy_zero[1] = {0x00};
+static const int8_t wh_size2[1] = {2};
+static const int8_t ofx_marineLR[3] = {-28, -24, -16};
+static const int8_t ofx_marineRL[3] = {0, 16, 22};
+static const int8_t ofy_marine[3] = {0, 0, 0};
+static const int8_t w_marineLR[3] = {0, 0, 1};
+static const int8_t w_marineRL[3] = {1, 0, 0};
+static const int8_t h_marine[3] = {1, 1, 1};
 
 static uint8_t* get_init_ofx(uint8_t type)
 {
     switch (type) {
-        case 0: return ofxy_zero; // 0: 爆発
+        case 0: return ofxy_zero;    // 0: 爆発
         case 1: return ofx_marineLR; // 1: 潜水艦 (左から右)
         case 2: return ofx_marineRL;
         default: return (uint8_t*)0;
@@ -65,7 +65,7 @@ static uint8_t* get_init_ofx(uint8_t type)
 static uint8_t* get_init_ofy(uint8_t type)
 {
     switch (type) {
-        case 0: return ofxy_zero; // 0: 爆発
+        case 0: return ofxy_zero;  // 0: 爆発
         case 1: return ofy_marine; // 1: 潜水艦 (左から右)
         case 2: return ofy_marine;
         default: return (uint8_t*)0;
@@ -75,7 +75,7 @@ static uint8_t* get_init_ofy(uint8_t type)
 static uint8_t* get_init_width(uint8_t type)
 {
     switch (type) {
-        case 0: return wh_size2; // 0: 爆発
+        case 0: return wh_size2;   // 0: 爆発
         case 1: return w_marineLR; // 1: 潜水艦 (左から右)
         case 2: return w_marineRL;
         default: return (uint8_t*)0;
@@ -94,9 +94,9 @@ static uint8_t* get_init_height(uint8_t type)
 
 // 当たり判定定義テーブル
 static const rect_t hittbl[3] = {
-    { 8, 8, 8, 8 },     // 0: 爆発
-    { -24, 0, 24, 16 },   // 1: 潜水艦 (左から右)
-    { 0, 0, 24, 16 }    // 2: 潜水艦 (右から左)
+    {8, 8, 8, 8},     // 0: 爆発
+    {-24, 0, 24, 16}, // 1: 潜水艦 (左から右)
+    {0, 0, 24, 16}    // 2: 潜水艦 (右から左)
 };
 
 void add_enemy(uint8_t type, uint8_t x, uint8_t y)

@@ -67,7 +67,7 @@ void add_star(void) __z88dk_fastcall
     GV->starIndex &= 0x0F;
 }
 
-void add_bubble(void)  __z88dk_fastcall
+void add_bubble(void) __z88dk_fastcall
 {
     if (GV->bubble[GV->bubbleIndex].flag) {
         return;
@@ -153,7 +153,7 @@ void screen_effect_proc(uint8_t a) __z88dk_fastcall
             if (0 == GV->bubble[i].flag) {
                 VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] = 0x10;
                 VGS0_ADDR_BG->attr[GV->bubble[i].y][GV->bubble[i].x] = 0x00;
-            } else  if (0 == (GV->bubble[i].flag & 0x03)) {
+            } else if (0 == (GV->bubble[i].flag & 0x03)) {
                 VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] += 1;
             }
         }

@@ -9,9 +9,9 @@ void game_main(void)
     vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
     score_print(VGS0_ADDR_FG);
     for (i = 0; i < 32; i++) {
-        VGS0_ADDR_BG->ptn[2][i] = 0x00; // スコア(BG)をクリア
-        VGS0_ADDR_BG->ptn[9][i] = 0x00; // 波をクリア
-        VGS0_ADDR_FG->ptn[9][i] = 0xA2; // 波を描画
+        VGS0_ADDR_BG->ptn[2][i] = 0x00;  // スコア(BG)をクリア
+        VGS0_ADDR_BG->ptn[9][i] = 0x00;  // 波をクリア
+        VGS0_ADDR_FG->ptn[9][i] = 0xA2;  // 波を描画
         VGS0_ADDR_FG->attr[9][i] = 0x80; // 波を描画
     }
 
