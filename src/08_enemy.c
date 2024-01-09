@@ -233,8 +233,8 @@ void move_enemy(void) __z88dk_fastcall
                             uint8_t er = el;
                             er += hittbl[GV->enemy[j].type].width;
                             if (bl < er && el < br) {
-                                erase_enemy(j);
                                 add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
+                                erase_enemy(j);
                             }
                         }
                     }
