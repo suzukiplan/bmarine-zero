@@ -1,5 +1,14 @@
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
+// バンク定義
+#define BANK_PRG0 0     // プログラム
+#define BANK_PRG1 1     // プログラム
+#define BANK_PRG2 2     // プログラム
+#define BANK_PRG3 3     // プログラム
+#define BANK_MAIN_BG 4  // メインBG
+#define BANK_MAIN_FG 5  // メインFG
+#define BANK_MAIN_SP 6  // メインスプライト
+
 // スプライトの初期位置
 #define SP_ENEMY 88     // 敵 (128)
 #define SP_DUST 216     // 土埃 (16)

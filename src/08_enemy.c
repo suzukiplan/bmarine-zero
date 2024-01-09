@@ -199,12 +199,14 @@ void move_enemy(void) __z88dk_fastcall
                             er += hittbl[GV->enemy[i].type].width;
                             if (GV->shot[j].x < er && el < GV->shot[j].x + 8) {
                                 if (0 != GV->enemy[i].type) {
-                                    GV->enemy[i].flag = 0;
                                     add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                                 }
                                 GV->shot[j].flag = 0;
                                 VGS0_ADDR_OAM[SP_SHOT + j].attr = 0x00;
                                 add_enemy(ET_BOMBER, GV->shot[j].x - 8, GV->shot[j].y.raw[1] - 8);
+                                if (0 != GV->enemy[i].type) {
+                                    GV->enemy[i].flag = 0;
+                                }
                                 break;
                             }
                         }

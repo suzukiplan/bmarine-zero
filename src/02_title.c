@@ -23,9 +23,9 @@ static const int8_t rasterTable[32] = {
 void title(void)
 {
     // DPM を設定
-    *VGS0_ADDR_BG_DPM = 4;
-    *VGS0_ADDR_FG_DPM = 5;
-    *VGS0_ADDR_SPRITE_DPM = 6;
+    *VGS0_ADDR_BG_DPM = BANK_MAIN_BG;
+    *VGS0_ADDR_FG_DPM = BANK_MAIN_FG;
+    *VGS0_ADDR_SPRITE_DPM = BANK_MAIN_SP;
 
     // FGにタイトル描画
     uint8_t i, j;
