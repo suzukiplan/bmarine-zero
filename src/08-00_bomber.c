@@ -20,7 +20,7 @@ void move_bomber(Enemy* enemy) __z88dk_fastcall
         enemy->check = 1;
         enemy->n8[0]++;
         if (enemy->n8[0] < 10) {
-            VGS0_ADDR_OAM[SP_ENEMY + enemy->si].ptn = ptn[enemy->n8[0]];
+            VGS0_ADDR_OAM[enemy->si[0]].ptn = ptn[enemy->n8[0]];
         } else {
             enemy->flag = 0;
         }

@@ -99,7 +99,7 @@ typedef struct {
     uint8_t type;   // 種別フラグ
     uint8_t n8[4];  // 汎用変数（8bit）
     var16_t n16;    // 汎用変数 (16bit)
-    uint8_t si;     // スプライト・インデクス
+    uint8_t si[4];  // スプライト・インデクス
     uint8_t sn;     // スプライト数
     var16_t x;      // X座標
     var16_t y;      // Y座標

@@ -138,7 +138,6 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     enemy->y.raw[1] = y;
     enemy->vx.value = 0;
     enemy->vy.value = 0;
-    enemy->si = GV->espIndex;
     enemy->sn = tbl_init_sn[type];
 
     // OAMに初期値を設定
@@ -149,7 +148,8 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     int8_t* w = get_init_width(type);
     int8_t* h = get_init_height(type);
     for (i = 0; i < enemy->sn; i++) {
-        vgs0_oam_set(SP_ENEMY + GV->espIndex, x + ofx[i], y + ofy[i], attr[i], ptn[i], w[i], h[i]);
+        enemy->si[i] = SP_ENEMY + GV->espIndex;
+        vgs0_oam_set(enemy->si[i], x + ofx[i], y + ofy[i], attr[i], ptn[i], w[i], h[i]);
         GV->espIndex += 1;
         GV->espIndex &= 0x7F;
     }
@@ -158,17 +158,12 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     GV->enemyIndex &= 0x1F;
 }
 
-static void erase_enemy(uint8_t index) __z88dk_fastcall
+static void erase_enemy(Enemy* enemy) __z88dk_fastcall
 {
-    GV->enemy[index].flag = 0;
-    uint8_t si = GV->enemy[index].si;
-    uint8_t i, n;
-    for (i = 0; i < GV->enemy[index].sn; i++) {
-        n = SP_ENEMY + si;
-        VGS0_ADDR_OAM[n].ptn = 0x00;
-        VGS0_ADDR_OAM[n].attr = 0x00;
-        si += 1;
-        si &= 0x7F;
+    enemy->flag = 0;
+    for (uint8_t i = 0; i < enemy->sn; i++) {
+        VGS0_ADDR_OAM[enemy->si[i]].ptn = 0x00;
+        VGS0_ADDR_OAM[enemy->si[i]].attr = 0x00;
     }
 }
 
@@ -183,12 +178,9 @@ static void update_enemy_position(Enemy* enemy) __z88dk_fastcall
 
     // 表示座標に変化があればスプライトを動かす
     if (dx || dy) {
-        uint8_t si = enemy->si;
         for (uint8_t i = 0; i < enemy->sn; i++) {
-            VGS0_ADDR_OAM[SP_ENEMY + si].x += dx;
-            VGS0_ADDR_OAM[SP_ENEMY + si].y += dy;
-            si += 1;
-            si &= 0x7F;
+            VGS0_ADDR_OAM[enemy->si[i]].x += dx;
+            VGS0_ADDR_OAM[enemy->si[i]].y += dy;
         }
     }
 }
@@ -256,7 +248,7 @@ static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
                 er += hittbl[enemy->type].width;
                 if (bl < er && el < br) {
                     add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
-                    erase_enemy(i);
+                    erase_enemy(enemy);
                 }
             }
         }
@@ -274,12 +266,12 @@ void move_enemy(void) __z88dk_fastcall
                 case ET_MARINE_LR: move_marineLR(enemy); break;
             }
             if (0 == enemy->flag) {
-                erase_enemy(i);
+                erase_enemy(enemy);
             } else {
                 update_enemy_position(enemy);
                 check_hit_pshot(enemy);
                 if (0 == enemy->flag) {
-                    erase_enemy(i);
+                    erase_enemy(enemy);
                 } else {
                     check_hit_bomb(enemy);
                 }
