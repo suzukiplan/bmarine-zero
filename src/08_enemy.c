@@ -1,5 +1,7 @@
 #include "header.h"
 
+#define HIT_KEEP_TIME 120
+
 // 敵の種別コード
 #define ET_BOMBER 0    // 爆発
 #define ET_MARINE_LR 1 // 潜水艦
@@ -222,6 +224,8 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
                     if (0 != enemy->type) {
                         enemy->flag = 0;
                     }
+                    GV->hit++;
+                    GV->hkt = HIT_KEEP_TIME;
                     return;
                 }
             }
@@ -256,6 +260,8 @@ static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
                 if (bl < er && el < br) {
                     add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                     erase_enemy(enemy);
+                    GV->hit++;
+                    GV->hkt = HIT_KEEP_TIME;
                 }
             }
         }

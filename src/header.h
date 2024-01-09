@@ -114,6 +114,9 @@ typedef struct {
     uint8_t sc[8];          // スコア
     uint8_t ridx;           // 乱数インデクス
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
+    uint16_t hit;           // コンボ数
+    uint8_t hkt;            // コンボ数のキープフレーム数
+    uint8_t hitstr[8];      // コンボ数表示用
     Player player;          // プレイヤー
     Shot shot[8];           // プレイヤーショット
     uint8_t shotIndex;      // プレイヤーショット index
@@ -137,8 +140,9 @@ extern const uint16_t random[256];
 // サブルーチン
 void init_palette(void);
 void title(void);
-void score_print(NameTable* nam);
-void score_increment(uint8_t keta);
+void score_print(NameTable* nam) __z88dk_fastcall;
+void score_increment(uint8_t keta) __z88dk_fastcall;
+void hit_print() __z88dk_fastcall;
 void game_main(void);
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
 

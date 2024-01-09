@@ -33,6 +33,8 @@ void move_pshot(void) __z88dk_fastcall
             j += SP_SHOT;
             if (176 < GV->shot[i].y.raw[1]) {
                 vgs0_se_play(3);
+                GV->hit = 0;
+                GV->hkt = 0;
                 GV->shot[i].flag = 0;
                 VGS0_ADDR_OAM[j].attr = 0x00;
                 add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);

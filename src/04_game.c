@@ -20,7 +20,7 @@ void game_main(void)
                 (uint16_t)&VGS0_ADDR_OAM[3],
                 sizeof(OAM) * 9);
 
-    // はイスコ以外のグローバル変数初期化
+    // ハイスコア以外のグローバル変数を初期化
     vgs0_memset(0xC000 + 8, 0x00, sizeof(GlobalVariables) - 8);
     GV->player.x.value = 0x7400;
     GV->player.y.value = 0x4000;
@@ -28,6 +28,7 @@ void game_main(void)
     vgs0_bgm_play(1);
 
     // メインループ
+    uint16_t prevHit = 0xFFFF;
     while (1) {
         vgs0_wait_vsync();
         a++;
@@ -55,6 +56,18 @@ void game_main(void)
         // スコア再描画 & ハイスコア更新（加算時のみ）
         if (GV->scoreAdded) {
             score_print(VGS0_ADDR_FG);
+        }
+
+        // ヒット数を描画（※除算が必要なので結構重い）
+        if (GV->hkt) {
+            GV->hkt--;
+            if (0 == GV->hkt) {
+                GV->hit = 0;
+            }
+        }
+        if (prevHit != GV->hit) {
+            prevHit = GV->hit;
+            hit_print();
         }
     }
 }

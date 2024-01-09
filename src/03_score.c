@@ -1,7 +1,7 @@
 #include "header.h"
 
 // スコア表示（ハイスコア更新を含む）
-void score_print(NameTable* nam)
+void score_print(NameTable* nam) __z88dk_fastcall
 {
     uint8_t detectS = 0;
     uint8_t detectH = 0;
@@ -39,7 +39,7 @@ void score_print(NameTable* nam)
 }
 
 // 指定ケタ（0: 10の位, 7: 億の位）のスコアを加算
-void score_increment(uint8_t keta)
+void score_increment(uint8_t keta) __z88dk_fastcall
 {
     GV->scoreAdded = 1;
     if (7 < keta) {
@@ -52,5 +52,51 @@ void score_increment(uint8_t keta)
     if (9 < GV->sc[keta]) {
         GV->sc[keta] = 0;
         score_increment(keta + 1);
+    }
+}
+
+void hit_print() __z88dk_fastcall
+{
+    if (9999 < GV->hit) {
+        GV->hit = 9999;
+        GV->hitstr[0] = '9';
+        GV->hitstr[1] = '9';
+        GV->hitstr[2] = '9';
+        GV->hitstr[3] = '9';
+    } else {
+        if (GV->hit < 1000) {
+            GV->hitstr[0] = ' ';
+        } else {
+            GV->hitstr[0] = GV->hit / 1000;
+            GV->hitstr[0] += '0';
+        }
+
+        if (GV->hit < 100) {
+            GV->hitstr[1] = ' ';
+        } else {
+            GV->hitstr[1] = GV->hit / 100;
+            GV->hitstr[1] += '0';
+        }
+
+        if (GV->hit < 10) {
+            GV->hitstr[2] = ' ';
+        } else {
+            GV->hitstr[2] = GV->hit / 10;
+            GV->hitstr[2] += '0';
+        }
+
+        if (0 < GV->hit) {
+            GV->hitstr[3] = GV->hit % 10;
+            GV->hitstr[3] += '0';
+            GV->hitstr[4] = 'H';
+            GV->hitstr[5] = 'I';
+            GV->hitstr[6] = 'T';
+        } else {
+            GV->hitstr[3] = ' ';
+            GV->hitstr[4] = ' ';
+            GV->hitstr[5] = ' ';
+            GV->hitstr[6] = ' ';
+        }
+        vgs0_fg_putstr(23, 4, 0x80, GV->hitstr);
     }
 }
