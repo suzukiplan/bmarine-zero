@@ -135,7 +135,7 @@ void screen_effect_proc(uint8_t a) __z88dk_fastcall
         // 水しぶき & けむり
         if (GV->spray[i].sn) {
             GV->spray[i].t += 1;
-            if (GV->spray[i].t & 1) {
+            if (0 == (GV->spray[i].t & 1)) {
                 GV->spray[i].sn += 1;
             }
             if (16 == GV->spray[i].t) {
