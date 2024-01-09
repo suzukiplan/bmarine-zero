@@ -9,25 +9,33 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
         enemy->vx.value += 0x0040;
     }
     enemy->n8[0]++;
+    uint8_t s0 = enemy->si;
+    s0 += SP_ENEMY;
+    uint8_t s1 = enemy->si + 1;
+    s1 &= 0x7F;
+    s1 += SP_ENEMY;
+    uint8_t s2 = enemy->si + 2;
+    s2 &= 0x7F;
+    s2 += SP_ENEMY;
 
     // クリッピング
     switch (enemy->flag) {
         case 2:
             if (8 <= enemy->x.raw[1]) {
-                VGS0_ADDR_OAM[SP_ENEMY + enemy->si + 2].attr = 0x80;
+                VGS0_ADDR_OAM[s2].attr = 0x80;
                 enemy->flag++;
             }
             break;
         case 3:
             if (24 <= enemy->x.raw[1]) {
-                VGS0_ADDR_OAM[SP_ENEMY + enemy->si + 1].attr = 0x80;
+                VGS0_ADDR_OAM[s1].attr = 0x80;
                 enemy->check = 1;
                 enemy->flag++;
             }
             break;
         case 4:
             if (28 <= enemy->x.raw[1]) {
-                VGS0_ADDR_OAM[SP_ENEMY + enemy->si].attr = 0x80;
+                VGS0_ADDR_OAM[s0].attr = 0x80;
                 enemy->flag++;
             }
             break;
@@ -42,7 +50,7 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
             break;
         case 6:
             if (8 <= enemy->x.raw[1]) {
-                VGS0_ADDR_OAM[SP_ENEMY + enemy->si + 2].attr = 0x00;
+                VGS0_ADDR_OAM[s2].attr = 0x00;
                 enemy->flag++;
             }
             break;
@@ -57,6 +65,6 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     if (0 == (enemy->n8[0] & 3)) {
         enemy->n8[1]++;
         enemy->n8[1] &= 0x03;
-        VGS0_ADDR_OAM[SP_ENEMY + enemy->si].ptn = 0x18 + enemy->n8[1];
+        VGS0_ADDR_OAM[s0].ptn = 0x18 + enemy->n8[1];
     }
 }
