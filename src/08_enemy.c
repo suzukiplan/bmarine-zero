@@ -103,9 +103,9 @@ static const rect_t hittbl[3] = {
 void add_enemy(uint8_t type, uint8_t x, uint8_t y)
 {
     uint8_t i, j;
-    i = GV->enemyIndex;
 
     // 追加可能なレコードを探索
+    i = GV->enemyIndex;
     while (GV->enemy[i].flag) {
         i++;
         i &= 0x1F;
@@ -117,13 +117,18 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     Enemy* enemy = &GV->enemy[GV->enemyIndex];
 
     // スプライトに空きがあるかチェック
-    j = GV->espIndex;
     for (i = 0; i < tbl_init_sn[type]; i++) {
-        if (VGS0_ADDR_OAM[SP_ENEMY + j].ptn != 0x00) {
-            return; // 空きなし
+        j = GV->espIndex;
+        while (VGS0_ADDR_OAM[SP_ENEMY + j].ptn != 0x00) {
+            j++;
+            j &= 0x7F;
+            if (j == GV->enemyIndex) {
+                return; // 空きなし
+            }
         }
-        j += 1;
-        j &= 0x7F;
+        enemy->si[i] = SP_ENEMY + j;
+        GV->espIndex = j + 1;
+        GV->espIndex &= 0x7F;
     }
 
     // テーブルに初期値を設定
@@ -149,7 +154,6 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     int8_t* w = get_init_width(type);
     int8_t* h = get_init_height(type);
     for (i = 0; i < enemy->sn; i++) {
-        enemy->si[i] = SP_ENEMY + GV->espIndex;
         vgs0_oam_set(enemy->si[i], x + ofx[i], y + ofy[i], attr[i], ptn[i], w[i], h[i]);
         GV->espIndex += 1;
         GV->espIndex &= 0x7F;
