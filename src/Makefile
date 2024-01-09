@@ -13,6 +13,7 @@ SRC_FILES += 08-01_marine.rel
 CHR_FILES = bg.chr
 CHR_FILES += fg.chr
 CHR_FILES += sprite.chr
+CHR_FILES += sprite_bomb.chr
 WAV_FILES = se000_start.wav
 WAV_FILES += se001_shot.wav
 WAV_FILES += se002_move.wav

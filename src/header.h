@@ -8,6 +8,7 @@
 #define BANK_MAIN_BG 4  // メインBG
 #define BANK_MAIN_FG 5  // メインFG
 #define BANK_MAIN_SP 6  // メインスプライト
+#define BANK_BOMB_SP 7  // 爆破パターン
 
 // スプライトの初期位置
 #define SP_ENEMY 88     // 敵 (128)

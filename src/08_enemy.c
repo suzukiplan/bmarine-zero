@@ -15,7 +15,7 @@ const uint8_t tbl_init_sn[9] = {
 };
 
 // 初期パターン定義
-static const uint8_t ptn_bomb[1] = {0xA0};
+static const uint8_t ptn_bomb[1] = {0x00};
 static const uint8_t ptn_marineLR[3] = {0x18, 0x15, 0x16};
 static const uint8_t ptn_marineRL[3] = {0x16, 0x15, 0x18};
 
