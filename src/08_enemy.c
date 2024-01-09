@@ -102,20 +102,27 @@ static const rect_t hittbl[3] = {
 void add_enemy(uint8_t type, uint8_t x, uint8_t y)
 {
     uint8_t i, j;
-    Enemy* enemy = &GV->enemy[GV->enemyIndex];
+    i = GV->enemyIndex;
 
-    // 追加可能なテーブルがあるかチェック
-    if (enemy->flag) {
-        return;
+    // 追加可能なレコードを探索
+    while (GV->enemy[i].flag) {
+        i++;
+        i &= 0x1F;
+        if (i == GV->enemyIndex) {
+            return; // 空きなし
+        }
     }
+    GV->enemyIndex = i;
+    Enemy* enemy = &GV->enemy[GV->enemyIndex];
 
     // スプライトに空きがあるかチェック
     j = GV->espIndex;
-    for (i = 0; i < tbl_init_sn[type]; i++, j++) {
-        j &= 0x7F;
+    for (i = 0; i < tbl_init_sn[type]; i++) {
         if (VGS0_ADDR_OAM[SP_ENEMY + j].ptn != 0x00) {
             return; // 空きなし
         }
+        j += 1;
+        j &= 0x7F;
     }
 
     // テーブルに初期値を設定
@@ -141,7 +148,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     int8_t* ofy = get_init_ofy(type);
     int8_t* w = get_init_width(type);
     int8_t* h = get_init_height(type);
-    for (i = 0; i < tbl_init_sn[type]; i++) {
+    for (i = 0; i < enemy->sn; i++) {
         vgs0_oam_set(GV->espIndex + SP_ENEMY, x + ofx[i], y + ofy[i], attr[i], ptn[i], w[i], h[i]);
         GV->espIndex += 1;
         GV->espIndex &= 0x7F;
@@ -193,32 +200,37 @@ void move_enemy(void) __z88dk_fastcall
                             if (GV->shot[j].x < er && el < GV->shot[j].x + 8) {
                                 if (0 != GV->enemy[i].type) {
                                     GV->enemy[i].flag = 0;
+                                    add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                                 }
                                 GV->shot[j].flag = 0;
                                 VGS0_ADDR_OAM[SP_SHOT + j].attr = 0x00;
                                 add_enemy(ET_BOMBER, GV->shot[j].x - 8, GV->shot[j].y.raw[1] - 8);
-                                add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
+                                break;
                             }
                         }
                     }
                 }
             }
             // 爆発の当たり判定チェック（爆発以外のものを誘爆）
-            if (0 != GV->enemy[i].flag && ET_BOMBER == GV->enemy[i].type) {
+            if (GV->enemy[i].flag && GV->enemy[i].check && ET_BOMBER == GV->enemy[i].type) {
+                uint8_t bt = GV->enemy[i].y.raw[1] + 8;
+                uint8_t bb = GV->enemy[i].y.raw[1] + 16;
+                uint8_t bl = GV->enemy[i].x.raw[1] + 8;
+                uint8_t br = GV->enemy[i].x.raw[1] + 16;
                 for (j = 0; j < 32; j++) {
-                    if (0 != GV->enemy[j].flag && ET_BOMBER != GV->enemy[j].type) {
+                    if (ET_BOMBER != GV->enemy[j].type && GV->enemy[j].flag && GV->enemy[j].check) {
                         // Y座標が範囲内かチェック
                         uint8_t et = GV->enemy[j].y.raw[1];
                         et += hittbl[GV->enemy[j].type].y;
                         uint8_t eb = et;
                         eb += hittbl[GV->enemy[j].type].height;
-                        if (GV->enemy[i].y.raw[1] + 4 < eb && et < GV->enemy[i].y.raw[1] + 20) {
+                        if (bt < eb && et < bb) {
                             // X座標が範囲内ならヒット
                             uint8_t el = GV->enemy[j].x.raw[1];
                             el += hittbl[GV->enemy[j].type].x;
                             uint8_t er = el;
                             er += hittbl[GV->enemy[j].type].width;
-                            if (GV->enemy[i].x.raw[1] + 4 < er && el < GV->enemy[i].x.raw[1] + 20) {
+                            if (bl < er && el < br) {
                                 erase_enemy(j);
                                 add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                             }
@@ -226,7 +238,7 @@ void move_enemy(void) __z88dk_fastcall
                     }
                 }
             }
-            if (0 != GV->enemy[i].flag) {
+            if (GV->enemy[i].flag) {
                 // 座標更新
                 dx = GV->enemy[i].x.raw[1];
                 dy = GV->enemy[i].y.raw[1];
