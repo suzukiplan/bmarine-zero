@@ -149,7 +149,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     int8_t* w = get_init_width(type);
     int8_t* h = get_init_height(type);
     for (i = 0; i < enemy->sn; i++) {
-        vgs0_oam_set(GV->espIndex + SP_ENEMY, x + ofx[i], y + ofy[i], attr[i], ptn[i], w[i], h[i]);
+        vgs0_oam_set(SP_ENEMY + GV->espIndex, x + ofx[i], y + ofy[i], attr[i], ptn[i], w[i], h[i]);
         GV->espIndex += 1;
         GV->espIndex &= 0x7F;
     }
@@ -233,8 +233,8 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
 static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
 {
     // 爆発の当たり判定チェック（爆発以外のものを誘爆）
-    if (0 == bomb->flag || 0 == bomb->check || ET_BOMBER != bomb->type) {
-        return;
+    if (0 == bomb->check || ET_BOMBER != bomb->type) {
+        return; // I'm not explosion
     }
     uint8_t bt = bomb->y.raw[1] + 8;
     uint8_t bb = bomb->y.raw[1] + 16;
