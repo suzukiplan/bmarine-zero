@@ -172,96 +172,117 @@ static void erase_enemy(uint8_t index) __z88dk_fastcall
     }
 }
 
+static void update_enemy_position(Enemy* enemy) __z88dk_fastcall
+{
+    uint8_t dx = enemy->x.raw[1];
+    uint8_t dy = enemy->y.raw[1];
+    enemy->x.value += enemy->vx.value;
+    enemy->y.value += enemy->vy.value;
+    dx = enemy->x.raw[1] - dx;
+    dy = enemy->y.raw[1] - dy;
+
+    // 表示座標に変化があればスプライトを動かす
+    if (dx || dy) {
+        uint8_t si = enemy->si;
+        for (uint8_t i = 0; i < enemy->sn; i++) {
+            VGS0_ADDR_OAM[SP_ENEMY + si].x += dx;
+            VGS0_ADDR_OAM[SP_ENEMY + si].y += dy;
+            si += 1;
+            si &= 0x7F;
+        }
+    }
+}
+
+static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
+{
+    // 自機ショットとの当たり判定チェック
+    if (0 == enemy->flag || 0 == enemy->check) {
+        return;
+    }
+    uint8_t et = enemy->y.raw[1];
+    et += hittbl[enemy->type].y;
+    uint8_t eb = et;
+    eb += hittbl[enemy->type].height;
+    uint8_t el = enemy->x.raw[1];
+    el += hittbl[enemy->type].x;
+    uint8_t er = el;
+    er += hittbl[enemy->type].width;
+    for (uint8_t i = 0; i < 8; i++) {
+        Shot* shot = &GV->shot[i];
+        if (shot->flag) {
+            // Y座標が範囲内かチェック
+            if (shot->y.raw[1] < eb && et < shot->y.raw[1] + 8) {
+                // X座標が範囲内ならヒット
+                if (shot->x < er && el < shot->x + 8) {
+                    if (0 != enemy->type) {
+                        add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
+                    }
+                    GV->shot[i].flag = 0;
+                    VGS0_ADDR_OAM[SP_SHOT + i].attr = 0x00;
+                    add_enemy(ET_BOMBER, GV->shot[i].x - 8, GV->shot[i].y.raw[1] - 8);
+                    if (0 != enemy->type) {
+                        enemy->flag = 0;
+                    }
+                    return;
+                }
+            }
+        }
+    }
+}
+
+static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
+{
+    // 爆発の当たり判定チェック（爆発以外のものを誘爆）
+    if (0 == bomb->flag || 0 == bomb->check || ET_BOMBER != bomb->type) {
+        return;
+    }
+    uint8_t bt = bomb->y.raw[1] + 8;
+    uint8_t bb = bomb->y.raw[1] + 16;
+    uint8_t bl = bomb->x.raw[1] + 8;
+    uint8_t br = bomb->x.raw[1] + 16;
+    for (uint8_t i = 0; i < 32; i++) {
+        Enemy* enemy = &GV->enemy[i];
+        if (ET_BOMBER != enemy->type && enemy->flag && enemy->check) {
+            // Y座標が範囲内かチェック
+            uint8_t et = enemy->y.raw[1];
+            et += hittbl[enemy->type].y;
+            uint8_t eb = et;
+            eb += hittbl[enemy->type].height;
+            if (bt < eb && et < bb) {
+                // X座標が範囲内ならヒット
+                uint8_t el = enemy->x.raw[1];
+                el += hittbl[enemy->type].x;
+                uint8_t er = el;
+                er += hittbl[enemy->type].width;
+                if (bl < er && el < br) {
+                    add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
+                    erase_enemy(i);
+                }
+            }
+        }
+    }
+}
+
 void move_enemy(void) __z88dk_fastcall
 {
-    uint8_t i, j, k, si;
-    uint8_t dx, dy;
+    uint8_t i;
     for (i = 0; i < 32; i++) {
-        if (GV->enemy[i].flag) {
-            switch (GV->enemy[i].type) {
-                case ET_BOMBER: move_bomber(&GV->enemy[i]); break;
-                case ET_MARINE_LR: move_marineLR(&GV->enemy[i]); break;
+        Enemy* enemy = &GV->enemy[i];
+        if (enemy->flag) {
+            switch (enemy->type) {
+                case ET_BOMBER: move_bomber(enemy); break;
+                case ET_MARINE_LR: move_marineLR(enemy); break;
             }
-            // 自機ショットとの当たり判定チェック
-            if (GV->enemy[i].flag && GV->enemy[i].check) {
-                for (j = 0; j < 8; j++) {
-                    if (GV->shot[j].flag) {
-                        // Y座標が範囲内かチェック
-                        uint8_t et = GV->enemy[i].y.raw[1];
-                        et += hittbl[GV->enemy[i].type].y;
-                        uint8_t eb = et;
-                        eb += hittbl[GV->enemy[i].type].height;
-                        if (GV->shot[j].y.raw[1] < eb && et < GV->shot[j].y.raw[1] + 8) {
-                            // X座標が範囲内ならヒット
-                            uint8_t el = GV->enemy[i].x.raw[1];
-                            el += hittbl[GV->enemy[i].type].x;
-                            uint8_t er = el;
-                            er += hittbl[GV->enemy[i].type].width;
-                            if (GV->shot[j].x < er && el < GV->shot[j].x + 8) {
-                                if (0 != GV->enemy[i].type) {
-                                    add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
-                                }
-                                GV->shot[j].flag = 0;
-                                VGS0_ADDR_OAM[SP_SHOT + j].attr = 0x00;
-                                add_enemy(ET_BOMBER, GV->shot[j].x - 8, GV->shot[j].y.raw[1] - 8);
-                                if (0 != GV->enemy[i].type) {
-                                    GV->enemy[i].flag = 0;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            // 爆発の当たり判定チェック（爆発以外のものを誘爆）
-            if (GV->enemy[i].flag && GV->enemy[i].check && ET_BOMBER == GV->enemy[i].type) {
-                uint8_t bt = GV->enemy[i].y.raw[1] + 8;
-                uint8_t bb = GV->enemy[i].y.raw[1] + 16;
-                uint8_t bl = GV->enemy[i].x.raw[1] + 8;
-                uint8_t br = GV->enemy[i].x.raw[1] + 16;
-                for (j = 0; j < 32; j++) {
-                    if (ET_BOMBER != GV->enemy[j].type && GV->enemy[j].flag && GV->enemy[j].check) {
-                        // Y座標が範囲内かチェック
-                        uint8_t et = GV->enemy[j].y.raw[1];
-                        et += hittbl[GV->enemy[j].type].y;
-                        uint8_t eb = et;
-                        eb += hittbl[GV->enemy[j].type].height;
-                        if (bt < eb && et < bb) {
-                            // X座標が範囲内ならヒット
-                            uint8_t el = GV->enemy[j].x.raw[1];
-                            el += hittbl[GV->enemy[j].type].x;
-                            uint8_t er = el;
-                            er += hittbl[GV->enemy[j].type].width;
-                            if (bl < er && el < br) {
-                                add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
-                                erase_enemy(j);
-                            }
-                        }
-                    }
-                }
-            }
-            if (GV->enemy[i].flag) {
-                // 座標更新
-                dx = GV->enemy[i].x.raw[1];
-                dy = GV->enemy[i].y.raw[1];
-                GV->enemy[i].x.value += GV->enemy[i].vx.value;
-                GV->enemy[i].y.value += GV->enemy[i].vy.value;
-                dx = GV->enemy[i].x.raw[1] - dx;
-                dy = GV->enemy[i].y.raw[1] - dy;
-                // 表示座標に変化があればスプライトを動かす
-                if (0 != dx || 0 != dy) {
-                    si = GV->enemy[i].si;
-                    for (j = 0; j < GV->enemy[i].sn; j++) {
-                        k = SP_ENEMY + si;
-                        VGS0_ADDR_OAM[k].x += dx;
-                        VGS0_ADDR_OAM[k].y += dy;
-                        si += 1;
-                        si &= 0x7F;
-                    }
-                }
-            } else {
-                // 削除
+            if (0 == enemy->flag) {
                 erase_enemy(i);
+            } else {
+                update_enemy_position(enemy);
+                check_hit_pshot(enemy);
+                if (0 == enemy->flag) {
+                    erase_enemy(i);
+                } else {
+                    check_hit_bomb(enemy);
+                }
             }
         }
     }
