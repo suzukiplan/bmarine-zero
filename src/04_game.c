@@ -33,7 +33,7 @@ void game_main(void)
         a++;
 
         if (a == 0x20 || a == 0x40) {
-            add_enemy(1, 0, (get_random(&GV->ridx) & 0x3F) + 0x50);
+            add_enemy(1, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
         }
 
         // 追加可能なら星と泡を追加
