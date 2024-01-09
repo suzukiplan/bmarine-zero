@@ -151,6 +151,20 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     GV->enemyIndex &= 0x1F;
 }
 
+static void erase_enemy(uint8_t index) __z88dk_fastcall
+{
+    GV->enemy[index].flag = 0;
+    uint8_t si = GV->enemy[index].si;
+    uint8_t i, n;
+    for (i = 0; i < GV->enemy[index].sn; i++) {
+        n = SP_ENEMY + si;
+        VGS0_ADDR_OAM[n].ptn = 0x00;
+        VGS0_ADDR_OAM[n].attr = 0x00;
+        si += 1;
+        si &= 0x7F;
+    }
+}
+
 void move_enemy(void) __z88dk_fastcall
 {
     uint8_t i, j, k, si;
@@ -183,6 +197,30 @@ void move_enemy(void) __z88dk_fastcall
                                 GV->shot[j].flag = 0;
                                 VGS0_ADDR_OAM[SP_SHOT + j].attr = 0x00;
                                 add_enemy(ET_BOMBER, GV->shot[j].x - 8, GV->shot[j].y.raw[1] - 8);
+                                add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
+                            }
+                        }
+                    }
+                }
+            }
+            // 爆発の当たり判定チェック（爆発以外のものを誘爆）
+            if (0 != GV->enemy[i].flag && ET_BOMBER == GV->enemy[i].type) {
+                for (j = 0; j < 32; j++) {
+                    if (0 != GV->enemy[j].flag && ET_BOMBER != GV->enemy[j].type) {
+                        // Y座標が範囲内かチェック
+                        uint8_t et = GV->enemy[j].y.raw[1];
+                        et += hittbl[GV->enemy[j].type].y;
+                        uint8_t eb = et;
+                        eb += hittbl[GV->enemy[j].type].height;
+                        if (GV->enemy[i].y.raw[1] + 4 < eb && et < GV->enemy[i].y.raw[1] + 20) {
+                            // X座標が範囲内ならヒット
+                            uint8_t el = GV->enemy[j].x.raw[1];
+                            el += hittbl[GV->enemy[j].type].x;
+                            uint8_t er = el;
+                            er += hittbl[GV->enemy[j].type].width;
+                            if (GV->enemy[i].x.raw[1] + 4 < er && el < GV->enemy[i].x.raw[1] + 20) {
+                                erase_enemy(j);
+                                add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                             }
                         }
                     }
@@ -209,14 +247,7 @@ void move_enemy(void) __z88dk_fastcall
                 }
             } else {
                 // 削除
-                si = GV->enemy[i].si;
-                for (j = 0; j < GV->enemy[i].sn; j++) {
-                    k = SP_ENEMY + si;
-                    VGS0_ADDR_OAM[k].ptn = 0x00;
-                    VGS0_ADDR_OAM[k].attr = 0x00;
-                    si += 1;
-                    si &= 0x7F;
-                }
+                erase_enemy(i);
             }
         }
     }
