@@ -72,12 +72,15 @@ clean:
 game.pkg: ${PROJECT}.rom bgm.dat se.dat
 	${MAKEPKG} -o game.pkg -r ${PROJECT}.rom -b bgm.dat -s se.dat
 
-${PROJECT}.rom: ${CHR_FILES} program.bin
+${PROJECT}.rom: program.bin ${CHR_FILES}
 	${MAKEROM} ${PROJECT}.rom program.bin ${CHR_FILES}
 
-program.bin: ${SRC_FILES} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
+program.bin: palette.h ${SRC_FILES} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
 	${LINK}
 	makebin -s 32768 program.ihx $@
+
+palette.h: sprite.bmp
+	${BMP2CHR} $< sprite.chr palette.h
 
 se.dat: ${WAV_FILES}
 	${MAKESE} $@ ${WAV_FILES}
@@ -87,14 +90,14 @@ bgm.dat: ${BGM_FILES}
 
 .SUFFIXES: .rel .src
 
-%.rel: %.c header.h
+%.rel: %.c header.h palette.h
 	make execute-format FILENAME=$<
 	${COMPILE} $<
 
 .SUFFIXES: .chr .bmp
 
 %.chr: %.bmp
-	${BMP2CHR} $< $@ palette.h
+	${BMP2CHR} $< $@
 
 .SUFFIXES: .bgm .mml
 
