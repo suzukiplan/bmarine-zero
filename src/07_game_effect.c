@@ -2,54 +2,38 @@
 
 void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
 {
-    GV->sprayIndex &= 0x0F;
     GV->spray[GV->sprayIndex].sn = sn;
     GV->spray[GV->sprayIndex].t = 0;
-    uint8_t i = SP_SPRAY + GV->sprayIndex;
-    VGS0_ADDR_OAM[i].x = x;
-    VGS0_ADDR_OAM[i].y = y;
-    VGS0_ADDR_OAM[i].ptn = sn;
-    VGS0_ADDR_OAM[i].attr = attr;
+    vgs0_oam_set(SP_SPRAY + GV->sprayIndex, x, y, attr, sn, 0, 0);
     GV->sprayIndex += 1;
+    GV->sprayIndex &= 0x0F;
 }
 
 void add_dust_ground(uint8_t x, uint8_t y)
 {
-    GV->dustIndex &= 0x0F;
     GV->dust[GV->dustIndex].flag = 1;
     GV->dust[GV->dustIndex].x.raw[1] = x;
     GV->dust[GV->dustIndex].y.raw[1] = y;
     GV->dust[GV->dustIndex].vx = 0;
-
-    uint8_t r = get_random(&GV->ridx) & 0x1F;
-    GV->dust[GV->dustIndex].sx = r;
-
+    GV->dust[GV->dustIndex].sx = get_random(&GV->ridx) & 0x1F;
     if (GV->dustIndex & 0x01) {
         GV->dust[GV->dustIndex].sx = -GV->dust[GV->dustIndex].sx;
     }
-
-    r = get_random(&GV->ridx) & 0x1F;
-    GV->dust[GV->dustIndex].sy = r;
-
-    r = get_random(&GV->ridx);
-    if (r < 0xC0) {
+    GV->dust[GV->dustIndex].sy = get_random(&GV->ridx) & 0x1F;
+    if (get_random(&GV->ridx) < 0xC0) {
         GV->dust[GV->dustIndex].sy = -GV->dust[GV->dustIndex].sy;
     }
-
-    r = get_random(&GV->ridx);
-    GV->dust[GV->dustIndex].vy = r;
+    GV->dust[GV->dustIndex].vy = get_random(&GV->ridx);
     GV->dust[GV->dustIndex].vy <<= 1;
     GV->dust[GV->dustIndex].vy = -GV->dust[GV->dustIndex].vy;
 
-    uint8_t s = GV->dustIndex;
-    s += SP_DUST;
-    vgs0_oam_set(s, x, y, 0x83, 0x14, 0, 0);
+    vgs0_oam_set(SP_DUST + GV->dustIndex, x, y, 0x83, 0x14, 0, 0);
     GV->dustIndex++;
+    GV->dustIndex &= 0x0F;
 }
 
 void add_dust_air(uint8_t x, uint8_t y)
 {
-    GV->dustIndex &= 0x0F;
     GV->dust[GV->dustIndex].flag = 1;
     GV->dust[GV->dustIndex].x.raw[1] = x;
     GV->dust[GV->dustIndex].y.raw[1] = y;
@@ -65,16 +49,14 @@ void add_dust_air(uint8_t x, uint8_t y)
     }
     GV->dust[GV->dustIndex].vx = get_random(&GV->ridx);
     GV->dust[GV->dustIndex].vy = get_random(&GV->ridx);
-
-    uint8_t s = GV->dustIndex;
-    s += SP_DUST;
     switch (GV->dustIndex & 3) {
-        case 0: vgs0_oam_set(s, x, y, 0x83, 0x14, 0, 0); break;
-        case 1: vgs0_oam_set(s, x, y, 0x80, 0x40, 0, 0); break;
-        case 2: vgs0_oam_set(s, x, y, 0x80, 0x50, 0, 0); break;
-        case 3: vgs0_oam_set(s, x, y, 0x84, 0x60, 0, 0); break;
+        case 0: vgs0_oam_set(SP_DUST + GV->dustIndex, x, y, 0x83, 0x14, 0, 0); break;
+        case 1: vgs0_oam_set(SP_DUST + GV->dustIndex, x, y, 0x80, 0x40, 0, 0); break;
+        case 2: vgs0_oam_set(SP_DUST + GV->dustIndex, x, y, 0x80, 0x50, 0, 0); break;
+        case 3: vgs0_oam_set(SP_DUST + GV->dustIndex, x, y, 0x84, 0x60, 0, 0); break;
     }
     GV->dustIndex++;
+    GV->dustIndex &= 0x0F;
 }
 
 void add_star(void) __z88dk_fastcall
@@ -130,7 +112,7 @@ void add_bubble(void) __z88dk_fastcall
 
 void screen_effect_proc(uint8_t a) __z88dk_fastcall
 {
-    uint8_t i, j;
+    uint8_t i;
     for (i = 0; i < 16; i++) {
         // 水しぶき & けむり
         if (GV->spray[i].sn) {
@@ -151,16 +133,14 @@ void screen_effect_proc(uint8_t a) __z88dk_fastcall
             GV->dust[i].flag &= 0x1F;
             GV->dust[i].x.value += GV->dust[i].vx;
             GV->dust[i].y.value += GV->dust[i].vy;
-            j = i;
-            j += SP_DUST;
             if (0 == GV->dust[i].flag || 248 <= GV->dust[i].x.raw[1] || 192 <= GV->dust[i].y.raw[1]) {
                 GV->dust[i].flag = 0;
-                VGS0_ADDR_OAM[j].attr = 0x00;
+                VGS0_ADDR_OAM[SP_DUST + i].attr = 0x00;
             } else {
                 GV->dust[i].vx += GV->dust[i].sx;
                 GV->dust[i].vy += GV->dust[i].sy;
-                VGS0_ADDR_OAM[j].x = GV->dust[i].x.raw[1];
-                VGS0_ADDR_OAM[j].y = GV->dust[i].y.raw[1];
+                VGS0_ADDR_OAM[SP_DUST + i].x = GV->dust[i].x.raw[1];
+                VGS0_ADDR_OAM[SP_DUST + i].y = GV->dust[i].y.raw[1];
             }
         }
         // 星
