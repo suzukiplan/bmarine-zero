@@ -99,6 +99,7 @@ static const rect_t hittbl[3] = {
     {0, 0, 24, 16}    // 2: 潜水艦 (右から左)
 };
 
+// 敵を追加
 void add_enemy(uint8_t type, uint8_t x, uint8_t y)
 {
     uint8_t i, j;
@@ -158,6 +159,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     GV->enemyIndex &= 0x1F;
 }
 
+// 敵を削除
 static void erase_enemy(Enemy* enemy) __z88dk_fastcall
 {
     enemy->flag = 0;
@@ -167,6 +169,7 @@ static void erase_enemy(Enemy* enemy) __z88dk_fastcall
     }
 }
 
+// 座標更新
 static void update_enemy_position(Enemy* enemy) __z88dk_fastcall
 {
     uint8_t dx = enemy->x.raw[1];
@@ -185,9 +188,9 @@ static void update_enemy_position(Enemy* enemy) __z88dk_fastcall
     }
 }
 
+// 自機ショットとの当たり判定チェック
 static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
 {
-    // 自機ショットとの当たり判定チェック
     if (0 == enemy->flag || 0 == enemy->check) {
         return;
     }
@@ -222,9 +225,9 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
     }
 }
 
+// 爆発の当たり判定チェック（爆発以外のものを誘爆）
 static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
 {
-    // 爆発の当たり判定チェック（爆発以外のものを誘爆）
     if (0 == bomb->check || ET_BOMBER != bomb->type) {
         return; // I'm not explosion
     }
