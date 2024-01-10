@@ -237,14 +237,12 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
                 // X座標が範囲内ならヒット
                 if (shot->x < er && el < shot->x + 8) {
                     if (0 != enemy->type) {
+                        erase_enemy(enemy);
                         add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                     }
                     GV->shot[i].flag = 0;
                     VGS0_ADDR_OAM[SP_SHOT + i].attr = 0x00;
                     add_enemy(ET_BOMBER, GV->shot[i].x - 8, GV->shot[i].y.raw[1] - 8);
-                    if (0 != enemy->type) {
-                        enemy->flag = 0;
-                    }
                     increment_hit_count();
                     return;
                 }
@@ -278,8 +276,8 @@ static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
                 uint8_t er = el;
                 er += hittbl[enemy->type].width;
                 if (bl < er && el < br) {
-                    add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                     erase_enemy(enemy);
+                    add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                     increment_hit_count();
                 }
             }
@@ -303,9 +301,7 @@ void move_enemy(void) __z88dk_fastcall
             } else {
                 update_enemy_position(enemy);
                 check_hit_pshot(enemy);
-                if (0 == enemy->flag) {
-                    erase_enemy(enemy);
-                } else {
+                if (0 != enemy->flag) {
                     check_hit_bomb(enemy);
                 }
             }
