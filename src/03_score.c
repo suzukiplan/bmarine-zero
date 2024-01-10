@@ -121,7 +121,7 @@ void hit_print() __z88dk_fastcall
             }
         }
     }
-    // 　ステータス変化に応じたOAM更新
+    // ステータス変化に応じたOAM更新
     switch (GV->hstat) {
         case 0: { // 初期状態
             if (10 < GV->hit) {
@@ -166,6 +166,7 @@ void hit_print() __z88dk_fastcall
         case 100: { // 退避状態
             uint8_t done = 1;
             for (uint8_t i = 0; i < 6; i++) {
+                VGS0_ADDR_OAM[SP_HIT + i].ptn |= 0x08;
                 if (VGS0_ADDR_OAM[SP_HIT + i].x < 240) {
                     VGS0_ADDR_OAM[SP_HIT + i].x++;
                     if (240 <= VGS0_ADDR_OAM[SP_HIT + i].x) {
