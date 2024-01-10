@@ -1,14 +1,10 @@
 # WIP: Battle Marine for VGS-Zero
 
-「Battle Marine」（バトルマリーン）は固定画面弾幕海戦シューティングゲームです。
+2013 年にスマートフォン向けゲームとしてリリース、その後 2019 年に [ファミコンに移植](https://github.com/suzukiplan/battle-marine-fc) されたあの「Battle Marine」（バトルマリーン）が [VGS-Zero](https://github.com/suzukiplan/vgszero) 対応ソフト第1弾として満を持して復活。
 
-2013 年にスマートフォン向けゲームとしてリリース、その後 2019 年に [ファミコンに移植](https://github.com/suzukiplan/battle-marine-fc) されました。
+今回の Battle Marine は、従来までの「スナイプ＆ショット」の楽しさを継承しつつ、連魂（(C)SUZUKIPLAN）で好評だった「誘爆」によるコンボシステムを採用。
 
-今回、VGS-Zero 対応ソフト第1弾としてリニューアル移植。
-
-潜水艦、魚、カニを魚雷で DESTROY THEM ALL!
-
-鳥のう○こに気をつけろ!!
+目指せ 999HIT!!
 
 ## How to Use (WIP)
 
@@ -39,6 +35,10 @@
 >
 > キー配置は [コチラ](https://github.com/suzukiplan/vgszero?tab=readme-ov-file#configsys) のドキュメントを参考にして [config.sys](./image/config.sys) を編集してください。
 
+テレビではなくパソコンでプレイしたい場合、HDMI 対応のキャプチャーボードを利用して [OBS](https://obsproject.com/ja) などを用いれば簡単にプレイできるものと思われます。
+
+本ゲームプレイ動画のインターネット動画配信サイトでの利用（収益化配信を含む）には制限がないので、[OBS](https://obsproject.com/ja) でそのまま ニコニコ生放送 や YouTube Live などで実況配信をしていただくことも可能です。もちろん、インタラクティブ配信（生放送）に限らず VOD 配信への制限も無いので、撮影した動画を編集してニコニコ動画やYouTubeへアップロードしていただいても問題ありません。（事前・事後の連絡も不要です）
+
 ### Launch Game
 
 [image](./image) ディレクトリ配下のファイルを FAT32 フォーマットされた SD カードのルートディレクトリへ配置して、RaspberryPi Zero 2W に挿入して電源投入すればゲームが起動します。
@@ -53,5 +53,9 @@
 - A ボタン: ジャンプ
 
 ## Game Play
+
+TODO
+
+## License
 
 TODO
