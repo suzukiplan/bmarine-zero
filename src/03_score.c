@@ -50,6 +50,10 @@ void score_calc(void) __z88dk_fastcall
             GV->sadd[i]--;
         }
     }
+    if (0 < GV->sadd[7]) {
+        score_increment(7);
+        GV->sadd[7]--;
+    }
 }
 
 // 指定ケタ（0: 10の位, 7: 億の位）のスコアを加算
