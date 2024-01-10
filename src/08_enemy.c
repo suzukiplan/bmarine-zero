@@ -160,7 +160,6 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
         GV->espIndex += 1;
         GV->espIndex &= 0x7F;
     }
-    score_increment(0);
     GV->enemyIndex += 1;
     GV->enemyIndex &= 0x1F;
 }
@@ -194,6 +193,22 @@ static void update_enemy_position(Enemy* enemy) __z88dk_fastcall
     }
 }
 
+static void increment_hit_count() __z88dk_fastcall
+{
+    GV->hit++;
+    if (GV->hit < 10) {
+        GV->sadd[0] += GV->hit;
+    } else if (GV->hit < 100) {
+        GV->sadd[1] += GV->hit >> 3;
+        GV->sadd[0] += GV->hit & 0x0F;
+    } else {
+        GV->sadd[2] += GV->hit >> 5;
+        GV->sadd[1] += GV->hit >> 4;
+        GV->sadd[0] += GV->hit & 0x0F;
+    }
+    GV->hkt = HIT_KEEP_TIME;
+}
+
 // 自機ショットとの当たり判定チェック
 static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
 {
@@ -224,8 +239,7 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
                     if (0 != enemy->type) {
                         enemy->flag = 0;
                     }
-                    GV->hit++;
-                    GV->hkt = HIT_KEEP_TIME;
+                    increment_hit_count();
                     return;
                 }
             }
@@ -260,8 +274,7 @@ static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
                 if (bl < er && el < br) {
                     add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
                     erase_enemy(enemy);
-                    GV->hit++;
-                    GV->hkt = HIT_KEEP_TIME;
+                    increment_hit_count();
                 }
             }
         }

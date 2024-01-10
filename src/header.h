@@ -115,6 +115,7 @@ typedef struct {
 typedef struct {
     uint8_t hi[8];          // ハイスコア
     uint8_t sc[8];          // スコア
+    uint8_t sadd[8];        // 桁毎のスコア加算値
     uint8_t ridx;           // 乱数インデクス
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
     uint16_t hit;           // コンボ数
@@ -145,9 +146,12 @@ extern const uint16_t random[256];
 // サブルーチン
 void init_palette(void);
 void title(void);
+
+void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;
 void score_increment(uint8_t keta) __z88dk_fastcall;
 void hit_print() __z88dk_fastcall;
+
 void game_main(void);
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
 

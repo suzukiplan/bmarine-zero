@@ -38,6 +38,20 @@ void score_print(NameTable* nam) __z88dk_fastcall
     GV->scoreAdded = 0;
 }
 
+void score_calc(void) __z88dk_fastcall
+{
+    for (uint8_t i = 0; i < 7; i++) {
+        while (10 <= GV->sadd[i]) {
+            GV->sadd[i] -= 10;
+            GV->sadd[i + 1] += 1;
+        }
+        if (0 < GV->sadd[i]) {
+            score_increment(i);
+            GV->sadd[i]--;
+        }
+    }
+}
+
 // 指定ケタ（0: 10の位, 7: 億の位）のスコアを加算
 void score_increment(uint8_t keta) __z88dk_fastcall
 {

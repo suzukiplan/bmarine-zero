@@ -74,7 +74,6 @@ void move_player(uint8_t a) __z88dk_fastcall
             GV->player.x.value += GV->player.spd / 2;
             GV->player.y.value += GV->player.jmp;
             GV->player.flight++;
-            score_increment(0);
             GV->player.y.value += GV->player.jmp;
             if (GV->player.jmpKeep) {
                 GV->player.jmp += 55;

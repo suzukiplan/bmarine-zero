@@ -52,6 +52,9 @@ void game_main(void)
         // 画面エフェクトの処理を実行
         screen_effect_proc(a);
 
+        // スコア加算値の計算処理
+        score_calc();
+
         // スコア再描画 & ハイスコア更新（加算時のみ）
         if (GV->scoreAdded) {
             score_print(VGS0_ADDR_FG);
