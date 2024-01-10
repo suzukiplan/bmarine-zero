@@ -124,6 +124,7 @@ typedef struct {
     uint8_t sadd[8];        // 桁毎のスコア加算値
     uint8_t ridx;           // 乱数インデクス
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
+    urect_t hbuf[2];        // 当たり判定用バッファ
     uint16_t hit;           // コンボ数
     uint16_t maxhit;        // 最大コンボ数
     uint16_t hitlog;        // 直前フレームのコンボ数
