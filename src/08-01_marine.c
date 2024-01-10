@@ -10,6 +10,16 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     }
     enemy->n8[0]++;
 
+    // 雷撃
+    if (enemy->n8[2]) {
+        enemy->n8[2]--;
+    } else {
+        if (enemy->x.raw[1] - 16 < GV->player.x.raw[1] + 24 && GV->player.x.raw[1] < enemy->x.raw[1] - 8) {
+            add_enemy(ET_THUNDER, enemy->x.raw[1] - 12, enemy->y.raw[1] - 4);
+            enemy->n8[2] = 13;
+        }
+    }
+
     // クリッピング
     switch (enemy->flag) {
         case 2:

@@ -32,7 +32,7 @@ void game_main(void)
         vgs0_wait_vsync();
         a++;
 
-        if (0 == (a & 0x1F)) {
+        if (0 == (a & 0x3F)) {
             add_enemy(1, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
         }
 

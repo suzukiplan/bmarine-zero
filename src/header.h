@@ -18,6 +18,12 @@
 #define SP_SHOT 232     // 自機ショット (8)
 #define SP_SPRAY 240    // 水しぶき & ショットの煙 (16)
 
+// 敵の種別コード
+#define ET_BOMBER 0    // 爆発
+#define ET_MARINE_LR 1 // 潜水艦
+#define ET_MARINE_RL 2 // 潜水艦
+#define ET_THUNDER 3   // 雷撃
+
 // 固定小数点数
 typedef union {
     uint16_t value;
@@ -171,3 +177,4 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y);
 void move_enemy(void) __z88dk_fastcall;
 void move_bomber(Enemy* enemy) __z88dk_fastcall;
 void move_marineLR(Enemy* enemy) __z88dk_fastcall;
+void move_thunder(Enemy* enemy) __z88dk_fastcall;

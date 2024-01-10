@@ -12,6 +12,7 @@ SRC_FILES += 07_game_effect.rel
 SRC_FILES += 08_enemy.rel
 SRC_FILES += 08-00_bomber.rel
 SRC_FILES += 08-01_marine.rel
+SRC_FILES += 08-03_thunder.rel
 
 # image files
 CHR_FILES = bg.chr
