@@ -123,6 +123,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     }
     GV->enemyIndex = i;
     Enemy* enemy = &GV->enemy[GV->enemyIndex];
+    vgs0_memset((uint16_t)enemy, 0, sizeof(Enemy));
 
     // スプライトに空きがあるかチェック
     for (i = 0; i < tbl_init_sn[type]; i++) {
@@ -141,17 +142,9 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
 
     // テーブルに初期値を設定
     enemy->flag = 1;
-    enemy->n8[0] = 0;
-    enemy->n8[1] = 0;
-    enemy->n8[2] = 0;
-    enemy->n8[3] = 0;
-    enemy->n16.value = 0;
-    enemy->check = 0;
     enemy->type = type;
     enemy->x.raw[1] = x;
     enemy->y.raw[1] = y;
-    enemy->vx.value = 0;
-    enemy->vy.value = 0;
     enemy->sn = tbl_init_sn[type];
 
     // OAMに初期値を設定
