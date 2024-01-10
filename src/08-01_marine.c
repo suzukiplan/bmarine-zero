@@ -13,10 +13,38 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     // 雷撃
     if (enemy->n8[2]) {
         enemy->n8[2]--;
+        enemy->n8[3]++;
+        switch (enemy->n8[3]) {
+            case 1:
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x90;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x91;
+                break;
+            case 3:
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x93;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x94;
+                break;
+            case 5:
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x96;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x97;
+                break;
+            case 9:
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x99;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x9A;
+                break;
+            case 12:
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x9C;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x9D;
+                break;
+            case 15:
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
+                break;
+        }
     } else {
         if (enemy->x.raw[1] - 16 < GV->player.x.raw[1] + 24 && GV->player.x.raw[1] < enemy->x.raw[1] - 8) {
             add_enemy(ET_THUNDER, enemy->x.raw[1] - 12, enemy->y.raw[1] - 4);
-            enemy->n8[2] = 13;
+            enemy->n8[2] = 16;
+            enemy->n8[3] = 0;
         }
     }
 
