@@ -55,48 +55,130 @@ void score_increment(uint8_t keta) __z88dk_fastcall
     }
 }
 
+static const uint8_t hitptn[10] = {0x00, 0x20, 0x40, 0x60, 0x02, 0x22, 0x42, 0x62, 0x04, 0x24};
+static const uint8_t hitspdx[6] = {7, 6, 5, 4, 3, 2};
+static const uint8_t hitposx[6] = {175, 185, 195, 211, 223, 231};
+
 void hit_print() __z88dk_fastcall
 {
-    if (9999 < GV->hit) {
-        GV->hit = 9999;
-        GV->hitstr[0] = '9';
-        GV->hitstr[1] = '9';
-        GV->hitstr[2] = '9';
-        GV->hitstr[3] = '9';
-    } else {
-        if (GV->hit < 1000) {
-            GV->hitstr[0] = ' ';
-        } else {
-            GV->hitstr[0] = GV->hit / 1000;
-            GV->hitstr[0] += '0';
+    // コンボタイマーのチェック
+    if (GV->hkt) {
+        GV->hkt--;
+        if (0 == GV->hkt) {
+            GV->hit = 0;
         }
+    }
 
-        if (GV->hit < 100) {
-            GV->hitstr[1] = ' ';
-        } else {
-            GV->hitstr[1] = GV->hit / 100;
-            GV->hitstr[1] += '0';
-        }
+    // ヒット数の減少を検出した場合、退避状態へ遷移
+    if (GV->hit < GV->hitlog) {
+        GV->hitlog = GV->hit;
+        GV->hstat = 100;
+    }
 
-        if (GV->hit < 10) {
-            GV->hitstr[2] = ' ';
-        } else {
-            GV->hitstr[2] = GV->hit / 10;
-            GV->hitstr[2] += '0';
+    // コンボ数に変化があったのみ更新処理を実行
+    if (GV->hitlog != GV->hit && 10 < GV->hit && GV->hstat < 100) {
+        GV->hitlog = GV->hit;
+        // 最大コンボを更新
+        if (GV->maxhit < GV->hit) {
+            GV->maxhit = GV->hit;
         }
-
-        if (0 < GV->hit) {
-            GV->hitstr[3] = GV->hit % 10;
-            GV->hitstr[3] += '0';
-            GV->hitstr[4] = 'H';
-            GV->hitstr[5] = 'I';
-            GV->hitstr[6] = 'T';
+        // カンスト対応
+        if (999 < GV->hit) {
+            GV->hit = 999;
+            VGS0_ADDR_OAM[SP_HIT].attr = 0x84;
+            VGS0_ADDR_OAM[SP_HIT + 1].attr = 0x84;
+            VGS0_ADDR_OAM[SP_HIT + 2].attr = 0x84;
+            VGS0_ADDR_OAM[SP_HIT + 3].attr = 0x84;
+            VGS0_ADDR_OAM[SP_HIT + 4].attr = 0x84;
+            VGS0_ADDR_OAM[SP_HIT + 5].attr = 0x84;
+            VGS0_ADDR_OAM[SP_HIT].ptn = hitptn[9];
+            VGS0_ADDR_OAM[SP_HIT + 1].attr = hitptn[9];
+            VGS0_ADDR_OAM[SP_HIT + 2].attr = hitptn[9];
         } else {
-            GV->hitstr[3] = ' ';
-            GV->hitstr[4] = ' ';
-            GV->hitstr[5] = ' ';
-            GV->hitstr[6] = ' ';
+            // 100の位のパターン更新
+            uint16_t hit = GV->hit;
+            if (GV->hit < 100) {
+                VGS0_ADDR_OAM[SP_HIT].attr = 0x00;
+            } else {
+                VGS0_ADDR_OAM[SP_HIT].attr = 0x84;
+                VGS0_ADDR_OAM[SP_HIT].ptn = hitptn[hit / 100];
+                hit %= 100;
+            }
+            // 10の位のパターン更新
+            if (GV->hit < 10) {
+                VGS0_ADDR_OAM[SP_HIT + 1].attr = 0x00;
+            } else {
+                VGS0_ADDR_OAM[SP_HIT + 1].attr = 0x84;
+                VGS0_ADDR_OAM[SP_HIT + 1].ptn = hitptn[hit / 10];
+                hit %= 10;
+            }
+            // 1の位のパターン更新
+            if (GV->hit < 1) {
+                VGS0_ADDR_OAM[SP_HIT + 2].attr = 0x00;
+            } else {
+                VGS0_ADDR_OAM[SP_HIT + 2].attr = 0x84;
+                VGS0_ADDR_OAM[SP_HIT + 2].ptn = hitptn[hit];
+            }
         }
-        vgs0_fg_putstr(23, 4, 0x80, GV->hitstr);
+    }
+    // 　ステータス変化に応じたOAM更新
+    switch (GV->hstat) {
+        case 0: { // 初期状態
+            if (10 < GV->hit) {
+                // HITの属性設定
+                VGS0_ADDR_OAM[SP_HIT + 3].ptn = 0xE0;
+                VGS0_ADDR_OAM[SP_HIT + 4].ptn = 0xE2;
+                VGS0_ADDR_OAM[SP_HIT + 5].ptn = 0xE4;
+                VGS0_ADDR_OAM[SP_HIT + 3].attr = 0x84;
+                VGS0_ADDR_OAM[SP_HIT + 4].attr = 0x84;
+                VGS0_ADDR_OAM[SP_HIT + 5].attr = 0x84;
+                // その他の初期値設定
+                for (uint8_t i = 0; i < 6; i++) {
+                    VGS0_ADDR_OAM[SP_HIT + i].bank = BANK_HIT_SP;
+                    VGS0_ADDR_OAM[SP_HIT + i].x = 240;
+                    VGS0_ADDR_OAM[SP_HIT + i].y = 27;
+                    VGS0_ADDR_OAM[SP_HIT + i].widthMinus1 = 1;
+                    VGS0_ADDR_OAM[SP_HIT + i].heightMinus1 = 1;
+                }
+                GV->hstat = 1; // 登場状態へ繊維
+            }
+            break;
+        }
+        case 1: { // 登場状態
+            uint8_t done = 1;
+            for (uint8_t i = 0; i < 6; i++) {
+                VGS0_ADDR_OAM[SP_HIT + i].x -= hitspdx[i];
+                if (VGS0_ADDR_OAM[SP_HIT + i].x < hitposx[i]) {
+                    VGS0_ADDR_OAM[SP_HIT + i].x = hitposx[i];
+                } else {
+                    done = 0;
+                }
+            }
+            if (done) {
+                GV->hstat = 2; // 表示完了状態へ繊維
+            }
+            break;
+        }
+        case 2: { // 表示完了状態
+            // TODO: 何かするかも
+            break;
+        }
+        case 100: { // 退避状態
+            uint8_t done = 1;
+            for (uint8_t i = 0; i < 6; i++) {
+                if (VGS0_ADDR_OAM[SP_HIT + i].x < 240) {
+                    VGS0_ADDR_OAM[SP_HIT + i].x++;
+                    if (240 <= VGS0_ADDR_OAM[SP_HIT + i].x) {
+                        VGS0_ADDR_OAM[SP_HIT + i].attr = 0x00;
+                    } else {
+                        done = 0;
+                    }
+                }
+            }
+            if (done) {
+                GV->hstat = 0; // 初期状態へ戻る
+            }
+            break;
+        }
     }
 }

@@ -1,4 +1,6 @@
 PROJECT = bmarine-zero
+
+# source files
 SRC_FILES = 00_main.rel
 SRC_FILES += 01_tables.rel
 SRC_FILES += 02_title.rel
@@ -10,10 +12,15 @@ SRC_FILES += 07_game_effect.rel
 SRC_FILES += 08_enemy.rel
 SRC_FILES += 08-00_bomber.rel
 SRC_FILES += 08-01_marine.rel
+
+# image files
 CHR_FILES = bg.chr
 CHR_FILES += fg.chr
 CHR_FILES += sprite.chr
 CHR_FILES += sprite_bomb.chr
+CHR_FILES += sprite_hit.chr
+
+# sound effect
 WAV_FILES = se000_start.wav
 WAV_FILES += se001_shot.wav
 WAV_FILES += se002_move.wav
@@ -22,8 +29,11 @@ WAV_FILES += se004_jump.wav
 WAV_FILES += se005_landing.wav
 WAV_FILES += se006_landing2.wav
 WAV_FILES += se007_explosion.wav
+
+# background music
 BGM_FILES = song1.bgm
 BGM_FILES += song2.bgm
+
 VGSHOME = ../vgszero
 BMP2CHR = ${VGSHOME}/tools/bmp2chr/bmp2chr
 VGSMML = ${VGSHOME}/tools/vgsmml/vgsmml

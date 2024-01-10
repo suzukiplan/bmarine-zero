@@ -28,7 +28,6 @@ void game_main(void)
     vgs0_bgm_play(1);
 
     // メインループ
-    uint16_t prevHit = 0xFFFF;
     while (1) {
         vgs0_wait_vsync();
         a++;
@@ -58,16 +57,7 @@ void game_main(void)
             score_print(VGS0_ADDR_FG);
         }
 
-        // ヒット数を描画（※除算が必要なので結構重い）
-        if (GV->hkt) {
-            GV->hkt--;
-            if (0 == GV->hkt) {
-                GV->hit = 0;
-            }
-        }
-        if (prevHit != GV->hit) {
-            prevHit = GV->hit;
-            hit_print();
-        }
+        // ヒット数を描画
+        hit_print();
     }
 }

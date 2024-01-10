@@ -9,8 +9,10 @@
 #define BANK_MAIN_FG 5  // メインFG
 #define BANK_MAIN_SP 6  // メインスプライト
 #define BANK_BOMB_SP 7  // 爆破パターン
+#define BANK_HIT_SP 8   // コンボ・カウンタ
 
 // スプライトの初期位置
+#define SP_HIT 82       // コンボ・カウンタ (6)
 #define SP_ENEMY 88     // 敵 (128)
 #define SP_DUST 216     // 土埃 (16)
 #define SP_SHOT 232     // 自機ショット (8)
@@ -116,8 +118,10 @@ typedef struct {
     uint8_t ridx;           // 乱数インデクス
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
     uint16_t hit;           // コンボ数
+    uint16_t maxhit;        // 最大コンボ数
+    uint16_t hitlog;        // 直前フレームのコンボ数
     uint8_t hkt;            // コンボ数のキープフレーム数
-    uint8_t hitstr[8];      // コンボ数表示用
+    uint8_t hstat;          // コンボ数表示ステータス (0: 非表示, 1: 登場中, 2: 表示中, 3: 退避中)
     Player player;          // プレイヤー
     Shot shot[8];           // プレイヤーショット
     uint8_t shotIndex;      // プレイヤーショット index
