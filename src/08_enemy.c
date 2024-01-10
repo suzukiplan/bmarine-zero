@@ -124,7 +124,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
         while (VGS0_ADDR_OAM[SP_ENEMY + j].ptn != 0x00) {
             j++;
             j &= 0x7F;
-            if (j == GV->enemyIndex) {
+            if (j == GV->espIndex) {
                 return; // 空きなし
             }
         }
