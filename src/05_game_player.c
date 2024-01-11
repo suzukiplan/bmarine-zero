@@ -47,7 +47,7 @@ void move_player(uint8_t a) __z88dk_fastcall
     if (pad & VGS0_JOYPAD_T1) {
         if (0 == GV->player.jmpKeep && 0 == GV->player.jmp) {
             vgs0_se_play(4);
-            GV->player.jmp = -777;
+            GV->player.jmp = -543;
             GV->player.jmpKeep = 1;
             add_spray(GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 5, 0x30, 0x83);
             add_spray(GV->player.x.raw[1] + 4, GV->player.y.raw[1] + 5, 0x30, 0xC3);
@@ -76,9 +76,9 @@ void move_player(uint8_t a) __z88dk_fastcall
             GV->player.flight++;
             GV->player.y.value += GV->player.jmp;
             if (GV->player.jmpKeep) {
-                GV->player.jmp += 55;
+                GV->player.jmp += 23;
             } else {
-                GV->player.jmp += 122;
+                GV->player.jmp += 54;
             }
             if (0x41 < GV->player.y.raw[1]) {
                 vgs0_se_play(5);
