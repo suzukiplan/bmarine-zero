@@ -6,6 +6,7 @@
 #define nThunderWait enemy->n8[2]  /* 雷撃の発射ウェイト */
 #define nMarineAnime enemy->n8[3]  /* 艦体のアニメーション用 */
 #define nPersonality enemy->n8[4]  /* 性格フラグ */
+#define nSurmount enemy->n8[5]     /* 潜水フラグ */
 
 // 1: 潜水艦 (左から右)
 void move_marineLR(Enemy* enemy) __z88dk_fastcall
@@ -33,10 +34,25 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     } else if (3 == nPersonality) {
         // ひきこもりタイプ（底が好き）
         if (enemy->y.raw[1] < 158 && 0 == enemy->vy.raw[1]) {
+            if (0 == nSurmount && 0 == nThunderWait) {
+                nSurmount = 1;
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x51;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x52;
+            }
             enemy->vy.value++;
         } else if (163 < enemy->y.raw[1]) {
+            if (0 != nSurmount && 0 == nThunderWait) {
+                nSurmount = 0;
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
+            }
             enemy->vy.value = 0;
         } else {
+            if (0 != nSurmount && 0 == nThunderWait) {
+                nSurmount = 0;
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
+            }
             if (16 < enemy->vy.value) {
                 enemy->vy.value -= 13;
             }
@@ -69,8 +85,13 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
                 VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x9D;
                 break;
             case 15:
-                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
-                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
+                if (nSurmount) {
+                    VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x51;
+                    VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x52;
+                } else {
+                    VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
+                    VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
+                }
                 break;
         }
     } else {
@@ -128,6 +149,10 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     if (0 == (nFrameCounter & 3)) {
         nPropeller++;
         nPropeller &= 0x03;
-        VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x18 + nPropeller;
+        if (nSurmount) {
+            VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x54 + nPropeller;
+        } else {
+            VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x18 + nPropeller;
+        }
     }
 }
