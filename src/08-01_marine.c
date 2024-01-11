@@ -44,6 +44,7 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
         } else if (163 < enemy->y.raw[1]) {
             if (0 != nSurmount && 0 == nThunderWait) {
                 nSurmount = 0;
+                nMarineAnime = 0;
                 VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
                 VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
             }
@@ -51,6 +52,7 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
         } else {
             if (0 != nSurmount && 0 == nThunderWait) {
                 nSurmount = 0;
+                nMarineAnime = 0;
                 VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
                 VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
             }
@@ -100,6 +102,42 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
             add_enemy(ET_THUNDER, enemy->x.raw[1] - 12, enemy->y.raw[1] - 4);
             nThunderWait = 16;
             nMarineAnime = 0;
+        } else if (0 == nSurmount) {
+            // 平泳ぎ
+            if (0 == (nFrameCounter & 0x03)) {
+                nMarineAnime++;
+                nMarineAnime &= 0x07;
+                switch (nMarineAnime) {
+                    case 0:
+                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
+                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
+                        break;
+                    case 1:
+                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB0;
+                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xB1;
+                        break;
+                    case 2:
+                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB3;
+                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xB4;
+                        break;
+                    case 3:
+                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB6;
+                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xB7;
+                        break;
+                    case 4:
+                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB9;
+                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xBA;
+                        break;
+                    case 6:
+                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xBC;
+                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xBD;
+                        break;
+                    case 7:
+                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB3;
+                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xB4;
+                        break;
+                }
+            }
         }
     }
 
