@@ -1,5 +1,12 @@
 #include "header.h"
 
+// n8 変数名の定義
+#define nFrameCounter enemy->n8[0] /* フレームカウンタ */
+#define nPropeller enemy->n8[1]    /* プロペラのアニメーション用 */
+#define nThunderWait enemy->n8[2]  /* 雷撃の発射ウェイト */
+#define nMarineAnime enemy->n8[3]  /* 艦体のアニメーション用 */
+#define nPersonality enemy->n8[4]  /* 性格フラグ */
+
 // 1: 潜水艦 (左から右)
 void move_marineLR(Enemy* enemy) __z88dk_fastcall
 {
@@ -7,14 +14,40 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
         enemy->flag = 2;
         enemy->vx.value = get_random(&GV->ridx);
         enemy->vx.value += 0x0040;
+        nPersonality = get_random(&GV->ridx) & 0x03;
     }
-    enemy->n8[0]++;
+    nFrameCounter++;
+
+    // 性格別の行動変化
+    if (1 == nPersonality) {
+        // 片思いタイプ（自機が好き）
+        if (enemy->x.raw[1] < GV->player.x.raw[1]) {
+            if (enemy->vx.raw[1] < 5) {
+                enemy->vx.value += 7;
+            }
+        } else {
+            if (0 < enemy->vx.raw[1]) {
+                enemy->vx.value -= 133;
+            }
+        }
+    } else if (3 == nPersonality) {
+        // ひきこもりタイプ（底が好き）
+        if (enemy->y.raw[1] < 158 && 0 == enemy->vy.raw[1]) {
+            enemy->vy.value++;
+        } else if (163 < enemy->y.raw[1]) {
+            enemy->vy.value = 0;
+        } else {
+            if (16 < enemy->vy.value) {
+                enemy->vy.value -= 13;
+            }
+        }
+    }
 
     // 雷撃
-    if (enemy->n8[2]) {
-        enemy->n8[2]--;
-        enemy->n8[3]++;
-        switch (enemy->n8[3]) {
+    if (nThunderWait) {
+        nThunderWait--;
+        nMarineAnime++;
+        switch (nMarineAnime) {
             case 1:
                 VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x90;
                 VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x91;
@@ -43,8 +76,8 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     } else {
         if (enemy->x.raw[1] - 16 < GV->player.x.raw[1] + 24 && GV->player.x.raw[1] < enemy->x.raw[1] - 8) {
             add_enemy(ET_THUNDER, enemy->x.raw[1] - 12, enemy->y.raw[1] - 4);
-            enemy->n8[2] = 16;
-            enemy->n8[3] = 0;
+            nThunderWait = 16;
+            nMarineAnime = 0;
         }
     }
 
@@ -73,7 +106,7 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
             if (enemy->x.raw[1] < 28) {
                 enemy->flag++;
             } else {
-                if (0 == (enemy->n8[0] & 0x03)) {
+                if (0 == (nFrameCounter & 0x03)) {
                     add_spray(enemy->x.raw[1] - 28, enemy->y.raw[1] + 4, 0x38, 0x83);
                 }
             }
@@ -92,9 +125,9 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     }
 
     // プロペラを回転
-    if (0 == (enemy->n8[0] & 3)) {
-        enemy->n8[1]++;
-        enemy->n8[1] &= 0x03;
-        VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x18 + enemy->n8[1];
+    if (0 == (nFrameCounter & 3)) {
+        nPropeller++;
+        nPropeller &= 0x03;
+        VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x18 + nPropeller;
     }
 }
