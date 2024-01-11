@@ -20,7 +20,7 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     nFrameCounter++;
 
     // 性格別の行動変化
-    if (1 == nPersonality) {
+    if (1 == nPersonality || 2 == nPersonality) {
         // 片思いタイプ（自機が好き）
         if (enemy->x.raw[1] < GV->player.x.raw[1]) {
             if (enemy->vx.raw[1] < 5) {
@@ -31,7 +31,8 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
                 enemy->vx.value -= 133;
             }
         }
-    } else if (3 == nPersonality) {
+    }
+    if (3 == nPersonality || 2 == nPersonality) {
         // ひきこもりタイプ（底が好き）
         if (enemy->y.raw[1] < 158 && 0 == enemy->vy.raw[1]) {
             if (0 == nSurmount && 0 == nThunderWait) {
