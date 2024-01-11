@@ -30,6 +30,8 @@ WAV_FILES += se004_jump.wav
 WAV_FILES += se005_landing.wav
 WAV_FILES += se006_landing2.wav
 WAV_FILES += se007_explosion.wav
+WAV_FILES += se008_thunder.wav
+WAV_FILES += se009_thunder2.wav
 
 # background music
 BGM_FILES = song1.bgm

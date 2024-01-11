@@ -13,8 +13,10 @@ void move_thunder(Enemy* enemy) __z88dk_fastcall
                 VGS0_ADDR_OAM[enemy->si[0]].attr |= 0x40;
             }
             enemy->n8[2] = 0x1E;
+            vgs0_se_play(9);
         } else {
             enemy->n8[2] = 0x1C;
+            vgs0_se_play(8);
         }
     }
     enemy->check = 1;
