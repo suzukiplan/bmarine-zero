@@ -24,28 +24,6 @@
 #define ET_MARINE_RL 2 // 潜水艦
 #define ET_THUNDER 3   // 雷撃
 
-// 固定小数点数
-typedef union {
-    uint16_t value;
-    uint8_t raw[2];
-} var16_t;
-
-// 矩形 (signed)
-typedef struct {
-    int8_t x;
-    int8_t y;
-    uint8_t width;
-    uint8_t height;
-} rect_t;
-
-// 矩形 (unsigned)
-typedef struct {
-    uint8_t x;
-    uint8_t y;
-    uint8_t width;
-    uint8_t height;
-} urect_t;
-
 // プレイヤー
 typedef struct {
     var16_t x;      // X座標
