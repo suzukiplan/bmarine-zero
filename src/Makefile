@@ -15,7 +15,8 @@ PROGRAM1 += 06_game_pshot.rel
 PROGRAM1 += 07_game_effect.rel
 PROGRAM1 += 08_enemy.rel
 PROGRAM1 += 08-00_bomber.rel
-PROGRAM1 += 08-01_marine.rel
+PROGRAM1 += 08-01_marineLR.rel
+PROGRAM1 += 08-02_marineRL.rel
 PROGRAM1 += 08-03_thunder.rel
 
 # image files

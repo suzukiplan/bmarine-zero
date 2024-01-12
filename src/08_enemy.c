@@ -30,7 +30,7 @@ static uint8_t* get_init_ptn(uint8_t type)
 // 属性定義
 static const uint8_t attr_bomb[1] = {0x85};
 static const uint8_t attr_marineLR[3] = {0x00, 0x00, 0x00};
-static const uint8_t attr_marineRL[3] = {0xC0, 0xC0, 0xC0};
+static const uint8_t attr_marineRL[3] = {0x00, 0x00, 0x00};
 static const uint8_t attr_thunder[1] = {0x84};
 
 static uint8_t* get_init_attr(uint8_t type)
@@ -283,7 +283,9 @@ void move_enemy(void) __z88dk_fastcall
             switch (enemy->type) {
                 case ET_BOMBER: move_bomber(enemy); break;
                 case ET_MARINE_LR: move_marineLR(enemy); break;
+                case ET_MARINE_RL: move_marineRL(enemy); break;
                 case ET_THUNDER: move_thunder(enemy); break;
+                default: erase_enemy(enemy);
             }
             if (0 == enemy->flag) {
                 erase_enemy(enemy);

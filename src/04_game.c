@@ -32,7 +32,8 @@ void submain(uint8_t arg) __z88dk_fastcall
         GV->frame++;
 
         if (0 == (GV->frame & 0x3F)) {
-            add_enemy(1, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
+            add_enemy(ET_MARINE_LR, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
+            add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);
         }
 
         // 追加可能なら星と泡を追加
