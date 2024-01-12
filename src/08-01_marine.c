@@ -8,6 +8,9 @@
 #define nPersonality enemy->n8[4]  /* 性格フラグ */
 #define nSurmount enemy->n8[5]     /* 潜水フラグ */
 
+static const uint8_t swim_ptn[8] = {0x15, 0xB0, 0xB3, 0xB6, 0xB9, 0xB9, 0xBC, 0xB3};
+static const uint8_t bullet_ptn[8] = {0x90, 0x90, 0x93, 0x96, 0x96, 0x99, 0x99, 0x9C};
+
 // 1: 潜水艦 (左から右)
 void move_marineLR(Enemy* enemy) __z88dk_fastcall
 {
@@ -65,29 +68,13 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
     // 雷撃
     if (nThunderWait) {
         nThunderWait--;
-        nMarineAnime++;
-        switch (nMarineAnime) {
-            case 1:
-                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x90;
-                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x91;
-                break;
-            case 3:
-                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x93;
-                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x94;
-                break;
-            case 5:
-                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x96;
-                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x97;
-                break;
-            case 9:
-                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x99;
-                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x9A;
-                break;
-            case 12:
-                VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x9C;
-                VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x9D;
-                break;
-            case 15:
+        if (0 == (nFrameCounter & 0x01)) {
+            nMarineAnime++;
+            nMarineAnime &= 0x07;
+            if (nMarineAnime) {
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = bullet_ptn[nMarineAnime];
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = bullet_ptn[nMarineAnime] + 1;
+            } else {
                 if (nSurmount) {
                     VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x51;
                     VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x52;
@@ -95,7 +82,7 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
                     VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
                     VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
                 }
-                break;
+            }
         }
     } else {
         if (enemy->x.raw[1] - 16 < GV->player.x.raw[1] + 24 && GV->player.x.raw[1] < enemy->x.raw[1] - 8) {
@@ -107,81 +94,47 @@ void move_marineLR(Enemy* enemy) __z88dk_fastcall
             if (0 == (nFrameCounter & 0x03)) {
                 nMarineAnime++;
                 nMarineAnime &= 0x07;
-                switch (nMarineAnime) {
-                    case 0:
-                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0x15;
-                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0x16;
-                        break;
-                    case 1:
-                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB0;
-                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xB1;
-                        break;
-                    case 2:
-                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB3;
-                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xB4;
-                        break;
-                    case 3:
-                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB6;
-                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xB7;
-                        break;
-                    case 4:
-                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB9;
-                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xBA;
-                        break;
-                    case 6:
-                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xBC;
-                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xBD;
-                        break;
-                    case 7:
-                        VGS0_ADDR_OAM[enemy->si[1]].ptn = 0xB3;
-                        VGS0_ADDR_OAM[enemy->si[2]].ptn = 0xB4;
-                        break;
-                }
+                VGS0_ADDR_OAM[enemy->si[1]].ptn = swim_ptn[nMarineAnime];
+                VGS0_ADDR_OAM[enemy->si[2]].ptn = swim_ptn[nMarineAnime] + 1;
             }
         }
     }
 
     // クリッピング
-    switch (enemy->flag) {
-        case 2:
-            if (8 <= enemy->x.raw[1]) {
-                VGS0_ADDR_OAM[enemy->si[2]].attr = 0x80;
-                enemy->flag++;
+    if (2 == enemy->flag) {
+        if (8 <= enemy->x.raw[1]) {
+            VGS0_ADDR_OAM[enemy->si[2]].attr = 0x80;
+            enemy->flag++;
+        }
+    } else if (3 == enemy->flag) {
+        if (24 <= enemy->x.raw[1]) {
+            VGS0_ADDR_OAM[enemy->si[1]].attr = 0x80;
+            enemy->check = 1;
+            enemy->flag++;
+        }
+    } else if (4 == enemy->flag) {
+        if (28 <= enemy->x.raw[1]) {
+            VGS0_ADDR_OAM[enemy->si[0]].attr = 0x80;
+            enemy->flag++;
+        }
+    } else if (5 == enemy->flag) {
+        if (enemy->x.raw[1] < 28) {
+            enemy->flag++;
+        } else {
+            if (0 == (nFrameCounter & 0x03)) {
+                add_spray(enemy->x.raw[1] - 28, enemy->y.raw[1] + 4, 0x38, 0x83);
             }
-            break;
-        case 3:
-            if (24 <= enemy->x.raw[1]) {
-                VGS0_ADDR_OAM[enemy->si[1]].attr = 0x80;
-                enemy->check = 1;
-                enemy->flag++;
-            }
-            break;
-        case 4:
-            if (28 <= enemy->x.raw[1]) {
-                VGS0_ADDR_OAM[enemy->si[0]].attr = 0x80;
-                enemy->flag++;
-            }
-            break;
-        case 5:
-            if (enemy->x.raw[1] < 28) {
-                enemy->flag++;
-            } else {
-                if (0 == (nFrameCounter & 0x03)) {
-                    add_spray(enemy->x.raw[1] - 28, enemy->y.raw[1] + 4, 0x38, 0x83);
-                }
-            }
-            break;
-        case 6:
-            if (8 <= enemy->x.raw[1]) {
-                VGS0_ADDR_OAM[enemy->si[2]].attr = 0x00;
-                enemy->flag++;
-            }
-            break;
-        case 7:
-            if (16 <= enemy->x.raw[1]) {
-                enemy->flag = 0; // 画面アウト
-            }
-            break;
+        }
+    } else if (6 == enemy->flag) {
+        if (8 <= enemy->x.raw[1]) {
+            VGS0_ADDR_OAM[enemy->si[2]].attr = 0x00;
+            enemy->flag++;
+        }
+    } else {
+        if (16 <= enemy->x.raw[1]) {
+            enemy->flag = 0; // 画面アウト
+            return;
+        }
     }
 
     // プロペラを回転
