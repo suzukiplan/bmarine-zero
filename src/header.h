@@ -1,15 +1,19 @@
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
 // バンク定義
-#define BANK_PRG0 0     // プログラム
-#define BANK_PRG1 1     // プログラム
-#define BANK_PRG2 2     // プログラム
-#define BANK_PRG3 3     // プログラム
-#define BANK_MAIN_BG 4  // メインBG
-#define BANK_MAIN_FG 5  // メインFG
-#define BANK_MAIN_SP 6  // メインスプライト
-#define BANK_BOMB_SP 7  // 爆破パターン
-#define BANK_HIT_SP 8   // コンボ・カウンタ
+#define BANK_PRG0_0 0   // プログラム0 page 0
+#define BANK_PRG0_1 1   // プログラム0 page 1
+#define BANK_PRG0_2 2   // プログラム0 page 2
+#define BANK_PRG0_3 3   // プログラム0 page 3
+#define BANK_PRG1_0 4   // プログラム1 page 0
+#define BANK_PRG1_1 5   // プログラム1 page 1
+#define BANK_PRG1_2 6   // プログラム1 page 2
+#define BANK_PRG1_3 7   // プログラム1 page 3
+#define BANK_MAIN_BG 8  // メインBG
+#define BANK_MAIN_FG 9  // メインFG
+#define BANK_MAIN_SP 10 // メインスプライト
+#define BANK_BOMB_SP 11 // 爆破パターン
+#define BANK_HIT_SP 12  // コンボ・カウンタ
 
 // スプライトの初期位置
 #define SP_HIT 82       // コンボ・カウンタ (6)
@@ -131,14 +135,12 @@ extern const uint16_t random[256];
 
 // サブルーチン
 void init_palette(void);
-void title(void);
+void submain(uint8_t arg) __z88dk_fastcall;
 
 void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;
 void score_increment(uint8_t keta) __z88dk_fastcall;
 void hit_print() __z88dk_fastcall;
-
-void game_main(void);
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
 
 void move_player() __z88dk_fastcall;

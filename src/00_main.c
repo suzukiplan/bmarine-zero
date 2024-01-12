@@ -11,6 +11,18 @@ void main(void)
     GV->hi[0] = 3;
     GV->hi[1] = 7;
     GV->hi[2] = 5;
-    title();
-    game_main();
+
+    // タイトル画面へ遷移
+    vgs0_bank0_switch(BANK_PRG0_0);
+    vgs0_bank1_switch(BANK_PRG0_1);
+    vgs0_bank2_switch(BANK_PRG0_2);
+    vgs0_bank3_switch(BANK_PRG0_3);
+    submain(0);
+
+    // ゲームメインへ遷移
+    vgs0_bank0_switch(BANK_PRG1_0);
+    vgs0_bank1_switch(BANK_PRG1_1);
+    vgs0_bank2_switch(BANK_PRG1_2);
+    vgs0_bank3_switch(BANK_PRG1_3);
+    submain(0);
 }

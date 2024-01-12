@@ -1,6 +1,6 @@
 #include "header.h"
 
-void game_main(void)
+void submain(uint8_t arg) __z88dk_fastcall
 {
     uint8_t i;
 

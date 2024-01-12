@@ -1,18 +1,22 @@
 PROJECT = bmarine-zero
 
 # source files
-SRC_FILES = 00_main.rel
-SRC_FILES += 01_tables.rel
-SRC_FILES += 02_score.rel
-SRC_FILES += 03_title.rel
-SRC_FILES += 04_game.rel
-SRC_FILES += 05_game_player.rel
-SRC_FILES += 06_game_pshot.rel
-SRC_FILES += 07_game_effect.rel
-SRC_FILES += 08_enemy.rel
-SRC_FILES += 08-00_bomber.rel
-SRC_FILES += 08-01_marine.rel
-SRC_FILES += 08-03_thunder.rel
+COMMON_SRC = 00_main.rel
+COMMON_SRC += 01_tables.rel
+COMMON_SRC += 02_score.rel
+
+PROGRAM0 = ${COMMON_SRC}
+PROGRAM0 += 03_title.rel
+
+PROGRAM1 = ${COMMON_SRC}
+PROGRAM1 += 04_game.rel
+PROGRAM1 += 05_game_player.rel
+PROGRAM1 += 06_game_pshot.rel
+PROGRAM1 += 07_game_effect.rel
+PROGRAM1 += 08_enemy.rel
+PROGRAM1 += 08-00_bomber.rel
+PROGRAM1 += 08-01_marine.rel
+PROGRAM1 += 08-03_thunder.rel
 
 # image files
 CHR_FILES = bg.chr
@@ -53,11 +57,7 @@ COMMON_FLAGS += --no-std-crt0
 COMPILE = sdcc
 COMPILE += ${COMMON_FLAGS}
 COMPILE += -c
-LINK = sdcc
-LINK += ${COMMON_FLAGS}
-LINK += -Wl${VGSHOME}/lib/sdcc/vgs0.lib
-LINK += -o program.ihx
-LINK += ${SRC_FILES}
+LINK = sdcc ${COMMON_FLAGS} -Wl${VGSHOME}/lib/sdcc/vgs0.lib
 
 all: build
 	cd ${VGSHOME}/src/sdl2 && make
@@ -85,12 +85,16 @@ clean:
 game.pkg: ${PROJECT}.rom bgm.dat se.dat
 	${MAKEPKG} -o game.pkg -r ${PROJECT}.rom -b bgm.dat -s se.dat
 
-${PROJECT}.rom: program.bin ${CHR_FILES}
-	${MAKEROM} ${PROJECT}.rom program.bin ${CHR_FILES}
+${PROJECT}.rom: program0.bin program1.bin ${CHR_FILES}
+	${MAKEROM} ${PROJECT}.rom program0.bin program1.bin ${CHR_FILES}
 
-program.bin: palette.h ${SRC_FILES} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
-	${LINK}
-	makebin -s 32768 program.ihx $@
+program0.bin: palette.h ${PROGRAM0} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
+	${LINK} -o program0.ihx ${PROGRAM0}
+	makebin -s 32768 program0.ihx $@
+
+program1.bin: palette.h ${PROGRAM1} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
+	${LINK} -o program1.ihx ${PROGRAM1}
+	makebin -s 32768 program1.ihx $@
 
 palette.h: sprite.bmp
 	${BMP2CHR} $< sprite.chr palette.h

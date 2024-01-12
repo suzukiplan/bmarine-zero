@@ -20,7 +20,7 @@ static const int8_t rasterTable[32] = {
     0, 0, -1, -1, -2, -2, -3, -3,
     -4, -4, -3, -3, -2, -2, -1, -1};
 
-void title(void)
+void submain(uint8_t arg) __z88dk_fastcall
 {
     // DPM を設定
     *VGS0_ADDR_BG_DPM = BANK_MAIN_BG;
