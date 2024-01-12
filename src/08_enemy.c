@@ -289,8 +289,9 @@ void move_enemy(void) __z88dk_fastcall
                 erase_enemy(enemy);
             } else {
                 update_enemy_position(enemy);
-                check_hit_pshot(enemy);
-                if (0 != enemy->flag) {
+                if (GV->frame & 1) {
+                    check_hit_pshot(enemy);
+                } else if (0 != enemy->flag) {
                     check_hit_bomb(enemy);
                 }
             }
