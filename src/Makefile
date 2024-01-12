@@ -3,8 +3,8 @@ PROJECT = bmarine-zero
 # source files
 SRC_FILES = 00_main.rel
 SRC_FILES += 01_tables.rel
-SRC_FILES += 02_title.rel
-SRC_FILES += 03_score.rel
+SRC_FILES += 02_score.rel
+SRC_FILES += 03_title.rel
 SRC_FILES += 04_game.rel
 SRC_FILES += 05_game_player.rel
 SRC_FILES += 06_game_pshot.rel
