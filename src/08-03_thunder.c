@@ -19,6 +19,12 @@ void move_thunder(Enemy* enemy) __z88dk_fastcall
             vgs0_se_play(8);
         }
     }
+    if (0 == enemy->n8[3] && enemy->y.raw[1] < 69) {
+        vgs0_se_play(5);
+        enemy->n8[3] = 1;
+        add_spray(enemy->x.raw[1] - 3, 69, 0x30, 0xC3);
+        add_spray(enemy->x.raw[1] + 3, 69, 0x30, 0x83);
+    }
     enemy->check = 1;
     enemy->n8[0]++;
     enemy->n8[0] &= 3;
@@ -26,8 +32,14 @@ void move_thunder(Enemy* enemy) __z88dk_fastcall
         enemy->n8[1] = 1 - enemy->n8[1];
         VGS0_ADDR_OAM[enemy->si[0]].ptn = enemy->n8[2] + enemy->n8[1];
     }
-    if (-900 < (int16_t)enemy->vy.value) {
-        enemy->vy.value -= 7;
+    if (enemy->n8[3]) {
+        if (-1800 < (int16_t)enemy->vy.value) {
+            enemy->vy.value -= 22;
+        }
+    } else {
+        if (-900 < (int16_t)enemy->vy.value) {
+            enemy->vy.value -= 7;
+        }
     }
     if (192 < enemy->y.raw[1] || 248 <= enemy->x.raw[1]) {
         enemy->flag = 0;
