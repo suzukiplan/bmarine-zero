@@ -110,7 +110,7 @@ void add_bubble(void) __z88dk_fastcall
     GV->bubbleIndex &= 0x0F;
 }
 
-void screen_effect_proc(uint8_t a) __z88dk_fastcall
+void screen_effect_proc() __z88dk_fastcall
 {
     uint8_t i;
     for (i = 0; i < 16; i++) {
@@ -170,6 +170,7 @@ void screen_effect_proc(uint8_t a) __z88dk_fastcall
     }
 
     // 波のアニメーション
+    uint8_t a = GV->frame;
     a &= 0x1F;
     a >>= 2;
     a |= 0xA0;

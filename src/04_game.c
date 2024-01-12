@@ -3,7 +3,6 @@
 void game_main(void)
 {
     uint8_t i;
-    uint8_t a = 12;
 
     // スコアと波をBGからFGに描き直す
     vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
@@ -30,9 +29,9 @@ void game_main(void)
     // メインループ
     while (1) {
         vgs0_wait_vsync();
-        a++;
+        GV->frame++;
 
-        if (0 == (a & 0x3F)) {
+        if (0 == (GV->frame & 0x3F)) {
             add_enemy(1, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
         }
 
@@ -44,13 +43,13 @@ void game_main(void)
         move_pshot();
 
         // プレイヤーの移動
-        move_player(a);
+        move_player();
 
         // 敵キャラの移動
         move_enemy();
 
         // 画面エフェクトの処理を実行
-        screen_effect_proc(a);
+        screen_effect_proc();
 
         // スコア加算値の計算処理
         score_calc();

@@ -101,6 +101,7 @@ typedef struct {
     uint8_t sc[8];          // スコア
     uint8_t sadd[8];        // 桁毎のスコア加算値
     uint8_t ridx;           // 乱数インデクス
+    uint8_t frame;          // フレームカウンタ
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
     urect_t hbuf[2];        // 当たり判定用バッファ
     uint16_t hit;           // コンボ数
@@ -140,7 +141,7 @@ void hit_print() __z88dk_fastcall;
 void game_main(void);
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
 
-void move_player(uint8_t a) __z88dk_fastcall;
+void move_player() __z88dk_fastcall;
 
 void move_pshot(void) __z88dk_fastcall;
 void add_pshot(uint8_t x, uint16_t y);
@@ -150,7 +151,7 @@ void add_dust_ground(uint8_t x, uint8_t y);
 void add_dust_air(uint8_t x, uint8_t y);
 void add_star(void) __z88dk_fastcall;
 void add_bubble(void)  __z88dk_fastcall;
-void screen_effect_proc(uint8_t a) __z88dk_fastcall;
+void screen_effect_proc() __z88dk_fastcall;
 
 void add_enemy(uint8_t type, uint8_t x, uint8_t y);
 void move_enemy(void) __z88dk_fastcall;

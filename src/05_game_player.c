@@ -21,7 +21,7 @@ static void update_player_position(void) __z88dk_fastcall
     VGS0_ADDR_OAM[5].y = GV->player.y.raw[1] + 8;
 }
 
-void move_player(uint8_t a) __z88dk_fastcall
+void move_player() __z88dk_fastcall
 {
     uint8_t i;
     uint8_t pad = vgs0_joypad_get();
@@ -95,7 +95,7 @@ void move_player(uint8_t a) __z88dk_fastcall
             GV->player.y.raw[1] = 0x41;
 
             if (8 < GV->player.x.raw[1] && GV->player.x.raw[1] < 224) {
-                if (a & 0x01) {
+                if (GV->frame & 0x01) {
                     i = GV->player.y.raw[1] + 5;
                     i += get_random(&GV->ridx) & 0x01;
                     i += get_random(&GV->ridx) & 0x01;
@@ -104,7 +104,7 @@ void move_player(uint8_t a) __z88dk_fastcall
                     } else {
                         add_spray(GV->player.x.raw[1], i, 0x30, 0xC3);
                     }
-                } else if (0 == (a & 3)) {
+                } else if (0 == (GV->frame & 3)) {
                     vgs0_se_play(2);
                 }
             }
@@ -119,7 +119,7 @@ void move_player(uint8_t a) __z88dk_fastcall
     if (GV->player.sa) {
         GV->player.sa--;
         if (GV->player.sa) {
-            i = a;
+            i = GV->frame;
             i >>= 1;
             i &= 0x03;
             i <<= 1;
