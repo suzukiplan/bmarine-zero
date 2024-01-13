@@ -78,6 +78,30 @@ void move_player(void) __z88dk_fastcall
         GV->player.charge = 0;
     }
 
+    // チャージ開始から10フレーム以降 & レーザー発射中は残像を描画
+    if (0 == (GV->frame & 0x03)) {
+        if (10 < GV->player.charge || GV->player.laser) {
+            GV->player.zflag[GV->player.zindex] = 1;
+            vgs0_oam_set(SP_ZANZO + GV->player.zindex, GV->player.x.raw[1], GV->player.y.raw[1], 0x87, 0x00, 2, 1);
+            VGS0_ADDR_OAM[SP_ZANZO + GV->player.zindex].bank = BANK_LASER2_SP;
+            GV->player.zindex++;
+            GV->player.zindex &= 0x03;
+        }
+    }
+
+    for (i = 0; i < 4; i++) {
+        if (GV->player.zflag[i]) {
+            GV->player.zflag[i]++;
+            if (0 == (GV->player.zflag[i] & 0x03)) {
+                VGS0_ADDR_OAM[SP_ZANZO + i].ptn += 3;
+                if (12 == VGS0_ADDR_OAM[SP_ZANZO + i].ptn) {
+                    GV->player.zflag[i] = 0;
+                    VGS0_ADDR_OAM[SP_ZANZO + i].attr = 0x00;
+                }
+            }
+        }
+    }
+
     // 座標更新
     if (0 != GV->player.spd || 0 != GV->player.jmp) {
         if (0 != GV->player.jmp) {

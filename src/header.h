@@ -1,24 +1,27 @@
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
 // バンク定義
-#define BANK_PRG0_0 0    // プログラム0 page 0
-#define BANK_PRG0_1 1    // プログラム0 page 1
-#define BANK_PRG0_2 2    // プログラム0 page 2
-#define BANK_PRG0_3 3    // プログラム0 page 3
-#define BANK_PRG1_0 4    // プログラム1 page 0
-#define BANK_PRG1_1 5    // プログラム1 page 1
-#define BANK_PRG1_2 6    // プログラム1 page 2
-#define BANK_PRG1_3 7    // プログラム1 page 3
-#define BANK_MAIN_BG 8   // メインBG
-#define BANK_MAIN_FG 9   // メインFG
-#define BANK_MAIN_SP 10  // メインスプライト
-#define BANK_BOMB_SP 11  // 爆破パターン
-#define BANK_HIT_SP 12   // コンボ・カウンタ
-#define BANK_MEDAL_SP 13 // メダル
-#define BANK_LASER_SP 14 // レーザー
+#define BANK_PRG0_0 0     // プログラム0 page 0
+#define BANK_PRG0_1 1     // プログラム0 page 1
+#define BANK_PRG0_2 2     // プログラム0 page 2
+#define BANK_PRG0_3 3     // プログラム0 page 3
+#define BANK_PRG1_0 4     // プログラム1 page 0
+#define BANK_PRG1_1 5     // プログラム1 page 1
+#define BANK_PRG1_2 6     // プログラム1 page 2
+#define BANK_PRG1_3 7     // プログラム1 page 3
+#define BANK_MAIN_BG 8    // メインBG
+#define BANK_MAIN_FG 9    // メインFG
+#define BANK_MAIN_SP 10   // メインスプライト
+#define BANK_BOMB_SP 11   // 爆破パターン
+#define BANK_HIT_SP 12    // コンボ・カウンタ
+#define BANK_MEDAL_SP 13  // メダル
+#define BANK_LASER_SP 14  // レーザー
+#define BANK_LASER2_SP 15 // レーザー装飾
 
 // スプライトの初期位置
 #define SP_LASER 60     // レーザー (1)
+#define SP_LMETER 61    // レーザーのパワーメーター (1)
+#define SP_ZANZO 62     // レーザー充填 & 発射時の残像 (4)
 #define SP_MEDAL 66     // メダル (16)
 #define SP_HIT 82       // コンボ・カウンタ (6)
 #define SP_ENEMY 88     // 敵 (128)
@@ -34,21 +37,23 @@
 
 // プレイヤー
 typedef struct {
-    var16_t x;      // X座標
-    var16_t y;      // Y座標
-    int16_t spd;    // 移動スピード
-    int16_t jmp;    // ジャンプスピード
-    int8_t jmpKeep; // ジャンプ中のボタン押しっぱなしフラグ
-    uint8_t flight; // 対空時間（フレーム数）
-    uint8_t snock;  // 着水時の衝撃波カウンター
-    uint8_t slx;    // 着水座標の左端
-    uint8_t srx;    // 着水座標の右端
-    uint8_t shot;   // ショット発射フラグ
-    uint8_t sa;     // ショット発射アニメーション
-    uint8_t charge; // レーザーチャージ
-    uint8_t laser;  // レーザー
-    uint8_t lcnt;   // レーザーカウンタ
-    uint8_t lhit;   // レーザー当たり判定
+    var16_t x;          // X座標
+    var16_t y;          // Y座標
+    int16_t spd;        // 移動スピード
+    int16_t jmp;        // ジャンプスピード
+    int8_t jmpKeep;     // ジャンプ中のボタン押しっぱなしフラグ
+    uint8_t flight;     // 対空時間（フレーム数）
+    uint8_t snock;      // 着水時の衝撃波カウンター
+    uint8_t slx;        // 着水座標の左端
+    uint8_t srx;        // 着水座標の右端
+    uint8_t shot;       // ショット発射フラグ
+    uint8_t sa;         // ショット発射アニメーション
+    uint8_t charge;     // レーザーチャージ
+    uint8_t laser;      // レーザー
+    uint8_t lcnt;       // レーザーカウンタ
+    uint8_t lhit;       // レーザー当たり判定
+    uint8_t zflag[4];   // 残像フラグ
+    uint8_t zindex;     // 残像インデクス
 } Player;
 
 // プレイヤーショット

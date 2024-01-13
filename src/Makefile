@@ -27,6 +27,7 @@ CHR_FILES += sprite_bomb.chr
 CHR_FILES += sprite_hit.chr
 CHR_FILES += sprite_medal.chr
 CHR_FILES += sprite_laser.chr
+CHR_FILES += sprite_laser2.chr
 
 # sound effect
 WAV_FILES = se000_start.wav
