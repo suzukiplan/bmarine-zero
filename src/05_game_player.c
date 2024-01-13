@@ -133,20 +133,21 @@ void move_player(void) __z88dk_fastcall
             VGS0_ADDR_OAM[SP_LASER].x = GV->player.x.raw[1] + 4;
             VGS0_ADDR_OAM[SP_LASER].y = GV->player.y.raw[1] + 16;
 
-            if (GV->player.lcnt < 15) {
+            if (GV->player.lcnt < 13) {
                 VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
                 VGS0_ADDR_OAM[SP_LASER].heightMinus1 = GV->player.lcnt;
                 VGS0_ADDR_OAM[SP_LASER].attr = 0x87;
                 VGS0_ADDR_OAM[SP_LASER].ptn = 0x00;
                 VGS0_ADDR_OAM[SP_LASER].bank = BANK_LASER_SP;
-            } else if (GV->player.lcnt == 15) {
+            } else if (GV->player.lcnt < 16) {
                 ;
             } else if (GV->player.lcnt < 32) {
                 VGS0_ADDR_OAM[SP_LASER].ptn = ((GV->player.lcnt - 16) >> 2) << 1;
             } else if (GV->player.lcnt < 120) {
-                VGS0_ADDR_OAM[SP_LASER].ptn = 8 + ((GV->player.lcnt & 0x30) >> 3);
+                VGS0_ADDR_OAM[SP_LASER].ptn = 8 + (GV->player.lcnt & 0x06);
             } else {
                 GV->player.laser = 0;
+                VGS0_ADDR_OAM[SP_LASER].attr = 0;
             }
             GV->player.lcnt++;
         } else {
