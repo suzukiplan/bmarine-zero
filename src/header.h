@@ -17,11 +17,11 @@
 #define BANK_MEDAL_SP 13 // メダル
 
 // スプライトの初期位置
-#define SP_HIT 66       // コンボ・カウンタ (6)
-#define SP_ENEMY 72     // 敵 (128)
-#define SP_DUST 200     // 土埃 (16)
-#define SP_SHOT 216     // 自機ショット (8)
-#define SP_MEDAL 224    // メダル (16)
+#define SP_MEDAL 66    // メダル (16)
+#define SP_HIT 82       // コンボ・カウンタ (6)
+#define SP_ENEMY 88     // 敵 (128)
+#define SP_DUST 216     // 土埃 (16)
+#define SP_SHOT 232     // 自機ショット (8)
 #define SP_SPRAY 240    // 水しぶき & ショットの煙 (16)
 
 // 敵の種別コード
