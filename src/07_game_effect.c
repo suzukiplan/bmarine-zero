@@ -123,7 +123,7 @@ void add_medal(uint8_t x, uint8_t y)
     GV->medalIndex &= 0x0F;
 }
 
-void screen_effect_proc() __z88dk_fastcall
+void screen_effect_proc(void) __z88dk_fastcall
 {
     uint8_t i;
     for (i = 0; i < 16; i++) {
@@ -190,7 +190,7 @@ void screen_effect_proc() __z88dk_fastcall
                         GV->medal[i].flag = 0x10; // 自動収集
                     } else {
                         GV->medal[i].vx.value = 0;
-                        if (-GV->medal[i].vy.raw[1] < 1) {
+                        if (((int8_t)GV->medal[i].vy.raw[1]) < 1) {
                             GV->medal[i].vy.value -= 3;
                         }
                         if (0 == (GV->frame & 0x03)) {

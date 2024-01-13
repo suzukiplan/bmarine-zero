@@ -15,9 +15,11 @@
 #define BANK_BOMB_SP 11  // 爆破パターン
 #define BANK_HIT_SP 12   // コンボ・カウンタ
 #define BANK_MEDAL_SP 13 // メダル
+#define BANK_LASER_SP 14 // レーザー
 
 // スプライトの初期位置
-#define SP_MEDAL 66    // メダル (16)
+#define SP_LASER 60     // レーザー (1)
+#define SP_MEDAL 66     // メダル (16)
 #define SP_HIT 82       // コンボ・カウンタ (6)
 #define SP_ENEMY 88     // 敵 (128)
 #define SP_DUST 216     // 土埃 (16)
@@ -43,6 +45,9 @@ typedef struct {
     uint8_t srx;    // 着水座標の右端
     uint8_t shot;   // ショット発射フラグ
     uint8_t sa;     // ショット発射アニメーション
+    uint8_t charge; // レーザーチャージ
+    uint8_t laser;  // レーザー
+    uint8_t lcnt;   // レーザーカウンタ
 } Player;
 
 // プレイヤーショット
@@ -154,10 +159,10 @@ void submain(uint8_t arg) __z88dk_fastcall;
 void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;
 void score_increment(uint8_t keta) __z88dk_fastcall;
-void hit_print() __z88dk_fastcall;
+void hit_print(void) __z88dk_fastcall;
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
 
-void move_player() __z88dk_fastcall;
+void move_player(void) __z88dk_fastcall;
 
 void move_pshot(void) __z88dk_fastcall;
 void add_pshot(uint8_t x, uint16_t y);
@@ -168,7 +173,7 @@ void add_dust_air(uint8_t x, uint8_t y);
 void add_star(void) __z88dk_fastcall;
 void add_bubble(void)  __z88dk_fastcall;
 void add_medal(uint8_t x, uint8_t y);
-void screen_effect_proc() __z88dk_fastcall;
+void screen_effect_proc(void) __z88dk_fastcall;
 
 void add_enemy(uint8_t type, uint8_t x, uint8_t y);
 void move_enemy(void) __z88dk_fastcall;

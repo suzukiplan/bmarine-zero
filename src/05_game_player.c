@@ -21,7 +21,7 @@ static void update_player_position(void) __z88dk_fastcall
     VGS0_ADDR_OAM[5].y = GV->player.y.raw[1] + 8;
 }
 
-void move_player() __z88dk_fastcall
+void move_player(void) __z88dk_fastcall
 {
     uint8_t i;
     uint8_t pad = vgs0_joypad_get();
@@ -44,7 +44,7 @@ void move_player() __z88dk_fastcall
     }
 
     // ジャンプ
-    if (pad & VGS0_JOYPAD_T1) {
+    if (pad & VGS0_JOYPAD_T1 && 0 == GV->player.laser) {
         if (0 == GV->player.jmpKeep && 0 == GV->player.jmp) {
             vgs0_se_play(4);
             GV->player.jmp = -543;
@@ -52,6 +52,7 @@ void move_player() __z88dk_fastcall
             add_spray(GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 5, 0x30, 0x83);
             add_spray(GV->player.x.raw[1] + 4, GV->player.y.raw[1] + 5, 0x30, 0xC3);
         }
+        GV->player.charge = 0;
     } else {
         GV->player.jmpKeep = 0;
     }
@@ -63,8 +64,18 @@ void move_player() __z88dk_fastcall
             GV->player.shot = 1;
             GV->player.sa = 16;
         }
+        if (0 == GV->player.jmp) {
+            if (0xFF != GV->player.charge) {
+                GV->player.charge++;
+            }
+        }
     } else {
         GV->player.shot = 0;
+        if (60 < GV->player.charge && 0 == GV->player.jmp) {
+            GV->player.laser = 255;
+            GV->player.lcnt = 0;
+        }
+        GV->player.charge = 0;
     }
 
     // 座標更新
@@ -113,6 +124,34 @@ void move_player() __z88dk_fastcall
     } else if (GV->player.y.raw[1] != 0x40) {
         GV->player.y.raw[1] = 0x40;
         update_player_position();
+    }
+
+    // レーザー
+    if (GV->player.laser) {
+        GV->player.laser--;
+        if (GV->player.laser) {
+            VGS0_ADDR_OAM[SP_LASER].x = GV->player.x.raw[1] + 4;
+            VGS0_ADDR_OAM[SP_LASER].y = GV->player.y.raw[1] + 16;
+
+            if (GV->player.lcnt < 15) {
+                VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
+                VGS0_ADDR_OAM[SP_LASER].heightMinus1 = GV->player.lcnt;
+                VGS0_ADDR_OAM[SP_LASER].attr = 0x87;
+                VGS0_ADDR_OAM[SP_LASER].ptn = 0x00;
+                VGS0_ADDR_OAM[SP_LASER].bank = BANK_LASER_SP;
+            } else if (GV->player.lcnt == 15) {
+                ;
+            } else if (GV->player.lcnt < 32) {
+                VGS0_ADDR_OAM[SP_LASER].ptn = ((GV->player.lcnt - 16) >> 2) << 1;
+            } else if (GV->player.lcnt < 120) {
+                VGS0_ADDR_OAM[SP_LASER].ptn = 8 + ((GV->player.lcnt & 0x30) >> 3);
+            } else {
+                GV->player.laser = 0;
+            }
+            GV->player.lcnt++;
+        } else {
+            VGS0_ADDR_OAM[SP_LASER].attr = 0;
+        }
     }
 
     // ショット発射アニメーション
