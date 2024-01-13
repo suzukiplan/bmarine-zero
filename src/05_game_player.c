@@ -58,24 +58,26 @@ void move_player(void) __z88dk_fastcall
     }
 
     // ショット発射
-    if (pad & VGS0_JOYPAD_T2) {
-        if (0 == GV->player.shot) {
-            add_pshot(GV->player.x.raw[1] + 8, GV->player.y.value + 0x0B00);
-            GV->player.shot = 1;
-            GV->player.sa = 16;
-        }
-        if (0 == GV->player.jmp) {
-            if (0xFF != GV->player.charge) {
-                GV->player.charge++;
+    if (0 == GV->player.laser) {
+        if (pad & VGS0_JOYPAD_T2) {
+            if (0 == GV->player.shot) {
+                add_pshot(GV->player.x.raw[1] + 8, GV->player.y.value + 0x0B00);
+                GV->player.shot = 1;
+                GV->player.sa = 16;
             }
+            if (0 == GV->player.jmp) {
+                if (0xFF != GV->player.charge) {
+                    GV->player.charge++;
+                }
+            }
+        } else {
+            GV->player.shot = 0;
+            if (60 < GV->player.charge && 0 == GV->player.jmp) {
+                GV->player.laser = 255;
+                GV->player.lcnt = 0;
+            }
+            GV->player.charge = 0;
         }
-    } else {
-        GV->player.shot = 0;
-        if (60 < GV->player.charge && 0 == GV->player.jmp) {
-            GV->player.laser = 255;
-            GV->player.lcnt = 0;
-        }
-        GV->player.charge = 0;
     }
 
     // チャージ開始から10フレーム以降 & レーザー発射中は残像を描画
@@ -88,7 +90,6 @@ void move_player(void) __z88dk_fastcall
             GV->player.zindex &= 0x03;
         }
     }
-
     for (i = 0; i < 4; i++) {
         if (GV->player.zflag[i]) {
             GV->player.zflag[i]++;
@@ -148,6 +149,32 @@ void move_player(void) __z88dk_fastcall
     } else if (GV->player.y.raw[1] != 0x40) {
         GV->player.y.raw[1] = 0x40;
         update_player_position();
+    }
+
+    // チャージメーター
+    if (5 < GV->player.charge) {
+        if (60 < GV->player.charge) {
+            i = 0x5C;
+        } else {
+            i = vgs0_div(GV->player.charge - 4, 3);
+            if (i < 5) {
+                i = vgs0_mul(i, 3);
+                i += 0x20;
+            } else if (i < 10) {
+                i = vgs0_mul(i - 5, 3);
+                i += 0x30;
+            } else if (i < 15) {
+                i = vgs0_mul(i - 10, 3);
+                i += 0x40;
+            } else {
+                i = vgs0_mul(i - 15, 3);
+                i += 0x50;
+            }
+        }
+        vgs0_oam_set(SP_LMETER, GV->player.x.raw[1], GV->player.y.raw[1] - 10, 0x87, i, 2, 0);
+        VGS0_ADDR_OAM[SP_LMETER].bank = BANK_LASER2_SP;
+    } else {
+        VGS0_ADDR_OAM[SP_LMETER].attr = 0x00;
     }
 
     // レーザー
