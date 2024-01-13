@@ -185,7 +185,7 @@ void move_player(void) __z88dk_fastcall
         VGS0_ADDR_OAM[SP_LBOTTOM].x = VGS0_ADDR_OAM[SP_LTOP].x;
         VGS0_ADDR_OAM[SP_LTOP].y = GV->player.y.raw[1] + 16;
         VGS0_ADDR_OAM[SP_LBOTTOM].y = 177;
-        VGS0_ADDR_OAM[SP_LTOP].ptn = (GV->frame & 0x0C) | 0x60;
+        VGS0_ADDR_OAM[SP_LTOP].ptn = ((GV->frame & 0x06) << 1) | 0x60;
         VGS0_ADDR_OAM[SP_LBOTTOM].ptn = (GV->frame & 0x0C) | 0x70;
         if (GV->player.lcnt < 13) {
             VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
