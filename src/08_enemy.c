@@ -226,6 +226,23 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
     GV->hbuf[0].y = et;
     GV->hbuf[0].width = hittbl[enemy->type].width;
     GV->hbuf[0].height = hittbl[enemy->type].height;
+
+    if (GV->player.lhit) {
+        if (0 != enemy->type) {
+            GV->hbuf[1].x = GV->player.x.raw[1] + 4;
+            GV->hbuf[1].y = GV->player.y.raw[1] + 16;
+            GV->hbuf[1].width = 16;
+            GV->hbuf[1].height = 128;
+            if (vgs0_collision_check((uint16_t)GV->hbuf)) {
+                erase_enemy(enemy);
+                add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
+                add_medal(el + (er - el - 16) / 2, et + (eb - et - 16) / 2);
+                increment_hit_count();
+            }
+        }
+        return;
+    }
+
     GV->hbuf[1].width = 8;
     GV->hbuf[1].height = 8;
     for (uint8_t i = 0; i < 8; i++) {

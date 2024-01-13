@@ -48,6 +48,7 @@ typedef struct {
     uint8_t charge; // レーザーチャージ
     uint8_t laser;  // レーザー
     uint8_t lcnt;   // レーザーカウンタ
+    uint8_t lhit;   // レーザー当たり判定
 } Player;
 
 // プレイヤーショット

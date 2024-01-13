@@ -128,31 +128,27 @@ void move_player(void) __z88dk_fastcall
 
     // レーザー
     if (GV->player.laser) {
-        GV->player.laser--;
-        if (GV->player.laser) {
-            VGS0_ADDR_OAM[SP_LASER].x = GV->player.x.raw[1] + 4;
-            VGS0_ADDR_OAM[SP_LASER].y = GV->player.y.raw[1] + 16;
-
-            if (GV->player.lcnt < 13) {
-                VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
-                VGS0_ADDR_OAM[SP_LASER].heightMinus1 = GV->player.lcnt;
-                VGS0_ADDR_OAM[SP_LASER].attr = 0x87;
-                VGS0_ADDR_OAM[SP_LASER].ptn = 0x00;
-                VGS0_ADDR_OAM[SP_LASER].bank = BANK_LASER_SP;
-            } else if (GV->player.lcnt < 16) {
-                ;
-            } else if (GV->player.lcnt < 32) {
-                VGS0_ADDR_OAM[SP_LASER].ptn = ((GV->player.lcnt - 16) >> 2) << 1;
-            } else if (GV->player.lcnt < 120) {
-                VGS0_ADDR_OAM[SP_LASER].ptn = 8 + (GV->player.lcnt & 0x06);
-            } else {
-                GV->player.laser = 0;
-                VGS0_ADDR_OAM[SP_LASER].attr = 0;
-            }
-            GV->player.lcnt++;
+        VGS0_ADDR_OAM[SP_LASER].x = GV->player.x.raw[1] + 4;
+        VGS0_ADDR_OAM[SP_LASER].y = GV->player.y.raw[1] + 16;
+        if (GV->player.lcnt < 13) {
+            VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
+            VGS0_ADDR_OAM[SP_LASER].heightMinus1 = GV->player.lcnt;
+            VGS0_ADDR_OAM[SP_LASER].attr = 0x87;
+            VGS0_ADDR_OAM[SP_LASER].ptn = 0x00;
+            VGS0_ADDR_OAM[SP_LASER].bank = BANK_LASER_SP;
+        } else if (GV->player.lcnt < 16) {
+            ;
+        } else if (GV->player.lcnt < 32) {
+            VGS0_ADDR_OAM[SP_LASER].ptn = ((GV->player.lcnt - 16) >> 2) << 1;
+        } else if (GV->player.lcnt < 152) {
+            GV->player.lhit = 1;
+            VGS0_ADDR_OAM[SP_LASER].ptn = 8 + (GV->player.lcnt & 0x06);
         } else {
+            GV->player.lhit = 0;
+            GV->player.laser = 0;
             VGS0_ADDR_OAM[SP_LASER].attr = 0;
         }
+        GV->player.lcnt++;
     }
 
     // ショット発射アニメーション
