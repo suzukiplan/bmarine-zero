@@ -26,7 +26,7 @@ void move_marineRL(Enemy* enemy) __z88dk_fastcall
     if (1 == nPersonality || 2 == nPersonality) {
         // 片思いタイプ（自機が好き）
         if (GV->player.x.raw[1] + 24 < enemy->x.raw[1]) {
-            if (-enemy->vx.raw[1] < 5) {
+            if (-5 < (int8_t)enemy->vx.raw[1]) {
                 enemy->vx.value -= 7;
             }
         } else {
