@@ -181,6 +181,12 @@ void move_player(void) __z88dk_fastcall
     if (GV->player.laser) {
         VGS0_ADDR_OAM[SP_LASER].x = GV->player.x.raw[1] + 4;
         VGS0_ADDR_OAM[SP_LASER].y = GV->player.y.raw[1] + 16;
+        VGS0_ADDR_OAM[SP_LTOP].x = GV->player.x.raw[1] - 4;
+        VGS0_ADDR_OAM[SP_LBOTTOM].x = VGS0_ADDR_OAM[SP_LTOP].x;
+        VGS0_ADDR_OAM[SP_LTOP].y = GV->player.y.raw[1] + 16;
+        VGS0_ADDR_OAM[SP_LBOTTOM].y = 177;
+        VGS0_ADDR_OAM[SP_LTOP].ptn = (GV->frame & 0x0C) | 0x60;
+        VGS0_ADDR_OAM[SP_LBOTTOM].ptn = (GV->frame & 0x0C) | 0x70;
         if (GV->player.lcnt < 13) {
             VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
             VGS0_ADDR_OAM[SP_LASER].heightMinus1 = GV->player.lcnt;
@@ -192,6 +198,16 @@ void move_player(void) __z88dk_fastcall
         } else if (GV->player.lcnt < 32) {
             VGS0_ADDR_OAM[SP_LASER].ptn = ((GV->player.lcnt - 16) >> 2) << 1;
         } else if (GV->player.lcnt < 152) {
+            if (32 == GV->player.lcnt) {
+                VGS0_ADDR_OAM[SP_LTOP].widthMinus1 = 3;
+                VGS0_ADDR_OAM[SP_LTOP].heightMinus1 = 1;
+                VGS0_ADDR_OAM[SP_LTOP].attr = 0x87;
+                VGS0_ADDR_OAM[SP_LTOP].bank = BANK_LASER2_SP;
+                VGS0_ADDR_OAM[SP_LBOTTOM].widthMinus1 = 3;
+                VGS0_ADDR_OAM[SP_LBOTTOM].heightMinus1 = 0;
+                VGS0_ADDR_OAM[SP_LBOTTOM].attr = 0xA7;
+                VGS0_ADDR_OAM[SP_LBOTTOM].bank = BANK_LASER2_SP;
+            }
             GV->player.lhit = 1;
             VGS0_ADDR_OAM[SP_LASER].ptn = 8 + (GV->player.lcnt & 0x06);
         } else {
@@ -200,6 +216,9 @@ void move_player(void) __z88dk_fastcall
             VGS0_ADDR_OAM[SP_LASER].attr = 0;
         }
         GV->player.lcnt++;
+    } else {
+        VGS0_ADDR_OAM[SP_LTOP].attr = 0x00;
+        VGS0_ADDR_OAM[SP_LBOTTOM].attr = 0x00;
     }
 
     // ショット発射アニメーション

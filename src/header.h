@@ -19,6 +19,8 @@
 #define BANK_LASER2_SP 15 // レーザー装飾
 
 // スプライトの初期位置
+#define SP_LTOP 58      // レーザー発射口 (1)
+#define SP_LBOTTOM 59   // レーザー地面 (1)
 #define SP_LASER 60     // レーザー (1)
 #define SP_LMETER 61    // レーザーのパワーメーター (1)
 #define SP_ZANZO 62     // レーザー充填 & 発射時の残像 (4)
