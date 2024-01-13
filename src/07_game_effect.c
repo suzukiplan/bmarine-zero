@@ -200,26 +200,20 @@ void screen_effect_proc() __z88dk_fastcall
                         }
                     }
                 } else if (0x10 == GV->medal[i].flag) {
-                    if (GV->hit < 100 && !GV->player.jmpKeep) {
-                        GV->medal[i].vx.value = 0;
-                        GV->medal[i].vy.value = 0;
-                        GV->medal[i].flag = 0x01; // 自動収集解除
-                    } else {
-                        uint8_t r = vgs0_angle(GV->medal[i].x.raw[1] + 4, GV->medal[i].y.raw[1] + 4, GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 8);
-                        GV->medal[i].vx.value = (uint16_t)((int8_t)vgs0_sin(r));
-                        GV->medal[i].vy.value = (uint16_t)((int8_t)vgs0_cos(r));
-                        GV->medal[i].vx.value += GV->medal[i].vx.value;
-                        GV->medal[i].vy.value += GV->medal[i].vy.value;
-                        GV->medal[i].vx.value += GV->medal[i].vx.value;
-                        GV->medal[i].vy.value += GV->medal[i].vy.value;
-                        if (0 == (GV->frame & 0x02)) {
-                            GV->medal[i].an += 2;
-                            GV->medal[i].an &= 0x1F;
-                            if (GV->medal[i].an < 0x10) {
-                                VGS0_ADDR_OAM[SP_MEDAL + i].ptn = GV->medal[i].an + 0x20;
-                            } else {
-                                VGS0_ADDR_OAM[SP_MEDAL + i].ptn = (GV->medal[i].an & 0x0F) + 0x40;
-                            }
+                    uint8_t r = vgs0_angle(GV->medal[i].x.raw[1] + 4, GV->medal[i].y.raw[1] + 4, GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 8);
+                    GV->medal[i].vx.value = (uint16_t)((int8_t)vgs0_sin(r));
+                    GV->medal[i].vy.value = (uint16_t)((int8_t)vgs0_cos(r));
+                    GV->medal[i].vx.value += GV->medal[i].vx.value;
+                    GV->medal[i].vy.value += GV->medal[i].vy.value;
+                    GV->medal[i].vx.value += GV->medal[i].vx.value;
+                    GV->medal[i].vy.value += GV->medal[i].vy.value;
+                    if (0 == (GV->frame & 0x02)) {
+                        GV->medal[i].an += 2;
+                        GV->medal[i].an &= 0x1F;
+                        if (GV->medal[i].an < 0x10) {
+                            VGS0_ADDR_OAM[SP_MEDAL + i].ptn = GV->medal[i].an + 0x20;
+                        } else {
+                            VGS0_ADDR_OAM[SP_MEDAL + i].ptn = (GV->medal[i].an & 0x0F) + 0x40;
                         }
                     }
                 }
@@ -227,6 +221,7 @@ void screen_effect_proc() __z88dk_fastcall
                 GV->medal[i].y.value += GV->medal[i].vy.value;
                 if (192 < GV->medal[i].y.raw[1] && GV->medal[i].y.raw[1] < 248) {
                     GV->medal[i].flag = 0;
+                    VGS0_ADDR_OAM[SP_MEDAL + i].attr = 0x00;
                 } else {
                     GV->hbuf[0].x = GV->player.x.raw[1];
                     GV->hbuf[0].y = GV->player.y.raw[1];
