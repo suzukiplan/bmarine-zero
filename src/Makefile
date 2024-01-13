@@ -89,19 +89,19 @@ clean:
 game.pkg: ${PROJECT}.rom bgm.dat se.dat
 	${MAKEPKG} -o game.pkg -r ${PROJECT}.rom -b bgm.dat -s se.dat
 
-${PROJECT}.rom: program0.bin program1.bin ${CHR_FILES}
-	${MAKEROM} ${PROJECT}.rom program0.bin program1.bin ${CHR_FILES}
+${PROJECT}.rom: program0.bin program1.bin palette.bin ${CHR_FILES}
+	${MAKEROM} ${PROJECT}.rom program0.bin program1.bin palette.bin ${CHR_FILES}
 
-program0.bin: palette.h ${PROGRAM0} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
+program0.bin: ${PROGRAM0} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
 	${LINK} -o program0.ihx ${PROGRAM0}
 	makebin -s 32768 program0.ihx $@
 
-program1.bin: palette.h ${PROGRAM1} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
+program1.bin: ${PROGRAM1} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
 	${LINK} -o program1.ihx ${PROGRAM1}
 	makebin -s 32768 program1.ihx $@
 
-palette.h: sprite.bmp
-	${BMP2CHR} $< sprite.chr palette.h
+palette.bin: sprite.bmp
+	${BMP2CHR} $< sprite.chr palette.bin
 
 se.dat: ${WAV_FILES}
 	${MAKESE} $@ ${WAV_FILES}
@@ -111,7 +111,7 @@ bgm.dat: ${BGM_FILES}
 
 .SUFFIXES: .rel .src
 
-%.rel: %.c header.h palette.h
+%.rel: %.c header.h
 	make execute-format FILENAME=$<
 	${COMPILE} $<
 

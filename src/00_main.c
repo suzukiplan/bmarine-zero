@@ -2,7 +2,9 @@
 
 void main(void)
 {
-    init_palette();
+    // パレット初期化
+    vgs0_dma(BANK_PALETTE);
+    vgs0_memcpy((uint16_t)VGS0_ADDR_PALETTE, (uint16_t)VGS0_ADDR_CHARACTER, 512);
 
     for (uint8_t i = 0; i < 8; i++) {
         GV->hi[i] = 0;

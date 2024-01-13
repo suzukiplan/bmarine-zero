@@ -9,14 +9,15 @@
 #define BANK_PRG1_1 5     // プログラム1 page 1
 #define BANK_PRG1_2 6     // プログラム1 page 2
 #define BANK_PRG1_3 7     // プログラム1 page 3
-#define BANK_MAIN_BG 8    // メインBG
-#define BANK_MAIN_FG 9    // メインFG
-#define BANK_MAIN_SP 10   // メインスプライト
-#define BANK_BOMB_SP 11   // 爆破パターン
-#define BANK_HIT_SP 12    // コンボ・カウンタ
-#define BANK_MEDAL_SP 13  // メダル
-#define BANK_LASER_SP 14  // レーザー
-#define BANK_LASER2_SP 15 // レーザー装飾
+#define BANK_PALETTE 8    // パレット
+#define BANK_MAIN_BG 9    // メインBG
+#define BANK_MAIN_FG 10   // メインFG
+#define BANK_MAIN_SP 11   // メインスプライト
+#define BANK_BOMB_SP 12   // 爆破パターン
+#define BANK_HIT_SP 13    // コンボ・カウンタ
+#define BANK_MEDAL_SP 14  // メダル
+#define BANK_LASER_SP 15  // レーザー
+#define BANK_LASER2_SP 16 // レーザー装飾
 
 // スプライトの初期位置
 #define SP_LTOP 58      // レーザー発射口 (1)
@@ -161,7 +162,6 @@ typedef struct {
 extern const uint16_t random[256];
 
 // サブルーチン
-void init_palette(void);
 void submain(uint8_t arg) __z88dk_fastcall;
 
 void score_calc(void) __z88dk_fastcall;
