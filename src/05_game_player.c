@@ -53,6 +53,7 @@ void move_player(void) __z88dk_fastcall
             add_spray(GV->player.x.raw[1] + 4, GV->player.y.raw[1] + 5, 0x30, 0xC3);
         }
         GV->player.charge = 0;
+        vgs0_se_stop(11);
     } else {
         GV->player.jmpKeep = 0;
     }
@@ -66,6 +67,11 @@ void move_player(void) __z88dk_fastcall
                 GV->player.sa = 16;
             }
             if (0 == GV->player.jmp) {
+                if (4 == GV->player.charge) {
+                    vgs0_se_play(11);
+                } else if (60 == GV->player.charge) {
+                    vgs0_se_play(12);
+                }
                 if (0xFF != GV->player.charge) {
                     GV->player.charge++;
                 }
@@ -75,8 +81,10 @@ void move_player(void) __z88dk_fastcall
             if (60 < GV->player.charge && 0 == GV->player.jmp) {
                 GV->player.laser = 255;
                 GV->player.lcnt = 0;
+                vgs0_se_play(13);
             }
             GV->player.charge = 0;
+            vgs0_se_stop(11);
         }
     }
 

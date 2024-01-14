@@ -232,6 +232,7 @@ void screen_effect_proc(void) __z88dk_fastcall
                     GV->hbuf[1].width = 24;
                     GV->hbuf[1].height = 16;
                     if (vgs0_collision_check((uint16_t)GV->hbuf)) {
+                        vgs0_se_play(10);
                         GV->medal[i].flag = 0x20;
                         GV->medal[i].an = 0;
                         VGS0_ADDR_OAM[SP_MEDAL + i].ptn = 0x60;
