@@ -51,7 +51,7 @@ void move_player(void) __z88dk_fastcall
     }
 
     // ショット発射
-    if (0 == GV->player.laser) {
+    if (0 == GV->player.laser && 0 == GV->player.dmg) {
         if (pad & VGS0_JOYPAD_T2) {
             if (0 == GV->player.shot) {
                 add_pshot(GV->player.x.raw[1] + 8, GV->player.y.value + 0x0B00);
@@ -79,6 +79,8 @@ void move_player(void) __z88dk_fastcall
             GV->player.charge = 0;
             vgs0_se_stop(11);
         }
+    } else {
+        vgs0_se_stop(11);
     }
 
     // チャージ開始から10フレーム以降 & レーザー発射中は残像を描画
