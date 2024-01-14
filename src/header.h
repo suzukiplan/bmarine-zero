@@ -20,6 +20,9 @@
 #define BANK_LASER2_SP 16 // レーザー装飾
 
 // スプライトの初期位置
+#define SP_JIKIDMG 0    // 自機ダメージ (1)
+#define SP_JIKI 1       // 自機 (2)
+#define SP_SHOTEFF 3    // ショット発射エフェクト (1)
 #define SP_LTOP 58      // レーザー発射口 (1)
 #define SP_LBOTTOM 59   // レーザー地面 (1)
 #define SP_LASER 60     // レーザー (1)

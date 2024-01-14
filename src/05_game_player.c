@@ -7,18 +7,10 @@ static void update_player_position(void) __z88dk_fastcall
     } else if (224 < GV->player.x.raw[1]) {
         GV->player.x.raw[1] = 224;
     }
-    VGS0_ADDR_OAM[0].x = GV->player.x.raw[1];
-    VGS0_ADDR_OAM[0].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[1].x = GV->player.x.raw[1] + 8;
-    VGS0_ADDR_OAM[1].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[2].x = GV->player.x.raw[1] + 16;
-    VGS0_ADDR_OAM[2].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[3].x = GV->player.x.raw[1];
-    VGS0_ADDR_OAM[3].y = GV->player.y.raw[1] + 8;
-    VGS0_ADDR_OAM[4].x = GV->player.x.raw[1] + 8;
-    VGS0_ADDR_OAM[4].y = GV->player.y.raw[1] + 8;
-    VGS0_ADDR_OAM[5].x = GV->player.x.raw[1] + 16;
-    VGS0_ADDR_OAM[5].y = GV->player.y.raw[1] + 8;
+    VGS0_ADDR_OAM[SP_JIKI].x = GV->player.x.raw[1];
+    VGS0_ADDR_OAM[SP_JIKI].y = GV->player.y.raw[1];
+    VGS0_ADDR_OAM[SP_JIKI + 1].x = GV->player.x.raw[1] + 8;
+    VGS0_ADDR_OAM[SP_JIKI + 1].y = GV->player.y.raw[1];
 }
 
 void move_player(void) __z88dk_fastcall
@@ -31,12 +23,12 @@ void move_player(void) __z88dk_fastcall
         if (-640 < GV->player.spd) {
             GV->player.spd -= 64;
         }
-        VGS0_ADDR_OAM[1].attr |= 0b01000000;
+        VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0b01000000;
     } else if (pad & VGS0_JOYPAD_RI) {
         if (GV->player.spd < 640) {
             GV->player.spd += 64;
         }
-        VGS0_ADDR_OAM[1].attr &= 0b10111111;
+        VGS0_ADDR_OAM[SP_JIKI + 1].attr &= 0b10111111;
     } else if (0 < GV->player.spd) {
         GV->player.spd -= 64;
     } else if (GV->player.spd < 0) {
@@ -238,9 +230,9 @@ void move_player(void) __z88dk_fastcall
             i &= 0x03;
             i <<= 1;
             i += 0x48;
-            vgs0_oam_set(6, GV->player.x.raw[1] + 3, GV->player.y.raw[1] + 7, 0x84, i, 1, 1);
+            vgs0_oam_set(SP_SHOTEFF, GV->player.x.raw[1] + 3, GV->player.y.raw[1] + 7, 0x84, i, 1, 1);
         } else {
-            VGS0_ADDR_OAM[6].attr = 0;
+            VGS0_ADDR_OAM[SP_SHOTEFF].attr = 0;
         }
     }
 
