@@ -43,9 +43,9 @@ void move_player(void) __z88dk_fastcall
             GV->player.jmpKeep = 1;
             add_spray(GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 5, 0x30, 0x83);
             add_spray(GV->player.x.raw[1] + 4, GV->player.y.raw[1] + 5, 0x30, 0xC3);
+            GV->player.charge = 0;
+            vgs0_se_stop(11);
         }
-        GV->player.charge = 0;
-        vgs0_se_stop(11);
     } else {
         GV->player.jmpKeep = 0;
     }
