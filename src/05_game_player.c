@@ -152,8 +152,39 @@ void move_player(void) __z88dk_fastcall
         update_player_position();
     }
 
+    // ダメージ処理
+    if (0 != GV->player.dmg) {
+        GV->player.dmg--;
+        if (0 != GV->player.dmg) {
+            i = GV->frame & 0x03;
+            i = vgs0_mul(i, 3);
+            i += 0xD0;
+            vgs0_oam_set(SP_JIKIDMG, GV->player.x.raw[1], GV->player.y.raw[1], 0x88, i, 2, 1);
+            if (3 == (GV->frame & 0x07)) {
+                add_enemy(ET_BOMBER, GV->player.x.raw[1], GV->player.y.raw[1] - 4);
+            }
+        } else {
+            VGS0_ADDR_OAM[SP_JIKIDMG].attr = 0x00;
+            GV->player.muteki = 60;
+        }
+    } else if (GV->player.muteki) {
+        GV->player.muteki--;
+        if (GV->player.muteki) {
+            if ((GV->frame & 0x03) < 2) {
+                VGS0_ADDR_OAM[SP_JIKI].attr &= 0x7F;
+                VGS0_ADDR_OAM[SP_JIKI + 1].attr &= 0x7F;
+            } else {
+                VGS0_ADDR_OAM[SP_JIKI].attr |= 0x80;
+                VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0x80;
+            }
+        } else {
+            VGS0_ADDR_OAM[SP_JIKI].attr |= 0x80;
+            VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0x80;
+        }
+    }
+
     // チャージメーター
-    if (5 < GV->player.charge) {
+    if (10 < GV->player.charge) {
         if (60 < GV->player.charge) {
             i = 0x5C;
         } else {

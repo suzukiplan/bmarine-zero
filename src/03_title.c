@@ -22,6 +22,10 @@ static const int8_t rasterTable[32] = {
 
 void submain(uint8_t arg) __z88dk_fastcall
 {
+    if (arg) {
+        return; // arg で別処理分岐（未実装）  TODO: ゲームオーバー処理へココから分岐予定
+    }
+
     // DPM を設定
     *VGS0_ADDR_BG_DPM = BANK_MAIN_BG;
     *VGS0_ADDR_FG_DPM = BANK_MAIN_FG;

@@ -60,6 +60,8 @@ typedef struct {
     uint8_t lhit;       // レーザー当たり判定
     uint8_t zflag[4];   // 残像フラグ
     uint8_t zindex;     // 残像インデクス
+    uint8_t dmg;        // ダメージカウンタ
+    uint8_t muteki;     // 無敵カウンタ
 } Player;
 
 // プレイヤーショット

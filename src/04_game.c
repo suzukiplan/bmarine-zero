@@ -2,6 +2,9 @@
 
 void submain(uint8_t arg) __z88dk_fastcall
 {
+    if (arg) {
+        return; // arg で別処理分岐（未実装）
+    }
     uint8_t i;
 
     // スコアと波をBGからFGに描き直す
@@ -21,7 +24,6 @@ void submain(uint8_t arg) __z88dk_fastcall
 
     // OAMを初期化
     vgs0_memset((uint16_t)VGS0_ADDR_OAM, 0x00, sizeof(OAM) * 256);
-    vgs0_oam_set(SP_JIKIDMG, GV->player.x.raw[1], GV->player.y.raw[1], 0x00, 0xD0, 2, 1);
     vgs0_oam_set(SP_JIKI, GV->player.x.raw[1], GV->player.y.raw[1], 0x80, 0x10, 2, 1);
     vgs0_oam_set(SP_JIKI + 1, GV->player.x.raw[1] + 8, GV->player.y.raw[1], 0x80, 0x2F, 0, 0);
     VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;

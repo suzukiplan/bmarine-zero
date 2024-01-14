@@ -208,7 +208,7 @@ static void increment_hit_count() __z88dk_fastcall
     GV->hkt = HIT_KEEP_TIME;
 }
 
-// 自機ショットとの当たり判定チェック
+// 自機・自機ショットとの当たり判定チェック
 static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
 {
     if (0 == enemy->flag || 0 == enemy->check) {
@@ -240,7 +240,7 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
                 increment_hit_count();
             }
         }
-        return;
+        return; // レーザー中は自機 and 自機ショットの判定をスキップ（自機はレーザー中無敵）
     }
 
     GV->hbuf[1].width = 8;
@@ -262,6 +262,22 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
                 increment_hit_count();
                 return;
             }
+        }
+    }
+
+    if (0 == GV->player.dmg && 0 == GV->player.muteki) {
+        GV->hbuf[1].x = GV->player.x.raw[1];
+        GV->hbuf[1].y = GV->player.y.raw[1];
+        GV->hbuf[1].width = 24;
+        GV->hbuf[1].height = 16;
+        if (vgs0_collision_check((uint16_t)GV->hbuf)) {
+            if (0 != enemy->type) {
+                erase_enemy(enemy);
+                add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
+            }
+            GV->hit = 0;
+            GV->player.dmg = 60;
+            return;
         }
     }
 }
