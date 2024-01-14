@@ -24,6 +24,15 @@ void submain(uint8_t arg) __z88dk_fastcall
     vgs0_oam_set(SP_JIKIDMG, GV->player.x.raw[1], GV->player.y.raw[1], 0x00, 0xD0, 2, 1);
     vgs0_oam_set(SP_JIKI, GV->player.x.raw[1], GV->player.y.raw[1], 0x80, 0x10, 2, 1);
     vgs0_oam_set(SP_JIKI + 1, GV->player.x.raw[1] + 8, GV->player.y.raw[1], 0x80, 0x2F, 0, 0);
+    VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
+    VGS0_ADDR_OAM[SP_LASER].bank = BANK_LASER_SP;
+    VGS0_ADDR_OAM[SP_LTOP].widthMinus1 = 3;
+    VGS0_ADDR_OAM[SP_LTOP].heightMinus1 = 1;
+    VGS0_ADDR_OAM[SP_LTOP].bank = BANK_LASER2_SP;
+    VGS0_ADDR_OAM[SP_LBOTTOM].y = 177;
+    VGS0_ADDR_OAM[SP_LBOTTOM].widthMinus1 = 3;
+    VGS0_ADDR_OAM[SP_LBOTTOM].heightMinus1 = 0;
+    VGS0_ADDR_OAM[SP_LBOTTOM].bank = BANK_LASER2_SP;
 
     vgs0_bgm_play(1);
 

@@ -71,6 +71,7 @@ void move_player(void) __z88dk_fastcall
         } else {
             GV->player.shot = 0;
             if (60 < GV->player.charge && 0 == GV->player.jmp) {
+                VGS0_ADDR_OAM[SP_LASER].attr = 0x87;
                 GV->player.laser = 255;
                 GV->player.lcnt = 0;
                 vgs0_se_play(13);
@@ -184,29 +185,19 @@ void move_player(void) __z88dk_fastcall
         VGS0_ADDR_OAM[SP_LTOP].x = GV->player.x.raw[1] - 4;
         VGS0_ADDR_OAM[SP_LBOTTOM].x = VGS0_ADDR_OAM[SP_LTOP].x;
         VGS0_ADDR_OAM[SP_LTOP].y = GV->player.y.raw[1] + 16;
-        VGS0_ADDR_OAM[SP_LBOTTOM].y = 177;
         VGS0_ADDR_OAM[SP_LTOP].ptn = ((GV->frame & 0x06) << 1) | 0x60;
         VGS0_ADDR_OAM[SP_LBOTTOM].ptn = (GV->frame & 0x0C) | 0x70;
         if (GV->player.lcnt < 13) {
-            VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
             VGS0_ADDR_OAM[SP_LASER].heightMinus1 = GV->player.lcnt;
-            VGS0_ADDR_OAM[SP_LASER].attr = 0x87;
             VGS0_ADDR_OAM[SP_LASER].ptn = 0x00;
-            VGS0_ADDR_OAM[SP_LASER].bank = BANK_LASER_SP;
         } else if (GV->player.lcnt < 16) {
             ;
         } else if (GV->player.lcnt < 32) {
             VGS0_ADDR_OAM[SP_LASER].ptn = ((GV->player.lcnt - 16) >> 2) << 1;
         } else if (GV->player.lcnt < 152) {
             if (32 == GV->player.lcnt) {
-                VGS0_ADDR_OAM[SP_LTOP].widthMinus1 = 3;
-                VGS0_ADDR_OAM[SP_LTOP].heightMinus1 = 1;
                 VGS0_ADDR_OAM[SP_LTOP].attr = 0x87;
-                VGS0_ADDR_OAM[SP_LTOP].bank = BANK_LASER2_SP;
-                VGS0_ADDR_OAM[SP_LBOTTOM].widthMinus1 = 3;
-                VGS0_ADDR_OAM[SP_LBOTTOM].heightMinus1 = 0;
                 VGS0_ADDR_OAM[SP_LBOTTOM].attr = 0xA7;
-                VGS0_ADDR_OAM[SP_LBOTTOM].bank = BANK_LASER2_SP;
             }
             GV->player.lhit = 1;
             VGS0_ADDR_OAM[SP_LASER].ptn = 8 + (GV->player.lcnt & 0x06);
