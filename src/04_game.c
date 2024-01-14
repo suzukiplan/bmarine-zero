@@ -21,6 +21,9 @@ void submain(uint8_t arg) __z88dk_fastcall
     vgs0_memset(0xC000 + 8, 0x00, sizeof(GlobalVariables) - 8);
     GV->player.x.value = 0x7400;
     GV->player.y.value = 0x4000;
+    GV->player.hp = 3;
+    GV->player.mhp = 5;
+    render_hp();
 
     // OAMを初期化
     vgs0_memset((uint16_t)VGS0_ADDR_OAM, 0x00, sizeof(OAM) * 256);

@@ -62,6 +62,8 @@ typedef struct {
     uint8_t zindex;     // 残像インデクス
     uint8_t dmg;        // ダメージカウンタ
     uint8_t muteki;     // 無敵カウンタ
+    uint8_t hp;         // 体力
+    uint8_t mhp;        // 最大体力
 } Player;
 
 // プレイヤーショット
@@ -173,6 +175,7 @@ void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;
 void score_increment(uint8_t keta) __z88dk_fastcall;
 void hit_print(void) __z88dk_fastcall;
+void render_hp(void) __z88dk_fastcall;
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
 
 void move_player(void) __z88dk_fastcall;

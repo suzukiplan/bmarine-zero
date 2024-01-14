@@ -154,6 +154,10 @@ void move_player(void) __z88dk_fastcall
 
     // ダメージ処理
     if (0 != GV->player.dmg) {
+        if (60 == GV->player.dmg && GV->player.hp) {
+            GV->player.hp--;
+            render_hp();
+        }
         GV->player.dmg--;
         if (0 != GV->player.dmg) {
             i = GV->frame & 0x03;

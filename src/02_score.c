@@ -201,3 +201,15 @@ void hit_print() __z88dk_fastcall
         }
     }
 }
+
+void render_hp(void) __z88dk_fastcall
+{
+    for (uint8_t i = 0; i < GV->player.mhp; i++) {
+        if (i < GV->player.hp) {
+            VGS0_ADDR_FG->ptn[4][2 + i] = 0x01;
+        } else {
+            VGS0_ADDR_FG->ptn[4][2 + i] = 0x02;
+        }
+        VGS0_ADDR_FG->attr[4][2 + i] = 0x80;
+    }
+}
