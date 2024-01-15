@@ -7,18 +7,10 @@ static void update_player_position(void) __z88dk_fastcall
     } else if (224 < GV->player.x.raw[1]) {
         GV->player.x.raw[1] = 224;
     }
-    VGS0_ADDR_OAM[0].x = GV->player.x.raw[1];
-    VGS0_ADDR_OAM[0].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[1].x = GV->player.x.raw[1] + 8;
-    VGS0_ADDR_OAM[1].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[2].x = GV->player.x.raw[1] + 16;
-    VGS0_ADDR_OAM[2].y = GV->player.y.raw[1];
-    VGS0_ADDR_OAM[3].x = GV->player.x.raw[1];
-    VGS0_ADDR_OAM[3].y = GV->player.y.raw[1] + 8;
-    VGS0_ADDR_OAM[4].x = GV->player.x.raw[1] + 8;
-    VGS0_ADDR_OAM[4].y = GV->player.y.raw[1] + 8;
-    VGS0_ADDR_OAM[5].x = GV->player.x.raw[1] + 16;
-    VGS0_ADDR_OAM[5].y = GV->player.y.raw[1] + 8;
+    VGS0_ADDR_OAM[SP_JIKI].x = GV->player.x.raw[1];
+    VGS0_ADDR_OAM[SP_JIKI].y = GV->player.y.raw[1];
+    VGS0_ADDR_OAM[SP_JIKI + 1].x = GV->player.x.raw[1] + 8;
+    VGS0_ADDR_OAM[SP_JIKI + 1].y = GV->player.y.raw[1];
 }
 
 void move_player(void) __z88dk_fastcall
@@ -31,12 +23,12 @@ void move_player(void) __z88dk_fastcall
         if (-640 < GV->player.spd) {
             GV->player.spd -= 64;
         }
-        VGS0_ADDR_OAM[1].attr |= 0b01000000;
+        VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0b01000000;
     } else if (pad & VGS0_JOYPAD_RI) {
         if (GV->player.spd < 640) {
             GV->player.spd += 64;
         }
-        VGS0_ADDR_OAM[1].attr &= 0b10111111;
+        VGS0_ADDR_OAM[SP_JIKI + 1].attr &= 0b10111111;
     } else if (0 < GV->player.spd) {
         GV->player.spd -= 64;
     } else if (GV->player.spd < 0) {
@@ -51,14 +43,15 @@ void move_player(void) __z88dk_fastcall
             GV->player.jmpKeep = 1;
             add_spray(GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 5, 0x30, 0x83);
             add_spray(GV->player.x.raw[1] + 4, GV->player.y.raw[1] + 5, 0x30, 0xC3);
+            GV->player.charge = 0;
+            vgs0_se_stop(11);
         }
-        GV->player.charge = 0;
     } else {
         GV->player.jmpKeep = 0;
     }
 
     // ショット発射
-    if (0 == GV->player.laser) {
+    if (0 == GV->player.laser && 0 == GV->player.dmg) {
         if (pad & VGS0_JOYPAD_T2) {
             if (0 == GV->player.shot) {
                 add_pshot(GV->player.x.raw[1] + 8, GV->player.y.value + 0x0B00);
@@ -66,6 +59,11 @@ void move_player(void) __z88dk_fastcall
                 GV->player.sa = 16;
             }
             if (0 == GV->player.jmp) {
+                if (4 == GV->player.charge) {
+                    vgs0_se_play(11);
+                } else if (60 == GV->player.charge) {
+                    vgs0_se_play(12);
+                }
                 if (0xFF != GV->player.charge) {
                     GV->player.charge++;
                 }
@@ -73,11 +71,16 @@ void move_player(void) __z88dk_fastcall
         } else {
             GV->player.shot = 0;
             if (60 < GV->player.charge && 0 == GV->player.jmp) {
+                VGS0_ADDR_OAM[SP_LASER].attr = 0x87;
                 GV->player.laser = 255;
                 GV->player.lcnt = 0;
+                vgs0_se_play(13);
             }
             GV->player.charge = 0;
+            vgs0_se_stop(11);
         }
+    } else {
+        vgs0_se_stop(11);
     }
 
     // チャージ開始から10フレーム以降 & レーザー発射中は残像を描画
@@ -151,8 +154,43 @@ void move_player(void) __z88dk_fastcall
         update_player_position();
     }
 
+    // ダメージ処理
+    if (0 != GV->player.dmg) {
+        if (60 == GV->player.dmg && GV->player.hp) {
+            GV->player.hp--;
+            render_hp();
+        }
+        GV->player.dmg--;
+        if (0 != GV->player.dmg) {
+            i = GV->frame & 0x03;
+            i = vgs0_mul(i, 3);
+            i += 0xD0;
+            vgs0_oam_set(SP_JIKIDMG, GV->player.x.raw[1], GV->player.y.raw[1], 0x88, i, 2, 1);
+            if (3 == (GV->frame & 0x07)) {
+                add_enemy(ET_BOMBER, GV->player.x.raw[1], GV->player.y.raw[1] - 4);
+            }
+        } else {
+            VGS0_ADDR_OAM[SP_JIKIDMG].attr = 0x00;
+            GV->player.muteki = 60;
+        }
+    } else if (GV->player.muteki) {
+        GV->player.muteki--;
+        if (GV->player.muteki) {
+            if ((GV->frame & 0x03) < 2) {
+                VGS0_ADDR_OAM[SP_JIKI].attr &= 0x7F;
+                VGS0_ADDR_OAM[SP_JIKI + 1].attr &= 0x7F;
+            } else {
+                VGS0_ADDR_OAM[SP_JIKI].attr |= 0x80;
+                VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0x80;
+            }
+        } else {
+            VGS0_ADDR_OAM[SP_JIKI].attr |= 0x80;
+            VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0x80;
+        }
+    }
+
     // チャージメーター
-    if (5 < GV->player.charge) {
+    if (10 < GV->player.charge) {
         if (60 < GV->player.charge) {
             i = 0x5C;
         } else {
@@ -184,29 +222,19 @@ void move_player(void) __z88dk_fastcall
         VGS0_ADDR_OAM[SP_LTOP].x = GV->player.x.raw[1] - 4;
         VGS0_ADDR_OAM[SP_LBOTTOM].x = VGS0_ADDR_OAM[SP_LTOP].x;
         VGS0_ADDR_OAM[SP_LTOP].y = GV->player.y.raw[1] + 16;
-        VGS0_ADDR_OAM[SP_LBOTTOM].y = 177;
         VGS0_ADDR_OAM[SP_LTOP].ptn = ((GV->frame & 0x06) << 1) | 0x60;
         VGS0_ADDR_OAM[SP_LBOTTOM].ptn = (GV->frame & 0x0C) | 0x70;
         if (GV->player.lcnt < 13) {
-            VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
             VGS0_ADDR_OAM[SP_LASER].heightMinus1 = GV->player.lcnt;
-            VGS0_ADDR_OAM[SP_LASER].attr = 0x87;
             VGS0_ADDR_OAM[SP_LASER].ptn = 0x00;
-            VGS0_ADDR_OAM[SP_LASER].bank = BANK_LASER_SP;
         } else if (GV->player.lcnt < 16) {
             ;
         } else if (GV->player.lcnt < 32) {
             VGS0_ADDR_OAM[SP_LASER].ptn = ((GV->player.lcnt - 16) >> 2) << 1;
         } else if (GV->player.lcnt < 152) {
             if (32 == GV->player.lcnt) {
-                VGS0_ADDR_OAM[SP_LTOP].widthMinus1 = 3;
-                VGS0_ADDR_OAM[SP_LTOP].heightMinus1 = 1;
                 VGS0_ADDR_OAM[SP_LTOP].attr = 0x87;
-                VGS0_ADDR_OAM[SP_LTOP].bank = BANK_LASER2_SP;
-                VGS0_ADDR_OAM[SP_LBOTTOM].widthMinus1 = 3;
-                VGS0_ADDR_OAM[SP_LBOTTOM].heightMinus1 = 0;
                 VGS0_ADDR_OAM[SP_LBOTTOM].attr = 0xA7;
-                VGS0_ADDR_OAM[SP_LBOTTOM].bank = BANK_LASER2_SP;
             }
             GV->player.lhit = 1;
             VGS0_ADDR_OAM[SP_LASER].ptn = 8 + (GV->player.lcnt & 0x06);
@@ -230,9 +258,9 @@ void move_player(void) __z88dk_fastcall
             i &= 0x03;
             i <<= 1;
             i += 0x48;
-            vgs0_oam_set(6, GV->player.x.raw[1] + 3, GV->player.y.raw[1] + 7, 0x84, i, 1, 1);
+            vgs0_oam_set(SP_SHOTEFF, GV->player.x.raw[1] + 3, GV->player.y.raw[1] + 7, 0x84, i, 1, 1);
         } else {
-            VGS0_ADDR_OAM[6].attr = 0;
+            VGS0_ADDR_OAM[SP_SHOTEFF].attr = 0;
         }
     }
 

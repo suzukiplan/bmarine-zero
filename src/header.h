@@ -20,6 +20,9 @@
 #define BANK_LASER2_SP 16 // レーザー装飾
 
 // スプライトの初期位置
+#define SP_JIKIDMG 0    // 自機ダメージ (1)
+#define SP_JIKI 1       // 自機 (2)
+#define SP_SHOTEFF 3    // ショット発射エフェクト (1)
 #define SP_LTOP 58      // レーザー発射口 (1)
 #define SP_LBOTTOM 59   // レーザー地面 (1)
 #define SP_LASER 60     // レーザー (1)
@@ -57,6 +60,10 @@ typedef struct {
     uint8_t lhit;       // レーザー当たり判定
     uint8_t zflag[4];   // 残像フラグ
     uint8_t zindex;     // 残像インデクス
+    uint8_t dmg;        // ダメージカウンタ
+    uint8_t muteki;     // 無敵カウンタ
+    uint8_t hp;         // 体力
+    uint8_t mhp;        // 最大体力
 } Player;
 
 // プレイヤーショット
@@ -168,6 +175,7 @@ void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;
 void score_increment(uint8_t keta) __z88dk_fastcall;
 void hit_print(void) __z88dk_fastcall;
+void render_hp(void) __z88dk_fastcall;
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
 
 void move_player(void) __z88dk_fastcall;

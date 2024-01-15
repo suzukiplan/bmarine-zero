@@ -2,6 +2,9 @@
 
 void submain(uint8_t arg) __z88dk_fastcall
 {
+    if (arg) {
+        return; // arg で別処理分岐（未実装）
+    }
     uint8_t i;
 
     // スコアと波をBGからFGに描き直す
@@ -14,15 +17,27 @@ void submain(uint8_t arg) __z88dk_fastcall
         VGS0_ADDR_FG->attr[9][i] = 0x80; // 波を描画
     }
 
-    // 波に使っていたスプライトを自機スプライトに上書き
-    vgs0_memcpy((uint16_t)&VGS0_ADDR_OAM[0],
-                (uint16_t)&VGS0_ADDR_OAM[3],
-                sizeof(OAM) * 9);
-
     // ハイスコア以外のグローバル変数を初期化
     vgs0_memset(0xC000 + 8, 0x00, sizeof(GlobalVariables) - 8);
     GV->player.x.value = 0x7400;
     GV->player.y.value = 0x4000;
+    GV->player.hp = 3;
+    GV->player.mhp = 5;
+    render_hp();
+
+    // OAMを初期化
+    vgs0_memset((uint16_t)VGS0_ADDR_OAM, 0x00, sizeof(OAM) * 256);
+    vgs0_oam_set(SP_JIKI, GV->player.x.raw[1], GV->player.y.raw[1], 0x80, 0x10, 2, 1);
+    vgs0_oam_set(SP_JIKI + 1, GV->player.x.raw[1] + 8, GV->player.y.raw[1], 0x80, 0x2F, 0, 0);
+    VGS0_ADDR_OAM[SP_LASER].widthMinus1 = 1;
+    VGS0_ADDR_OAM[SP_LASER].bank = BANK_LASER_SP;
+    VGS0_ADDR_OAM[SP_LTOP].widthMinus1 = 3;
+    VGS0_ADDR_OAM[SP_LTOP].heightMinus1 = 1;
+    VGS0_ADDR_OAM[SP_LTOP].bank = BANK_LASER2_SP;
+    VGS0_ADDR_OAM[SP_LBOTTOM].y = 177;
+    VGS0_ADDR_OAM[SP_LBOTTOM].widthMinus1 = 3;
+    VGS0_ADDR_OAM[SP_LBOTTOM].heightMinus1 = 0;
+    VGS0_ADDR_OAM[SP_LBOTTOM].bank = BANK_LASER2_SP;
 
     vgs0_bgm_play(1);
 
