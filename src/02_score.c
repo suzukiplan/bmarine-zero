@@ -204,12 +204,41 @@ void hit_print() __z88dk_fastcall
 
 void render_hp(void) __z88dk_fastcall
 {
-    for (uint8_t i = 0; i < GV->player.mhp; i++) {
-        if (i < GV->player.hp) {
-            VGS0_ADDR_FG->ptn[4][2 + i] = 0x01;
-        } else {
-            VGS0_ADDR_FG->ptn[4][2 + i] = 0x02;
+    if (GV->player.hp == GV->player.chp) {
+        return;
+    }
+    if (GV->player.hp < GV->player.chp) {
+        GV->player.chp--;
+    } else {
+        GV->player.chp = GV->player.hp;
+    }
+    uint8_t i, j;
+    if (80 == GV->player.chp) {
+        for (i = 0; i < 5; i++) {
+            VGS0_ADDR_OAM[SP_HP + i].ptn = 0xA0;
+            VGS0_ADDR_OAM[SP_HP + i].attr = 0x86;
         }
-        VGS0_ADDR_FG->attr[4][2 + i] = 0x80;
+        return;
+    }
+    uint8_t chp = GV->player.chp >> 1;
+    j = 0;
+    for (uint8_t i = 8; i <= 40; i += 8, j += 1) {
+        if (chp < i) {
+            i = chp & 0x07;
+            if (i) {
+                VGS0_ADDR_OAM[SP_HP + j].ptn = (7 - i) | 0xA0;
+                VGS0_ADDR_OAM[SP_HP + j].attr = 0x86;
+            } else {
+                VGS0_ADDR_OAM[SP_HP + j].attr = 0x00;
+            }
+            for (i = 0; i < j; i++) {
+                VGS0_ADDR_OAM[SP_HP + i].ptn = 0xA0;
+                VGS0_ADDR_OAM[SP_HP + i].attr = 0x86;
+            }
+            for (i = j + 1; i < 5; i++) {
+                VGS0_ADDR_OAM[SP_HP + i].attr = 0x00;
+            }
+            return;
+        }
     }
 }

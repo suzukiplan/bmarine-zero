@@ -157,8 +157,11 @@ void move_player(void) __z88dk_fastcall
     // ダメージ処理
     if (0 != GV->player.dmg) {
         if (60 == GV->player.dmg && GV->player.hp) {
-            GV->player.hp--;
-            render_hp();
+            if (23 <= GV->player.hp) {
+                GV->player.hp -= 23;
+            } else {
+                GV->player.hp = 0;
+            }
         }
         GV->player.dmg--;
         if (0 != GV->player.dmg) {
@@ -188,6 +191,9 @@ void move_player(void) __z88dk_fastcall
             VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0x80;
         }
     }
+
+    // 体力ゲージ更新
+    render_hp();
 
     // チャージメーター
     if (10 < GV->player.charge) {

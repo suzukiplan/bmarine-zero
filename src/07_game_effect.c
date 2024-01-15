@@ -236,6 +236,9 @@ void screen_effect_proc(void) __z88dk_fastcall
                         GV->medal[i].flag = 0x20;
                         GV->medal[i].an = 0;
                         VGS0_ADDR_OAM[SP_MEDAL + i].ptn = 0x60;
+                        if (GV->player.hp < 80) {
+                            GV->player.hp++;
+                        }
                     } else {
                         VGS0_ADDR_OAM[SP_MEDAL + i].x = GV->medal[i].x.raw[1];
                         VGS0_ADDR_OAM[SP_MEDAL + i].y = GV->medal[i].y.raw[1];

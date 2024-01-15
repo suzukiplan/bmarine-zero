@@ -23,6 +23,7 @@
 #define SP_JIKIDMG 0    // 自機ダメージ (1)
 #define SP_JIKI 1       // 自機 (2)
 #define SP_SHOTEFF 3    // ショット発射エフェクト (1)
+#define SP_HP 4         // 体力ゲージ (5)
 #define SP_LTOP 58      // レーザー発射口 (1)
 #define SP_LBOTTOM 59   // レーザー地面 (1)
 #define SP_LASER 60     // レーザー (1)
@@ -63,7 +64,7 @@ typedef struct {
     uint8_t dmg;        // ダメージカウンタ
     uint8_t muteki;     // 無敵カウンタ
     uint8_t hp;         // 体力
-    uint8_t mhp;        // 最大体力
+    uint8_t chp;        // 現在の表示体力
 } Player;
 
 // プレイヤーショット

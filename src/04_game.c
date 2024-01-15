@@ -21,9 +21,8 @@ void submain(uint8_t arg) __z88dk_fastcall
     vgs0_memset(0xC000 + 8, 0x00, sizeof(GlobalVariables) - 8);
     GV->player.x.value = 0x7400;
     GV->player.y.value = 0x4000;
-    GV->player.hp = 3;
-    GV->player.mhp = 5;
-    render_hp();
+    GV->player.hp = 80;
+    GV->player.chp = 0;
 
     // OAMを初期化
     vgs0_memset((uint16_t)VGS0_ADDR_OAM, 0x00, sizeof(OAM) * 256);
@@ -38,6 +37,18 @@ void submain(uint8_t arg) __z88dk_fastcall
     VGS0_ADDR_OAM[SP_LBOTTOM].widthMinus1 = 3;
     VGS0_ADDR_OAM[SP_LBOTTOM].heightMinus1 = 0;
     VGS0_ADDR_OAM[SP_LBOTTOM].bank = BANK_LASER2_SP;
+
+    // 体力ゲージの初期描画
+    for (i = 0; i < 5; i++) {
+        VGS0_ADDR_FG->ptn[3][2 + i] = i + 1;
+        VGS0_ADDR_FG->ptn[4][2 + i] = (i + 1) | 0x10;
+        VGS0_ADDR_FG->attr[3][2 + i] = 0x87;
+        VGS0_ADDR_FG->attr[4][2 + i] = 0x87;
+        VGS0_ADDR_OAM[SP_HP + i].x = 16 + (i << 3);
+        VGS0_ADDR_OAM[SP_HP + i].y = 32;
+        VGS0_ADDR_OAM[SP_HP + i].bank = BANK_MEDAL_SP;
+    }
+    render_hp();
 
     vgs0_bgm_play(1);
 
