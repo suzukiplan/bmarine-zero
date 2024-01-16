@@ -187,6 +187,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     enemy->x.raw[1] = x;
     enemy->y.raw[1] = y;
     enemy->sn = tbl_init_sn[type];
+    vgs0_memcpy((uint16_t)&enemy->hit, (uint16_t)&hittbl[type], sizeof(rect_t));
 
     // OAMに初期値を設定
     const uint8_t* ptn = get_init_ptn(type);
@@ -257,17 +258,17 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
         return;
     }
     uint8_t et = enemy->y.raw[1];
-    et += hittbl[enemy->type].y;
+    et += enemy->hit.y;
     uint8_t eb = et;
-    eb += hittbl[enemy->type].height;
+    eb += enemy->hit.height;
     uint8_t el = enemy->x.raw[1];
-    el += hittbl[enemy->type].x;
+    el += enemy->hit.x;
     uint8_t er = el;
-    er += hittbl[enemy->type].width;
+    er += enemy->hit.width;
     GV->hbuf[0].x = el;
     GV->hbuf[0].y = et;
-    GV->hbuf[0].width = hittbl[enemy->type].width;
-    GV->hbuf[0].height = hittbl[enemy->type].height;
+    GV->hbuf[0].width = enemy->hit.width;
+    GV->hbuf[0].height = enemy->hit.height;
 
     if (GV->player.lhit) {
         if (0 != enemy->type) {
@@ -341,10 +342,10 @@ static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
     for (uint8_t i = 0; i < 32; i++) {
         Enemy* enemy = &GV->enemy[i];
         if (ET_BOMBER != enemy->type && enemy->flag && enemy->check) {
-            GV->hbuf[1].x = enemy->x.raw[1] + hittbl[enemy->type].x;
-            GV->hbuf[1].y = enemy->y.raw[1] + hittbl[enemy->type].y;
-            GV->hbuf[1].width = hittbl[enemy->type].width;
-            GV->hbuf[1].height = hittbl[enemy->type].height;
+            GV->hbuf[1].x = enemy->x.raw[1] + enemy->hit.x;
+            GV->hbuf[1].y = enemy->y.raw[1] + enemy->hit.y;
+            GV->hbuf[1].width = enemy->hit.width;
+            GV->hbuf[1].height = enemy->hit.height;
             if (vgs0_collision_check((uint16_t)GV->hbuf)) {
                 erase_enemy(enemy);
                 add_enemy(ET_BOMBER, GV->hbuf[1].x + (GV->hbuf[1].width - 24) / 2, GV->hbuf[1].y + (GV->hbuf[1].height - 24) / 2);
