@@ -57,6 +57,7 @@ void submain(uint8_t arg) __z88dk_fastcall
         vgs0_wait_vsync();
         GV->frame++;
 
+        /*
         if (0 == (GV->frame & 0x3F)) {
             add_enemy(ET_MARINE_LR, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
             add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);
@@ -64,6 +65,11 @@ void submain(uint8_t arg) __z88dk_fastcall
 
         if (0 == (GV->frame & 0x7F)) {
             add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
+        }
+        */
+
+        if (0x0F == (GV->frame & 0x0F)) {
+            add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
         }
 
         // 追加可能なら星と泡を追加

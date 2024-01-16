@@ -44,6 +44,7 @@
 #define ET_THUNDER 3   // 雷撃
 #define ET_BIRD 4      // 鳥
 #define ET_UNK 5       // 鳥の落とし物
+#define ET_FISH 6      // 魚
 
 // プレイヤー
 typedef struct {
@@ -208,3 +209,4 @@ void move_marineRL(Enemy* enemy) __z88dk_fastcall;
 void move_thunder(Enemy* enemy) __z88dk_fastcall;
 void move_bird(Enemy* enemy) __z88dk_fastcall;
 void move_unk(Enemy* enemy) __z88dk_fastcall;
+void move_fish(Enemy* enemy) __z88dk_fastcall;

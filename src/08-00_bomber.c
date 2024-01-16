@@ -6,7 +6,6 @@ static const uint8_t ptn[10] = {0x00, 0x03, 0x06, 0x09, 0x0C, 0x30, 0x33, 0x36, 
 void move_bomber(Enemy* enemy) __z88dk_fastcall
 {
     if (1 == enemy->flag) {
-        VGS0_ADDR_OAM[enemy->si[0]].bank = BANK_BOMB_SP;
         vgs0_se_play(7);
         int8_t vx = (int8_t)get_random(&GV->ridx);
         int8_t vy = (int8_t)get_random(&GV->ridx);

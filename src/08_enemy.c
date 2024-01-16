@@ -10,6 +10,7 @@ const uint8_t tbl_init_sn[9] = {
     1, // 3: 雷撃
     1, // 4: 鳥
     1, // 5: 鳥の落とし物
+    1, // 6: 魚
 };
 
 // 初期パターン定義
@@ -19,6 +20,7 @@ static const uint8_t ptn_marineRL[3] = {0x16, 0x15, 0x18};
 static const uint8_t ptn_thunder[1] = {0x1C};
 static const uint8_t ptn_bird[1] = {0x68};
 static const uint8_t ptn_unk[1] = {0x2C};
+static const uint8_t ptn_fish[1] = {0x80};
 
 static const uint8_t* get_init_ptn(uint8_t type)
 {
@@ -29,6 +31,7 @@ static const uint8_t* get_init_ptn(uint8_t type)
         ptn_thunder,  // 3: 雷撃
         ptn_bird,     // 4: 鳥
         ptn_unk,      // 5: 鳥の落とし物
+        ptn_fish,     // 6: 魚
     };
     return ptn[type];
 }
@@ -40,6 +43,7 @@ static const uint8_t attr_marineRL[3] = {0x00, 0x00, 0x00};
 static const uint8_t attr_thunder[1] = {0x84};
 static const uint8_t attr_bird[1] = {0x80};
 static const uint8_t attr_unk[1] = {0x80};
+static const uint8_t attr_fish[1] = {0x87};
 
 static const uint8_t* get_init_attr(uint8_t type)
 {
@@ -50,6 +54,7 @@ static const uint8_t* get_init_attr(uint8_t type)
         attr_thunder,  // 3: 雷撃
         attr_bird,     // 4: 鳥
         attr_unk,      // 5: 鳥の落とし物
+        attr_fish,     // 6: 魚
     };
     return attr[type];
 }
@@ -74,6 +79,7 @@ static const uint8_t* get_init_ofx(uint8_t type)
         single0,      // 3: 雷撃
         single0,      // 4: 鳥
         single0,      // 5: 鳥の落とし物
+        single0,      // 6: 魚
     };
     return ofx[type];
 }
@@ -87,6 +93,7 @@ static const uint8_t* get_init_ofy(uint8_t type)
         single0,    // 3: 雷撃
         single0,    // 4: 鳥
         single0,    // 5: 鳥の落とし物
+        single0,    // 6: 魚
     };
     return ofy[type];
 }
@@ -100,6 +107,7 @@ static const uint8_t* get_init_width(uint8_t type)
         single0,    // 3: 雷撃
         single1,    // 4: 鳥
         single0,    // 5: 鳥の落とし物
+        single1,    // 6: 魚
     };
     return width[type];
 }
@@ -113,6 +121,7 @@ static const uint8_t* get_init_height(uint8_t type)
         single0,  // 3: 雷撃
         single1,  // 4: 鳥
         single0,  // 5: 鳥の落とし物
+        single1,  // 6: 魚
     };
     return height[type];
 }
@@ -125,6 +134,18 @@ static const rect_t hittbl[] = {
     {2, 0, 6, 8},     // 3: 雷撃
     {0, 0, 16, 16},   // 4: 鳥
     {0, 0, 8, 8},     // 5: 鳥の落とし物
+    {0, 0, 16, 16},   // 6: 魚
+};
+
+// スプライトバンク
+static const uint8_t spbank[] = {
+    BANK_BOMB_SP,   // 0: 爆発
+    0,              // 1: 潜水艦 (左から右)
+    0,              // 2: 潜水艦 (右から左)
+    0,              // 3: 雷撃
+    0,              // 4: 鳥
+    0,              // 5: 鳥の落とし物
+    BANK_LASER2_SP, // 6: 魚
 };
 
 // 敵を追加
@@ -176,6 +197,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     const int8_t* h = get_init_height(type);
     for (i = 0; i < enemy->sn; i++) {
         vgs0_oam_set(enemy->si[i], x + ofx[i], y + ofy[i], attr[i], ptn[i], w[i], h[i]);
+        VGS0_ADDR_OAM[enemy->si[i]].bank = spbank[type];
         GV->espIndex += 1;
         GV->espIndex &= 0x7F;
     }
@@ -346,6 +368,7 @@ void move_enemy(void) __z88dk_fastcall
                 case ET_THUNDER: move_thunder(enemy); break;
                 case ET_BIRD: move_bird(enemy); break;
                 case ET_UNK: move_unk(enemy); break;
+                case ET_FISH: move_fish(enemy); break;
                 default: erase_enemy(enemy);
             }
             if (0 == enemy->flag) {
