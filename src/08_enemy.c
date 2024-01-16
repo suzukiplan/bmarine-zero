@@ -290,10 +290,10 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
     }
 
     if (0 == GV->player.dmg && 0 == GV->player.muteki) {
-        GV->hbuf[1].x = GV->player.x.raw[1];
-        GV->hbuf[1].y = GV->player.y.raw[1];
-        GV->hbuf[1].width = 24;
-        GV->hbuf[1].height = 16;
+        GV->hbuf[1].x = GV->player.x.raw[1] + 10;
+        GV->hbuf[1].y = GV->player.y.raw[1] + 8;
+        GV->hbuf[1].width = 4;
+        GV->hbuf[1].height = 4;
         if (vgs0_collision_check((uint16_t)GV->hbuf)) {
             if (0 != enemy->type) {
                 erase_enemy(enemy);
