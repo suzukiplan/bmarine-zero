@@ -110,14 +110,19 @@ void add_bubble(void) __z88dk_fastcall
     GV->bubbleIndex &= 0x0F;
 }
 
-void add_medal(uint8_t x, uint8_t y)
+void add_medal(uint8_t type, uint8_t x, uint8_t y)
 {
     if (GV->medal[GV->medalIndex].flag) return;
     vgs0_memset((uint16_t)&GV->medal[GV->medalIndex], 0, sizeof(Medal));
     GV->medal[GV->medalIndex].flag = 1;
+    GV->medal[GV->medalIndex].type = type;
     GV->medal[GV->medalIndex].x.raw[1] = x;
     GV->medal[GV->medalIndex].y.raw[1] = y;
-    vgs0_oam_set(SP_MEDAL + GV->medalIndex, x, y, 0x86, 0x00, 1, 1);
+    if (0 == type) {
+        vgs0_oam_set(SP_MEDAL + GV->medalIndex, x, y, 0x86, 0x00, 1, 1);
+    } else {
+        vgs0_oam_set(SP_MEDAL + GV->medalIndex, x, y, 0x89, 0x00, 1, 1);
+    }
     VGS0_ADDR_OAM[SP_MEDAL + GV->medalIndex].bank = BANK_MEDAL_SP;
     GV->medalIndex += 1;
     GV->medalIndex &= 0x0F;
@@ -200,7 +205,7 @@ void screen_effect_proc(void) __z88dk_fastcall
                         }
                     }
                 } else if (0x10 == GV->medal[i].flag) {
-                    uint8_t r = vgs0_angle(GV->medal[i].x.raw[1] + 4, GV->medal[i].y.raw[1] + 4, GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 8);
+                    uint8_t r = vgs0_angle(GV->medal[i].x.raw[1] + 8, GV->medal[i].y.raw[1] + 8, GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 8);
                     GV->medal[i].vx.value = (uint16_t)((int8_t)vgs0_sin(r));
                     GV->medal[i].vy.value = (uint16_t)((int8_t)vgs0_cos(r));
                     GV->medal[i].vx.value += GV->medal[i].vx.value;
@@ -229,15 +234,30 @@ void screen_effect_proc(void) __z88dk_fastcall
                     GV->hbuf[0].height = 16;
                     GV->hbuf[1].x = GV->medal[i].x.raw[1];
                     GV->hbuf[1].y = GV->medal[i].y.raw[1];
-                    GV->hbuf[1].width = 24;
+                    GV->hbuf[1].width = 16;
                     GV->hbuf[1].height = 16;
                     if (vgs0_collision_check((uint16_t)GV->hbuf)) {
                         vgs0_se_play(10);
                         GV->medal[i].flag = 0x20;
                         GV->medal[i].an = 0;
                         VGS0_ADDR_OAM[SP_MEDAL + i].ptn = 0x60;
-                        if (GV->player.hp < 80) {
-                            GV->player.hp++;
+                        if (0 == GV->medal[i].type) {
+                            if (GV->player.hp < 80) {
+                                GV->player.hp++;
+                            } else {
+                                // メダル基礎得点上昇
+                                GV->smc.value++;
+                                if (0 == GV->smc.value) {
+                                    GV->smc.value = 0xFFFF;
+                                }
+                            }
+                        } else {
+                            GV->sadd[1] += 5 + (GV->smc.raw[0] & 0x0F);
+                            GV->sadd[2] += ((GV->smc.raw[0] & 0xF0) >> 4);
+                            if (GV->smc.raw[1]) {
+                                GV->sadd[3] += GV->smc.raw[1] & 0x0F;
+                                GV->sadd[4] += ((GV->smc.raw[1] & 0xF0) >> 4);
+                            }
                         }
                     } else {
                         VGS0_ADDR_OAM[SP_MEDAL + i].x = GV->medal[i].x.raw[1];
@@ -245,6 +265,7 @@ void screen_effect_proc(void) __z88dk_fastcall
                     }
                 }
             } else {
+                // 取得アニメーション
                 if (0 == (GV->frame & 0x01)) {
                     GV->medal[i].an += 2;
                     if (GV->medal[i].an < 32) {

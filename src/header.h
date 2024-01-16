@@ -111,6 +111,7 @@ typedef struct {
 // 勲章
 typedef struct {
     uint8_t flag;   // 存在フラグ & 状態
+    uint8_t type;   // 種別 (0: 回復, 1: スコア)
     uint8_t an;     // アニメーションパターン
     var16_t x;      // X座標
     var16_t y;      // Y座標
@@ -138,6 +139,7 @@ typedef struct {
     uint8_t hi[8];          // ハイスコア
     uint8_t sc[8];          // スコア
     uint8_t sadd[8];        // 桁毎のスコア加算値
+    var16_t smc;            // スコアに反映するメダル総数（最大体力で type 0 を取得すると上昇 & damage でリセット）
     uint8_t ridx;           // 乱数インデクス
     uint8_t frame;          // フレームカウンタ
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
@@ -189,7 +191,7 @@ void add_dust_ground(uint8_t x, uint8_t y);
 void add_dust_air(uint8_t x, uint8_t y);
 void add_star(void) __z88dk_fastcall;
 void add_bubble(void)  __z88dk_fastcall;
-void add_medal(uint8_t x, uint8_t y);
+void add_medal(uint8_t type, uint8_t x, uint8_t y);
 void screen_effect_proc(void) __z88dk_fastcall;
 
 void add_enemy(uint8_t type, uint8_t x, uint8_t y);

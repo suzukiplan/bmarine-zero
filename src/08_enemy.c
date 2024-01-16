@@ -236,7 +236,7 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
             if (vgs0_collision_check((uint16_t)GV->hbuf)) {
                 erase_enemy(enemy);
                 add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
-                add_medal(el + (er - el - 16) / 2, et + (eb - et - 16) / 2);
+                add_medal(1, el + (er - el - 16) / 2, et + (eb - et - 16) / 2);
                 increment_hit_count();
             }
         }
@@ -254,7 +254,11 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
                 if (0 != enemy->type) {
                     erase_enemy(enemy);
                     add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
-                    add_medal(el + (er - el - 16) / 2, et + (eb - et - 16) / 2);
+                    if (enemy->type == ET_MARINE_LR || enemy->type == ET_MARINE_RL) {
+                        add_medal(0, el + (er - el - 16) / 2, et + (eb - et - 16) / 2);
+                    } else {
+                        add_medal(1, el + (er - el - 16) / 2, et + (eb - et - 16) / 2);
+                    }
                 }
                 GV->shot[i].flag = 0;
                 VGS0_ADDR_OAM[SP_SHOT + i].attr = 0x00;
@@ -302,7 +306,7 @@ static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
             if (vgs0_collision_check((uint16_t)GV->hbuf)) {
                 erase_enemy(enemy);
                 add_enemy(ET_BOMBER, GV->hbuf[1].x + (GV->hbuf[1].width - 24) / 2, GV->hbuf[1].y + (GV->hbuf[1].height - 24) / 2);
-                add_medal(GV->hbuf[1].x + (GV->hbuf[1].width - 16) / 2, GV->hbuf[1].y + (GV->hbuf[1].height - 16) / 2);
+                add_medal(1, GV->hbuf[1].x + (GV->hbuf[1].width - 16) / 2, GV->hbuf[1].y + (GV->hbuf[1].height - 16) / 2);
                 increment_hit_count();
             }
         }
