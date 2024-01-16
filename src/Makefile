@@ -18,6 +18,8 @@ PROGRAM1 += 08-00_bomber.rel
 PROGRAM1 += 08-01_marineLR.rel
 PROGRAM1 += 08-02_marineRL.rel
 PROGRAM1 += 08-03_thunder.rel
+PROGRAM1 += 08-04_bird.rel
+PROGRAM1 += 08-05_unk.rel
 
 # image files
 CHR_FILES = bg.chr
@@ -44,6 +46,8 @@ WAV_FILES += se010_medal.wav
 WAV_FILES += se011_charge.wav
 WAV_FILES += se012_charge-full.wav
 WAV_FILES += se013_laser.wav
+WAV_FILES += se014_birdvoice.wav
+WAV_FILES += se015_birddrop.wav
 
 # background music
 BGM_FILES = song1.bgm

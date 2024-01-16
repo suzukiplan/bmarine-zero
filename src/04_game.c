@@ -62,6 +62,10 @@ void submain(uint8_t arg) __z88dk_fastcall
             add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);
         }
 
+        if (0 == (GV->frame & 0x7F)) {
+            add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
+        }
+
         // 追加可能なら星と泡を追加
         add_star();
         add_bubble();

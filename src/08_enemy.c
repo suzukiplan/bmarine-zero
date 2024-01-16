@@ -8,6 +8,8 @@ const uint8_t tbl_init_sn[9] = {
     3, // 1: 潜水艦 (左から右)
     3, // 2: 潜水艦 (右から左)
     1, // 3: 雷撃
+    1, // 4: 鳥
+    1, // 5: 鳥の落とし物
 };
 
 // 初期パターン定義
@@ -15,16 +17,20 @@ static const uint8_t ptn_bomb[1] = {0x00};
 static const uint8_t ptn_marineLR[3] = {0x18, 0x15, 0x16};
 static const uint8_t ptn_marineRL[3] = {0x16, 0x15, 0x18};
 static const uint8_t ptn_thunder[1] = {0x1C};
+static const uint8_t ptn_bird[1] = {0x68};
+static const uint8_t ptn_unk[1] = {0x2C};
 
-static uint8_t* get_init_ptn(uint8_t type)
+static const uint8_t* get_init_ptn(uint8_t type)
 {
-    switch (type) {
-        case 0: return ptn_bomb;     // 0: 爆発
-        case 1: return ptn_marineLR; // 1: 潜水艦 (左から右)
-        case 2: return ptn_marineRL; // 2: 潜水艦 (右から左)
-        case 3: return ptn_thunder;  // 3: 雷撃
-        default: return (uint8_t*)0;
-    }
+    const uint8_t* ptn[] = {
+        ptn_bomb,     // 0: 爆発
+        ptn_marineLR, // 1: 潜水艦 (左から右)
+        ptn_marineRL, // 2: 潜水艦 (右から左)
+        ptn_thunder,  // 3: 雷撃
+        ptn_bird,     // 4: 鳥
+        ptn_unk,      // 5: 鳥の落とし物
+    };
+    return ptn[type];
 }
 
 // 属性定義
@@ -32,22 +38,26 @@ static const uint8_t attr_bomb[1] = {0x85};
 static const uint8_t attr_marineLR[3] = {0x00, 0x00, 0x00};
 static const uint8_t attr_marineRL[3] = {0x00, 0x00, 0x00};
 static const uint8_t attr_thunder[1] = {0x84};
+static const uint8_t attr_bird[1] = {0x80};
+static const uint8_t attr_unk[1] = {0x80};
 
-static uint8_t* get_init_attr(uint8_t type)
+static const uint8_t* get_init_attr(uint8_t type)
 {
-    switch (type) {
-        case 0: return attr_bomb;     // 0: 爆発
-        case 1: return attr_marineLR; // 1: 潜水艦 (左から右)
-        case 2: return attr_marineRL; // 2: 潜水艦 (右から左)
-        case 3: return attr_thunder;  // 3: 雷撃
-        default: return (uint8_t*)0;
-    }
+    const uint8_t* attr[] = {
+        attr_bomb,     // 0: 爆発
+        attr_marineLR, // 1: 潜水艦 (左から右)
+        attr_marineRL, // 2: 潜水艦 (右から左)
+        attr_thunder,  // 3: 雷撃
+        attr_bird,     // 4: 鳥
+        attr_unk,      // 5: 鳥の落とし物
+    };
+    return attr[type];
 }
 
 // スプライトの初期座法設定テーブル
-static const int8_t ofxy_zero[1] = {0x00};
-static const int8_t wh_size0[1] = {0};
-static const int8_t wh_size2[1] = {2};
+static const int8_t single0[1] = {0};
+static const int8_t single1[1] = {1};
+static const int8_t single2[1] = {2};
 static const int8_t ofx_marineLR[3] = {-28, -24, -16};
 static const int8_t ofx_marineRL[3] = {0, 16, 22};
 static const int8_t ofy_marine[3] = {0, 0, 0};
@@ -55,48 +65,56 @@ static const int8_t w_marineLR[3] = {0, 0, 1};
 static const int8_t w_marineRL[3] = {1, 0, 0};
 static const int8_t h_marine[3] = {1, 1, 1};
 
-static uint8_t* get_init_ofx(uint8_t type)
+static const uint8_t* get_init_ofx(uint8_t type)
 {
-    switch (type) {
-        case 0: return ofxy_zero;    // 0: 爆発
-        case 1: return ofx_marineLR; // 1: 潜水艦 (左から右)
-        case 2: return ofx_marineRL; // 2: 潜水艦 (右から左)
-        case 3: return ofxy_zero;    // 3: 雷撃
-        default: return (uint8_t*)0;
-    }
+    const uint8_t* ofx[] = {
+        single0,      // 0: 爆発
+        ofx_marineLR, // 1: 潜水艦 (左から右)
+        ofx_marineRL, // 2: 潜水艦 (右から左)
+        single0,      // 3: 雷撃
+        single0,      // 4: 鳥
+        single0,      // 5: 鳥の落とし物
+    };
+    return ofx[type];
 }
 
-static uint8_t* get_init_ofy(uint8_t type)
+static const uint8_t* get_init_ofy(uint8_t type)
 {
-    switch (type) {
-        case 0: return ofxy_zero;  // 0: 爆発
-        case 1: return ofy_marine; // 1: 潜水艦 (左から右)
-        case 2: return ofy_marine; // 2: 潜水艦 (右から左)
-        case 3: return ofxy_zero;  // 3: 雷撃
-        default: return (uint8_t*)0;
-    }
+    const uint8_t* ofy[] = {
+        single0,    // 0: 爆発
+        ofy_marine, // 1: 潜水艦 (左から右)
+        ofy_marine, // 2: 潜水艦 (右から左)
+        single0,    // 3: 雷撃
+        single0,    // 4: 鳥
+        single0,    // 5: 鳥の落とし物
+    };
+    return ofy[type];
 }
 
-static uint8_t* get_init_width(uint8_t type)
+static const uint8_t* get_init_width(uint8_t type)
 {
-    switch (type) {
-        case 0: return wh_size2;   // 0: 爆発
-        case 1: return w_marineLR; // 1: 潜水艦 (左から右)
-        case 2: return w_marineRL; // 2: 潜水艦 (右から左)
-        case 3: return wh_size0;   // 3: 雷撃
-        default: return (uint8_t*)0;
-    }
+    const uint8_t* width[] = {
+        single2,    // 0: 爆発
+        w_marineLR, // 1: 潜水艦 (左から右)
+        w_marineRL, // 2: 潜水艦 (右から左)
+        single0,    // 3: 雷撃
+        single1,    // 4: 鳥
+        single0,    // 5: 鳥の落とし物
+    };
+    return width[type];
 }
 
-static uint8_t* get_init_height(uint8_t type)
+static const uint8_t* get_init_height(uint8_t type)
 {
-    switch (type) {
-        case 0: return wh_size2; // 0: 爆発
-        case 1: return h_marine; // 1: 潜水艦 (左から右)
-        case 2: return h_marine; // 2: 潜水艦 (右から左)
-        case 3: return wh_size0; // 3: 雷撃
-        default: return (uint8_t*)0;
-    }
+    const uint8_t* height[] = {
+        single2,  // 0: 爆発
+        h_marine, // 1: 潜水艦 (左から右)
+        h_marine, // 2: 潜水艦 (右から左)
+        single0,  // 3: 雷撃
+        single1,  // 4: 鳥
+        single0,  // 5: 鳥の落とし物
+    };
+    return height[type];
 }
 
 // 当たり判定定義テーブル
@@ -105,6 +123,8 @@ static const rect_t hittbl[] = {
     {-24, 0, 24, 16}, // 1: 潜水艦 (左から右)
     {0, 0, 24, 16},   // 2: 潜水艦 (右から左)
     {2, 0, 6, 8},     // 3: 雷撃
+    {0, 0, 16, 16},   // 4: 鳥
+    {0, 0, 8, 8},     // 5: 鳥の落とし物
 };
 
 // 敵を追加
@@ -148,12 +168,12 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
     enemy->sn = tbl_init_sn[type];
 
     // OAMに初期値を設定
-    uint8_t* ptn = get_init_ptn(type);
-    uint8_t* attr = get_init_attr(type);
-    int8_t* ofx = get_init_ofx(type);
-    int8_t* ofy = get_init_ofy(type);
-    int8_t* w = get_init_width(type);
-    int8_t* h = get_init_height(type);
+    const uint8_t* ptn = get_init_ptn(type);
+    const uint8_t* attr = get_init_attr(type);
+    const int8_t* ofx = get_init_ofx(type);
+    const int8_t* ofy = get_init_ofy(type);
+    const int8_t* w = get_init_width(type);
+    const int8_t* h = get_init_height(type);
     for (i = 0; i < enemy->sn; i++) {
         vgs0_oam_set(enemy->si[i], x + ofx[i], y + ofy[i], attr[i], ptn[i], w[i], h[i]);
         GV->espIndex += 1;
@@ -324,6 +344,8 @@ void move_enemy(void) __z88dk_fastcall
                 case ET_MARINE_LR: move_marineLR(enemy); break;
                 case ET_MARINE_RL: move_marineRL(enemy); break;
                 case ET_THUNDER: move_thunder(enemy); break;
+                case ET_BIRD: move_bird(enemy); break;
+                case ET_UNK: move_unk(enemy); break;
                 default: erase_enemy(enemy);
             }
             if (0 == enemy->flag) {

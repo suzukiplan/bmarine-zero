@@ -9,6 +9,15 @@ void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
     GV->sprayIndex &= 0x0F;
 }
 
+void add_spray2(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr)
+{
+    GV->spray2[GV->spray2Index].sn = sn;
+    GV->spray2[GV->spray2Index].t = 0;
+    vgs0_oam_set(SP_SPRAY2 + GV->spray2Index, x, y, attr, sn, 0, 0);
+    GV->spray2Index += 1;
+    GV->spray2Index &= 0x0F;
+}
+
 void add_dust_ground(uint8_t x, uint8_t y)
 {
     GV->dust[GV->dustIndex].flag = 1;
@@ -143,6 +152,19 @@ void screen_effect_proc(void) __z88dk_fastcall
                 VGS0_ADDR_OAM[SP_SPRAY + i].attr = 0x00;
             } else {
                 VGS0_ADDR_OAM[SP_SPRAY + i].ptn = GV->spray[i].sn;
+            }
+        }
+        // うんこの軌道
+        if (GV->spray2[i].sn) {
+            GV->spray2[i].t += 1;
+            if (0 == (GV->spray2[i].t & 7)) {
+                GV->spray2[i].sn += 1;
+            }
+            if (64 == GV->spray2[i].t) {
+                GV->spray2[i].sn = 0;
+                VGS0_ADDR_OAM[SP_SPRAY2 + i].attr = 0x00;
+            } else {
+                VGS0_ADDR_OAM[SP_SPRAY2 + i].ptn = GV->spray2[i].sn;
             }
         }
         // ゴミ

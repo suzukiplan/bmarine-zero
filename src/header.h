@@ -24,6 +24,7 @@
 #define SP_JIKI 1       // 自機 (2)
 #define SP_SHOTEFF 3    // ショット発射エフェクト (1)
 #define SP_HP 4         // 体力ゲージ (5)
+#define SP_SPRAY2 42    // うんこの軌道 (16)
 #define SP_LTOP 58      // レーザー発射口 (1)
 #define SP_LBOTTOM 59   // レーザー地面 (1)
 #define SP_LASER 60     // レーザー (1)
@@ -41,6 +42,8 @@
 #define ET_MARINE_LR 1 // 潜水艦
 #define ET_MARINE_RL 2 // 潜水艦
 #define ET_THUNDER 3   // 雷撃
+#define ET_BIRD 4      // 鳥
+#define ET_UNK 5       // 鳥の落とし物
 
 // プレイヤー
 typedef struct {
@@ -154,6 +157,8 @@ typedef struct {
     uint8_t shotIndex;      // プレイヤーショット index
     Spray spray[16];        // 水しぶき
     uint8_t sprayIndex;     // 水しぶき index
+    Spray spray2[16];       // うんこの軌道
+    uint8_t spray2Index;    // うんこの軌道 index
     Dust dust[16];          // ゴミ
     uint8_t dustIndex;      // ゴミ index
     Star star[16];          // 星
@@ -187,6 +192,7 @@ void move_pshot(void) __z88dk_fastcall;
 void add_pshot(uint8_t x, uint16_t y);
 
 void add_spray(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr);
+void add_spray2(uint8_t x, uint8_t y, uint8_t sn, uint8_t attr);
 void add_dust_ground(uint8_t x, uint8_t y);
 void add_dust_air(uint8_t x, uint8_t y);
 void add_star(void) __z88dk_fastcall;
@@ -200,3 +206,5 @@ void move_bomber(Enemy* enemy) __z88dk_fastcall;
 void move_marineLR(Enemy* enemy) __z88dk_fastcall;
 void move_marineRL(Enemy* enemy) __z88dk_fastcall;
 void move_thunder(Enemy* enemy) __z88dk_fastcall;
+void move_bird(Enemy* enemy) __z88dk_fastcall;
+void move_unk(Enemy* enemy) __z88dk_fastcall;
