@@ -29,6 +29,11 @@ void move_fish(Enemy* enemy) __z88dk_fastcall
             enemy->vx.value = -((int16_t)enemy->vx.value);
         }
         nPreviousX = enemy->x.raw[1];
+        // 当たり判定を大きくしておく
+        enemy->hit.x = -4;
+        enemy->hit.y = -4;
+        enemy->hit.width = 24;
+        enemy->hit.height = 24;
     }
 
     if (enemy->flag == 0x02) {
@@ -48,6 +53,11 @@ void move_fish(Enemy* enemy) __z88dk_fastcall
             return;
         } else if (0 == nRiseFlag && enemy->x.raw[1] < nRiseX) {
             nRiseFlag = 1;
+            // 当たり判定を小さくする
+            enemy->hit.x = 6;
+            enemy->hit.y = 6;
+            enemy->hit.width = 4;
+            enemy->hit.height = 4;
         }
     }
     nPreviousX = enemy->x.raw[1];
@@ -68,6 +78,11 @@ void move_fish(Enemy* enemy) __z88dk_fastcall
             if (nLandingY < enemy->y.raw[1]) {
                 VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x8E;
                 nRiseFlag++;
+                // 当たり判定を普通にする
+                enemy->hit.x = 0;
+                enemy->hit.y = 0;
+                enemy->hit.width = 16;
+                enemy->hit.height = 16;
             } else if (3 != enemy->vy.raw[1]) {
                 if (0 == enemy->vy.raw[1]) {
                     VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x88;
