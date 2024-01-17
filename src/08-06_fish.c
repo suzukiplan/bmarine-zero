@@ -6,6 +6,7 @@
 #define nRiseX enemy->n8[3]
 #define nRiseFlag enemy->n8[4]
 #define nLandingY enemy->n8[5]
+#define nSprayFlag enemy->n8[6]
 
 // 6: 魚
 void move_fish(Enemy* enemy) __z88dk_fastcall
@@ -74,7 +75,19 @@ void move_fish(Enemy* enemy) __z88dk_fastcall
                     VGS0_ADDR_OAM[enemy->si[0]].ptn |= 0x80;
                 }
             }
+            if (0 == nSprayFlag && enemy->y.raw[1] < 72) {
+                nSprayFlag = 1;
+                vgs0_se_play(5);
+                add_spray(enemy->x.raw[1], 69, 0x30, 0xC3);
+                add_spray(enemy->x.raw[1] + 8, 69, 0x30, 0x83);
+            }
         } else if (2 == nRiseFlag) {
+            if (1 == nSprayFlag && 72 < enemy->y.raw[1]) {
+                nSprayFlag = 2;
+                vgs0_se_play(5);
+                add_spray(enemy->x.raw[1], 69, 0x30, 0xC3);
+                add_spray(enemy->x.raw[1] + 8, 69, 0x30, 0x83);
+            }
             if (nLandingY < enemy->y.raw[1]) {
                 VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x8E;
                 nRiseFlag++;
