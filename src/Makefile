@@ -21,6 +21,8 @@ PROGRAM1 += 08-03_thunder.rel
 PROGRAM1 += 08-04_bird.rel
 PROGRAM1 += 08-05_unk.rel
 PROGRAM1 += 08-06_fish.rel
+PROGRAM1 += 08-07_kani.rel
+PROGRAM1 += 08-08_kanitama.rel
 
 # image files
 CHR_FILES = bg.chr

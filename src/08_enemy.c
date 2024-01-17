@@ -122,8 +122,8 @@ static const uint8_t* get_init_width(uint8_t type)
         single1,    // 4: 鳥
         single0,    // 5: 鳥の落とし物
         single1,    // 6: 魚
-        single1,      // 7: カニ
-        single0,      // 8: カニタマ
+        single1,    // 7: カニ
+        single0,    // 8: カニタマ
     };
     return width[type];
 }
@@ -138,8 +138,8 @@ static const uint8_t* get_init_height(uint8_t type)
         single1,  // 4: 鳥
         single0,  // 5: 鳥の落とし物
         single1,  // 6: 魚
-        single1,      // 7: カニ
-        single0,      // 8: カニタマ
+        single1,  // 7: カニ
+        single0,  // 8: カニタマ
     };
     return height[type];
 }
@@ -167,7 +167,7 @@ static const uint8_t spbank[] = {
     0,              // 5: 鳥の落とし物
     BANK_LASER2_SP, // 6: 魚
     0,              // 7: カニ
-    0, // 8: カニタマ
+    0,              // 8: カニタマ
 };
 
 // 敵を追加
