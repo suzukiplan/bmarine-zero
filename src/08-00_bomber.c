@@ -30,6 +30,10 @@ void move_bomber(Enemy* enemy) __z88dk_fastcall
         enemy->n8[0]++;
         if (enemy->n8[0] < 10) {
             VGS0_ADDR_OAM[enemy->si[0]].ptn = ptn[enemy->n8[0]];
+            // 特定パターン以降の当たり判定を削除
+            if (0x38 < ptn[enemy->n8[0]]) {
+                enemy->check = 0;
+            }
         } else {
             enemy->flag = 0;
         }
