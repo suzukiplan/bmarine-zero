@@ -54,8 +54,9 @@ void submain(uint8_t arg) __z88dk_fastcall
     vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
     score_print(VGS0_ADDR_FG);
     vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
-    vgs0_fg_putstr(7, 20, 0x80, "PRESS START BUTTON");
+    vgs0_fg_putstr(7, 19, 0x80, "PRESS START BUTTON");
     vgs0_fg_putstr(4, 23, 0x80, "@2013-2024 BY SUZUKIPLAN");
+    vgs0_fg_putstr(5, 22, 0x80, "PROGRAMMED BY Y.SUZUKI");
 
     // BGを表示
     n = 0;
@@ -92,7 +93,7 @@ void submain(uint8_t arg) __z88dk_fastcall
                 vgs0_se_play(0);
                 start = 1;
                 for (i = 0; i < 32; i++) {
-                    VGS0_ADDR_FG->attr[20][i] = 0x80;
+                    VGS0_ADDR_FG->attr[19][i] = 0x80;
                 }
             }
         } else {
@@ -113,22 +114,22 @@ void submain(uint8_t arg) __z88dk_fastcall
             switch (a & 0x3F) {
                 case 0:
                     for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[20][i] = 0x80;
+                        VGS0_ADDR_FG->attr[19][i] = 0x80;
                     }
                     break;
                 case 24:
                     for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[20][i] = 0x81;
+                        VGS0_ADDR_FG->attr[19][i] = 0x81;
                     }
                     break;
                 case 32:
                     for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[20][i] = 0x00;
+                        VGS0_ADDR_FG->attr[19][i] = 0x00;
                     }
                     break;
                 case 56:
                     for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[20][i] = 0x81;
+                        VGS0_ADDR_FG->attr[19][i] = 0x81;
                     }
                     break;
             }
