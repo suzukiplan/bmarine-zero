@@ -53,6 +53,8 @@ WAV_FILES += se013_laser.wav
 WAV_FILES += se014_birdvoice.wav
 WAV_FILES += se015_birddrop.wav
 WAV_FILES += se016_birdfall.wav
+WAV_FILES += se017_kanijump.wav
+WAV_FILES += se018_kanitama.wav
 
 # background music
 BGM_FILES = song1.bgm
