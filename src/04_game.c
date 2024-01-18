@@ -51,10 +51,11 @@ void submain(uint8_t arg) __z88dk_fastcall
     render_hp();
 
     vgs0_bgm_play(1);
-    uint8_t debug_nabura = 200;
+    // uint8_t debug_nabura = 200;
 
     // メインループ
     while (1) {
+#if 0
         // デバッグ用のナブラ遷移待ち
         if (debug_nabura) {
             debug_nabura--;
@@ -70,6 +71,7 @@ void submain(uint8_t arg) __z88dk_fastcall
                 }
             }
         }
+#endif
 
         vgs0_wait_vsync();
         GV->frame++;
