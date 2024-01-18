@@ -229,7 +229,7 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
 }
 
 // 敵を削除
-static void erase_enemy(Enemy* enemy) __z88dk_fastcall
+void erase_enemy(Enemy* enemy) __z88dk_fastcall
 {
     enemy->flag = 0;
     for (uint8_t i = 0; i < enemy->sn; i++) {
@@ -381,9 +381,11 @@ static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
 void move_enemy(void) __z88dk_fastcall
 {
     uint8_t i;
+    uint8_t cnt = 0;
     for (i = 0; i < 32; i++) {
         Enemy* enemy = &GV->enemy[i];
         if (enemy->flag) {
+            cnt++;
             switch (enemy->type) {
                 case ET_BOMBER: move_bomber(enemy); break;
                 case ET_MARINE_LR: move_marineLR(enemy); break;
@@ -406,6 +408,11 @@ void move_enemy(void) __z88dk_fastcall
                     check_hit_bomb(enemy);
                 }
             }
+        }
+    }
+    if (GV->waitclear) {
+        if (0 == cnt) {
+            GV->waitclear = 0;
         }
     }
 }

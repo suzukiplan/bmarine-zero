@@ -4,6 +4,8 @@
 #define nPatternIndex enemy->n8[1]
 #define nPreviousX enemy->n8[2]
 #define nUnkWait enemy->n8[3]
+#define nFallFlag enemy->n8[4]
+#define nFallWait enemy->n8[5]
 
 // 4: 鳥
 void move_bird(Enemy* enemy) __z88dk_fastcall
@@ -22,6 +24,34 @@ void move_bird(Enemy* enemy) __z88dk_fastcall
             enemy->vx.value = -((int16_t)enemy->vx.value);
         }
         nPreviousX = enemy->x.raw[1];
+        // ナブラモードの場合は滑空フラグを設定
+        if (0 != GV->player.mode) {
+            nFallFlag = 1;
+            nFallWait = get_random(&GV->ridx);
+        }
+    }
+
+    if (nFallFlag) {
+        if (0 != nFallWait) {
+            nFallWait--;
+        } else {
+            nUnkWait = 0xFF;
+            enemy->vy.value += 22;
+            if (1 == nFallFlag && 0 < enemy->vy.raw[1]) {
+                vgs0_se_play(16);
+                nFallFlag = 2;
+                VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x06;
+                VGS0_ADDR_OAM[enemy->si[0]].bank = BANK_MAIN_FG;
+            }
+            if (72 < enemy->y.raw[1]) {
+                erase_enemy(enemy);
+                vgs0_se_play(5);
+                add_spray(enemy->x.raw[1] - 2, 69, 0x30, 0xC3);
+                add_spray(enemy->x.raw[1] + 18, 69, 0x30, 0x83);
+                add_enemy(ET_BOMBER, enemy->x.raw[1] - 4, enemy->y.raw[1] - 4);
+                return;
+            }
+        }
     }
 
     if (0 == nUnkWait) {
@@ -52,15 +82,17 @@ void move_bird(Enemy* enemy) __z88dk_fastcall
     }
     nPreviousX = enemy->x.raw[1];
 
-    nAnimationCounter++;
-    nAnimationCounter &= 3;
-    if (0 == nAnimationCounter) {
-        nPatternIndex = 1 - nPatternIndex;
-        if (nPatternIndex) {
-            VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x6A;
-        } else {
-            VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x68;
-            vgs0_se_play(14);
+    if (2 != nFallFlag) {
+        nAnimationCounter++;
+        nAnimationCounter &= 3;
+        if (0 == nAnimationCounter) {
+            nPatternIndex = 1 - nPatternIndex;
+            if (nPatternIndex) {
+                VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x6A;
+            } else {
+                VGS0_ADDR_OAM[enemy->si[0]].ptn = 0x68;
+                vgs0_se_play(14);
+            }
         }
     }
 }

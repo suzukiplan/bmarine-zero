@@ -33,6 +33,7 @@ CHR_FILES += sprite_hit.chr
 CHR_FILES += sprite_medal.chr
 CHR_FILES += sprite_laser.chr
 CHR_FILES += sprite_laser2.chr
+CHR_FILES += sprite_nabura.chr
 
 # sound effect
 WAV_FILES = se000_start.wav
@@ -51,6 +52,7 @@ WAV_FILES += se012_charge-full.wav
 WAV_FILES += se013_laser.wav
 WAV_FILES += se014_birdvoice.wav
 WAV_FILES += se015_birddrop.wav
+WAV_FILES += se016_birdfall.wav
 
 # background music
 BGM_FILES = song1.bgm

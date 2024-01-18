@@ -11,6 +11,11 @@ static void update_player_position(void) __z88dk_fastcall
     VGS0_ADDR_OAM[SP_JIKI].y = GV->player.y.raw[1];
     VGS0_ADDR_OAM[SP_JIKI + 1].x = GV->player.x.raw[1] + 8;
     VGS0_ADDR_OAM[SP_JIKI + 1].y = GV->player.y.raw[1];
+    if (0 != GV->player.mode) {
+        VGS0_ADDR_OAM[SP_TAIRYO].x = GV->player.x.raw[1] + 10;
+        VGS0_ADDR_OAM[SP_TAIRYO].y = GV->player.y.raw[1] - 8;
+        VGS0_ADDR_OAM[SP_TAIRYO].ptn = 0x08 | (GV->frame & 0x06);
+    }
 }
 
 void move_player(void) __z88dk_fastcall
@@ -18,21 +23,59 @@ void move_player(void) __z88dk_fastcall
     uint8_t i;
     uint8_t pad = vgs0_joypad_get();
 
-    // 左右の加速度処理
-    if (pad & VGS0_JOYPAD_LE) {
-        if (-640 < GV->player.spd) {
+    if (0 == GV->player.nabura) {
+        // 左右の加速度処理
+        if (pad & VGS0_JOYPAD_LE) {
+            if (-640 < GV->player.spd) {
+                GV->player.spd -= 64;
+            }
+            VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0b01000000;
+        } else if (pad & VGS0_JOYPAD_RI) {
+            if (GV->player.spd < 640) {
+                GV->player.spd += 64;
+            }
+            VGS0_ADDR_OAM[SP_JIKI + 1].attr &= 0b10111111;
+        } else if (0 < GV->player.spd) {
             GV->player.spd -= 64;
-        }
-        VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0b01000000;
-    } else if (pad & VGS0_JOYPAD_RI) {
-        if (GV->player.spd < 640) {
+        } else if (GV->player.spd < 0) {
             GV->player.spd += 64;
         }
-        VGS0_ADDR_OAM[SP_JIKI + 1].attr &= 0b10111111;
-    } else if (0 < GV->player.spd) {
-        GV->player.spd -= 64;
-    } else if (GV->player.spd < 0) {
-        GV->player.spd += 64;
+    } else {
+        // ナブラモードへの遷移演出
+        GV->player.spd = 0;
+        pad = 0;
+        if (1 == GV->player.nabura) {
+            VGS0_ADDR_OAM[SP_JIKI].ptn = 0xDC;
+            VGS0_ADDR_OAM[SP_JIKI + 1].ptn = 0x88;
+            GV->player.nabura++;
+        } else if (2 == GV->player.nabura) {
+            if (0 == (GV->frame & 0x07)) {
+                if (0x8B == VGS0_ADDR_OAM[SP_JIKI + 1].ptn) {
+                    GV->player.nabura++;
+                    vgs0_oam_set(SP_TAIRYO, GV->player.x.raw[1] + 10, GV->player.y.raw[1], 0x85, 0x00, 1, 1);
+                    VGS0_ADDR_OAM[SP_TAIRYO].bank = BANK_NABURA_SP;
+                } else {
+                    VGS0_ADDR_OAM[SP_JIKI + 1].ptn++;
+                }
+            }
+        } else if (3 == GV->player.nabura) {
+            if (0 == (GV->frame & 0x03)) {
+                if (GV->player.y.raw[1] - 8 == VGS0_ADDR_OAM[SP_TAIRYO].y) {
+                    GV->player.nabura++;
+                } else {
+                    VGS0_ADDR_OAM[SP_TAIRYO].y--;
+                }
+            }
+        } else if (4 == GV->player.nabura) {
+            if (0 == (GV->frame & 0x07)) {
+                if (0x0E == VGS0_ADDR_OAM[SP_TAIRYO].ptn) {
+                    GV->player.nabura = 0;
+                    GV->player.mode = 1;
+                } else {
+                    VGS0_ADDR_OAM[SP_TAIRYO].ptn += 2;
+                }
+            }
+        }
     }
 
     // ジャンプ

@@ -18,18 +18,20 @@
 #define BANK_MEDAL_SP 14  // メダル
 #define BANK_LASER_SP 15  // レーザー
 #define BANK_LASER2_SP 16 // レーザー装飾
+#define BANK_NABURA_SP 17 // ナブラステージ
 
 // スプライトの初期位置
 #define SP_JIKIDMG 0    // 自機ダメージ (1)
 #define SP_JIKI 1       // 自機 (2)
 #define SP_SHOTEFF 3    // ショット発射エフェクト (1)
 #define SP_HP 4         // 体力ゲージ (5)
-#define SP_SPRAY2 42    // うんこの軌道 (16)
-#define SP_LTOP 58      // レーザー発射口 (1)
-#define SP_LBOTTOM 59   // レーザー地面 (1)
-#define SP_LASER 60     // レーザー (1)
-#define SP_LMETER 61    // レーザーのパワーメーター (1)
-#define SP_ZANZO 62     // レーザー充填 & 発射時の残像 (4)
+#define SP_SPRAY2 10    // うんこの軌道 (16)
+#define SP_LTOP 57      // レーザー発射口 (1)
+#define SP_LBOTTOM 58   // レーザー地面 (1)
+#define SP_LASER 59     // レーザー (1)
+#define SP_LMETER 60    // レーザーのパワーメーター (1)
+#define SP_ZANZO 61     // レーザー充填 & 発射時の残像 (4)
+#define SP_TAIRYO 65    // 大漁旗 (1)
 #define SP_MEDAL 66     // メダル (16)
 #define SP_HIT 82       // コンボ・カウンタ (6)
 #define SP_ENEMY 88     // 敵 (128)
@@ -71,6 +73,8 @@ typedef struct {
     uint8_t muteki;     // 無敵カウンタ
     uint8_t hp;         // 体力
     uint8_t chp;        // 現在の表示体力
+    uint8_t nabura;     // ナブラ演出フラグ
+    uint8_t mode;       // 0: 通常モード, 1: ナブラモード
 } Player;
 
 // プレイヤーショット
@@ -149,6 +153,7 @@ typedef struct {
     var16_t smc;            // スコアに反映するメダル総数（最大体力で type 0 を取得すると上昇 & damage でリセット）
     uint8_t ridx;           // 乱数インデクス
     uint8_t frame;          // フレームカウンタ
+    uint8_t waitclear;      // 画面から敵が履けるのを待つ
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
     urect_t hbuf[2];        // 当たり判定用バッファ
     uint16_t hit;           // コンボ数
@@ -205,6 +210,7 @@ void add_medal(uint8_t type, uint8_t x, uint8_t y);
 void screen_effect_proc(void) __z88dk_fastcall;
 
 void add_enemy(uint8_t type, uint8_t x, uint8_t y);
+void erase_enemy(Enemy* enemy) __z88dk_fastcall;
 void move_enemy(void) __z88dk_fastcall;
 void move_bomber(Enemy* enemy) __z88dk_fastcall;
 void move_marineLR(Enemy* enemy) __z88dk_fastcall;

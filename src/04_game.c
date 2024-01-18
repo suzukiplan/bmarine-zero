@@ -51,25 +51,51 @@ void submain(uint8_t arg) __z88dk_fastcall
     render_hp();
 
     vgs0_bgm_play(1);
+    uint8_t debug_nabura = 200;
 
     // メインループ
     while (1) {
+        // デバッグ用のナブラ遷移待ち
+        if (debug_nabura) {
+            debug_nabura--;
+            if (2 == debug_nabura) {
+                vgs0_bgm_fadeout();
+                GV->waitclear = 1; // 敵が消えるのを待つ
+            } else if (0 == debug_nabura) {
+                if (GV->waitclear || GV->player.jmp) {
+                    debug_nabura = 1;
+                } else {
+                    GV->player.nabura = 1; // ナブラモードへの遷移演出
+                }
+            }
+        }
+
         vgs0_wait_vsync();
         GV->frame++;
 
-        /*
-        if (0 == (GV->frame & 0x3F)) {
-            add_enemy(ET_MARINE_LR, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
-            add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);
-        }
-
-        if (0 == (GV->frame & 0x7F)) {
-            add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
-        }
-        */
-
-        if (0x0F == (GV->frame & 0x0F)) {
-            add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
+        // 敵出現制御 (ナブラ演出中とクリア待ちの間は出現を抑止)
+        if (0 == GV->player.nabura && 0 == GV->waitclear) {
+            if (0 == GV->player.mode) {
+                // 通常モード
+                if (0 == (GV->frame & 0x3F)) {
+                    add_enemy(ET_MARINE_LR, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
+                    add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);
+                }
+                if (0 == (GV->frame & 0x7F)) {
+                    add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
+                }
+                if (0x3F == (GV->frame & 0x7F)) {
+                    add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
+                }
+            } else {
+                // ナブラモード
+                if (0 == (GV->frame & 0x7F)) {
+                    add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
+                }
+                if (0x0F == (GV->frame & 0x0F)) {
+                    add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
+                }
+            }
         }
 
         // 追加可能なら星と泡を追加
