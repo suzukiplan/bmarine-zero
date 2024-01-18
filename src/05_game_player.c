@@ -48,6 +48,8 @@ void move_player(void) __z88dk_fastcall
             VGS0_ADDR_OAM[SP_JIKI].ptn = 0xDC;
             VGS0_ADDR_OAM[SP_JIKI + 1].ptn = 0x88;
             GV->player.nabura++;
+            vgs0_palette_set(0, 1, 20, 0, 170);
+            vgs0_palette_set(4, 8, 20, 0, 170);
         } else if (2 == GV->player.nabura) {
             if (0 == (GV->frame & 0x07)) {
                 if (0x8B == VGS0_ADDR_OAM[SP_JIKI + 1].ptn) {
@@ -58,6 +60,8 @@ void move_player(void) __z88dk_fastcall
                     VGS0_ADDR_OAM[SP_JIKI + 1].ptn++;
                 }
             }
+            vgs0_palette_set(0, 1, 40, 0, 170);
+            vgs0_palette_set(4, 8, 40, 0, 170);
         } else if (3 == GV->player.nabura) {
             if (0 == (GV->frame & 0x03)) {
                 if (GV->player.y.raw[1] - 8 == VGS0_ADDR_OAM[SP_TAIRYO].y) {
@@ -66,6 +70,8 @@ void move_player(void) __z88dk_fastcall
                     VGS0_ADDR_OAM[SP_TAIRYO].y--;
                 }
             }
+            vgs0_palette_set(0, 1, 60, 0, 170);
+            vgs0_palette_set(4, 8, 60, 0, 170);
         } else if (4 == GV->player.nabura) {
             if (0 == (GV->frame & 0x07)) {
                 if (0x0E == VGS0_ADDR_OAM[SP_TAIRYO].ptn) {
@@ -75,6 +81,8 @@ void move_player(void) __z88dk_fastcall
                     VGS0_ADDR_OAM[SP_TAIRYO].ptn += 2;
                 }
             }
+            vgs0_palette_set(0, 1, 80, 0, 170);
+            vgs0_palette_set(4, 8, 80, 0, 170);
         }
     }
 

@@ -57,6 +57,8 @@ WAV_FILES += se016_birdfall.wav
 # background music
 BGM_FILES = song1.bgm
 BGM_FILES += song2.bgm
+BGM_FILES += song3.bgm
+BGM_FILES += song4.bgm
 
 VGSHOME = ../vgszero
 BMP2CHR = ${VGSHOME}/tools/bmp2chr/bmp2chr

@@ -65,6 +65,7 @@ void submain(uint8_t arg) __z88dk_fastcall
                 if (GV->waitclear || GV->player.jmp) {
                     debug_nabura = 1;
                 } else {
+                    vgs0_bgm_play(3);
                     GV->player.nabura = 1; // ナブラモードへの遷移演出
                 }
             }
