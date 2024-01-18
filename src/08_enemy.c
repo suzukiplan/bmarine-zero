@@ -1,7 +1,5 @@
 #include "header.h"
 
-#define HIT_KEEP_TIME 120
-
 // 敵種別毎の使用スプライト数
 const uint8_t tbl_init_sn[9] = {
     1, // 0: 爆発

@@ -1,5 +1,8 @@
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
+// ヒットの維持フレーム数
+#define HIT_KEEP_TIME 120
+
 // バンク定義
 #define BANK_PRG0_0 0     // プログラム0 page 0
 #define BANK_PRG0_1 1     // プログラム0 page 1
