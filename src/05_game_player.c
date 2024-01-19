@@ -208,10 +208,10 @@ void move_player(void) __z88dk_fastcall
     // ダメージ処理
     if (0 != GV->player.dmg) {
         if (60 == GV->player.dmg && GV->player.hp) {
-            if (23 <= GV->player.hp) {
+            if (30 < GV->player.hp) {
                 GV->smc.value >>= 1;
                 GV->smc.value += GV->smc.value >> 1;
-                GV->player.hp -= 23;
+                GV->player.hp -= 30;
             } else {
                 GV->smc.value = 0;
                 GV->player.hp = 0;
