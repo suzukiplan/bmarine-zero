@@ -156,6 +156,9 @@ typedef struct {
     var16_t smc;            // スコアに反映するメダル総数（最大体力で type 0 を取得すると上昇 & damage でリセット）
     uint8_t ridx;           // 乱数インデクス
     uint8_t frame;          // フレームカウンタ
+    uint8_t level;          // レベル
+    uint8_t levelFrame;     // レベル表示フレーム
+    uint16_t enemies;       // 敵出現総数カウンタ
     uint8_t waitclear;      // 画面から敵が履けるのを待つ
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
     urect_t hbuf[2];        // 当たり判定用バッファ
@@ -224,3 +227,8 @@ void move_unk(Enemy* enemy) __z88dk_fastcall;
 void move_fish(Enemy* enemy) __z88dk_fastcall;
 void move_kani(Enemy* enemy) __z88dk_fastcall;
 void move_kanitama(Enemy* enemy) __z88dk_fastcall;
+
+void level_proc(void) __z88dk_fastcall;
+uint8_t level_medal_laser(uint8_t type) __z88dk_fastcall;
+uint8_t level_medal_shot(uint8_t type) __z88dk_fastcall;
+uint8_t level_medal_bomb(uint8_t type) __z88dk_fastcall;

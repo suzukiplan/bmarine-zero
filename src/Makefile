@@ -23,6 +23,7 @@ PROGRAM1 += 08-05_unk.rel
 PROGRAM1 += 08-06_fish.rel
 PROGRAM1 += 08-07_kani.rel
 PROGRAM1 += 08-08_kanitama.rel
+PROGRAM1 += 09_level.rel
 
 # image files
 CHR_FILES = bg.chr
