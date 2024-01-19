@@ -22,6 +22,10 @@ void level_proc(void) __z88dk_fastcall
                 vgs0_fg_putstr(7, 14, 0x80, "NABURA MODE START!");
             } else if (6 == GV->level) {
                 vgs0_fg_putstr(6, 14, 0x80, "INTO THE CRAB HOUSE!");
+            } else if (7 == GV->level) {
+                vgs0_fg_putstr(8, 14, 0x80, "LEVEL MAX START!");
+            } else if (8 == GV->level) {
+                vgs0_fg_putstr(8, 14, 0x80, "SHI-NU GA YOI...");
             } else {
                 vgs0_fg_putstr(9, 14, 0x80, "LEVEL 0 START!");
                 VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
