@@ -154,6 +154,7 @@ typedef struct {
     uint8_t sc[8];          // スコア
     uint8_t sadd[8];        // 桁毎のスコア加算値
     var16_t smc;            // スコアに反映するメダル総数（最大体力で type 0 を取得すると上昇 & damage でリセット）
+    var16_t smcPrev;        // 直前フレームのsmc（再描画判定用）
     uint8_t ridx;           // 乱数インデクス
     uint8_t frame;          // フレームカウンタ
     uint8_t level;          // レベル
@@ -199,6 +200,7 @@ void score_print(NameTable* nam) __z88dk_fastcall;
 void score_increment(uint8_t keta) __z88dk_fastcall;
 void hit_print(void) __z88dk_fastcall;
 void render_hp(void) __z88dk_fastcall;
+void render_crown(void) __z88dk_fastcall;
 uint8_t get_random(uint8_t* seed) __z88dk_fastcall;
 
 void move_player(void) __z88dk_fastcall;

@@ -86,5 +86,8 @@ void submain(uint8_t arg) __z88dk_fastcall
 
         // ヒット数を描画
         hit_print();
+
+        // 王冠を表示
+        render_crown();
     }
 }

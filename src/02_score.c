@@ -242,3 +242,25 @@ void render_hp(void) __z88dk_fastcall
         }
     }
 }
+
+void render_crown(void) __z88dk_fastcall
+{
+    if (GV->smc.value == GV->smcPrev.value) {
+        return;
+    }
+    GV->smcPrev.value = GV->smc.value;
+    uint16_t n = GV->smcPrev.value >> 4;
+    uint8_t nn, i;
+    if (30 < n) {
+        nn = 30;
+    } else {
+        nn = n & 0xFF;
+    }
+    for (i = 0; i < nn; i++) {
+        VGS0_ADDR_FG->ptn[24][1 + i] = 0xB0;
+        VGS0_ADDR_FG->attr[24][1 + i] = 0x86;
+    }
+    for (; i < 30; i++) {
+        VGS0_ADDR_FG->attr[24][1 + i] = 0x00;
+    }
+}
