@@ -168,6 +168,19 @@ static const uint8_t spbank[] = {
     0,              // 8: カニタマ
 };
 
+// ダメージ量
+const uint8_t dmgtbl[] = {
+    35,  // 0: 爆発
+    255, // 1: 潜水艦 (左から右)
+    255, // 2: 潜水艦 (右から左)
+    25,  // 3: 雷撃
+    28,  // 4: 鳥
+    17,  // 5: 鳥の落とし物
+    16,  // 6: 魚
+    255, // 7: カニ
+    32,  // 8: カニタマ
+};
+
 // 敵を追加
 void add_enemy(uint8_t type, uint8_t x, uint8_t y)
 {
@@ -339,12 +352,13 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
         GV->hbuf[1].width = 4;
         GV->hbuf[1].height = 4;
         if (vgs0_collision_check((uint16_t)GV->hbuf)) {
-            if (0 != enemy->type) {
+            GV->hit = 0;
+            GV->player.dmg = 60;
+            GV->player.dmgsrc = enemy->type;
+            if (ET_BOMBER != enemy->type) {
                 erase_enemy(enemy);
                 add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
             }
-            GV->hit = 0;
-            GV->player.dmg = 60;
             return;
         }
     }

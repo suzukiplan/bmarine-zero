@@ -53,6 +53,8 @@
 #define ET_KANI 7      // カニ
 #define ET_KANITAMA 8  // カニタマ
 
+extern const uint8_t dmgtbl[];
+
 // プレイヤー
 typedef struct {
     var16_t x;          // X座標
@@ -73,6 +75,7 @@ typedef struct {
     uint8_t zflag[4];   // 残像フラグ
     uint8_t zindex;     // 残像インデクス
     uint8_t dmg;        // ダメージカウンタ
+    uint8_t dmgsrc;     // ダメージソース
     uint8_t muteki;     // 無敵カウンタ
     uint8_t hp;         // 体力
     uint8_t chp;        // 現在の表示体力
