@@ -19,15 +19,18 @@ void level_proc(void) __z88dk_fastcall
         if (0xA0 == GV->levelFrame) {
             GV->enemies = 0;
             if (5 == GV->level) {
-                vgs0_fg_putstr(7, 14, 0x80, "NABURA MODE START!");
+                vgs0_fg_putstr(6, 14, 0x80, " NABURA MODE START! ");
             } else if (6 == GV->level) {
                 vgs0_fg_putstr(6, 14, 0x80, "INTO THE CRAB HOUSE!");
             } else if (7 == GV->level) {
-                vgs0_fg_putstr(8, 14, 0x80, "LEVEL MAX START!");
+                vgs0_fg_putstr(6, 14, 0x80, "  LEVEL MAX START!  ");
             } else if (8 == GV->level) {
-                vgs0_fg_putstr(8, 14, 0x80, "SHI-NU GA YOI...");
+                vgs0_fg_putstr(6, 14, 0x80, "  SHI-NU GA YOI...  ");
+                vgs0_bgm_play(1);
+                vgs0_palette_set(0, 1, 3, 7, 14);
+                vgs0_palette_set(4, 8, 3, 7, 14);
             } else {
-                vgs0_fg_putstr(9, 14, 0x80, "LEVEL 0 START!");
+                vgs0_fg_putstr(6, 14, 0x80, "   LEVEL 0 START!   ");
                 VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
             }
             if (5 == GV->level) {
@@ -43,12 +46,12 @@ void level_proc(void) __z88dk_fastcall
         GV->levelFrame--;
         j = GV->levelFrame & 0x1F;
         if (0 == j) {
-            for (i = 0; i < 28; i++) {
-                VGS0_ADDR_FG->attr[14][2 + i] = 0x00;
+            for (i = 0; i < 20; i++) {
+                VGS0_ADDR_FG->attr[14][6 + i] = 0x00;
             }
         } else if (0x10 == j) {
-            for (i = 0; i < 28; i++) {
-                VGS0_ADDR_FG->attr[14][2 + i] = 0x80;
+            for (i = 0; i < 20; i++) {
+                VGS0_ADDR_FG->attr[14][6 + i] = 0x80;
             }
         }
     }
@@ -120,63 +123,42 @@ void level_proc(void) __z88dk_fastcall
             }
             break;
         case 6: // 癒やしのカニ乱舞
-    }
-
-#if 0
-
-#if 0
-        // デバッグ用のナブラ遷移待ち
-        if (debug_nabura) {
-            debug_nabura--;
-            if (2 == debug_nabura) {
+            if (0x0F == (GV->frame & 0x0F)) {
+                add_enemy(ET_KANI, 248, 168);
+            }
+            if (10 < GV->enemies) {
+                level_up();
+            }
+            break;
+        case 7: // 全敵キャラが登場
+        case 8: // レベル8は7と同じだが打ち返し弾あり
+            if (0 == (GV->frame & 0x3F)) {
+                add_enemy(ET_MARINE_LR, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
+                add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);
+            }
+            if (0 == (GV->frame & 0x7F)) {
+                add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
+            }
+            if (0x3F == (GV->frame & 0x7F)) {
+                add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
+            }
+            if (0x1F == (GV->frame & 0x7F)) {
+                add_enemy(ET_KANI, 248, 168);
+            }
+            if (7 == GV->level && 100 < GV->enemies) {
                 vgs0_bgm_fadeout();
-                GV->waitclear = 1; // 敵が消えるのを待つ
-            } else if (0 == debug_nabura) {
-                if (GV->waitclear || GV->player.jmp) {
-                    debug_nabura = 1;
-                } else {
-                    vgs0_bgm_play(3);
-                    GV->player.nabura = 1; // ナブラモードへの遷移演出
-                }
+                level_up();
             }
-        }
-#endif
-
-        // 敵出現制御 (ナブラ演出中とクリア待ちの間は出現を抑止)
-        if (0 == GV->player.nabura && 0 == GV->waitclear) {
-            if (0 == GV->player.mode) {
-                // 通常モード
-                /*
-                if (0 == (GV->frame & 0x3F)) {
-                    add_enemy(ET_MARINE_LR, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
-                    add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);
-                }
-                if (0 == (GV->frame & 0x7F)) {
-                    add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
-                }
-                if (0x3F == (GV->frame & 0x7F)) {
-                    add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
-                }*/
-                if (0x1F == (GV->frame & 0x7F)) {
-                    add_enemy(ET_KANI, 248, 168);
-                }
-            } else {
-                // ナブラモード
-                if (0 == (GV->frame & 0x7F)) {
-                    add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
-                }
-                if (0x0F == (GV->frame & 0x0F)) {
-                    add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
-                }
-            }
-        }
-#endif
+            break;
+    }
 }
 
 // レーザーによる追加メダル種別の決定
 uint8_t level_medal_laser(uint8_t type) __z88dk_fastcall
 {
-    if (type == ET_KANI || type == ET_KANITAMA) {
+    if (8 <= GV->level) {
+        return 1; // レベル8 はスコアのみ
+    } else if (type == ET_KANI || type == ET_KANITAMA) {
         return 0; // カニとカニタマはレーザーを浴びる回復を出す（レベルMAX前のカニステージはレーザーで稼げるようにする為）
     } else {
         return 1; // カニ以外は常にスコア（敵種別に関係なく）
@@ -187,7 +169,11 @@ uint8_t level_medal_laser(uint8_t type) __z88dk_fastcall
 uint8_t level_medal_bomb(uint8_t type) __z88dk_fastcall
 {
     if (ET_MARINE_LR == type || ET_MARINE_RL == type) {
-        return 0; // 潜水艦は常に回復を出す
+        if (8 <= GV->level) {
+            return get_random(&GV->ridx) & 0x01; // レベル8の潜水艦は50%の確率で回復を出す
+        } else {
+            return 0; // レベル8以外の潜水艦は常に回復を出す
+        }
     }
     switch (GV->level) {
         case 1: // レベル1 は回復のみ
@@ -269,7 +255,7 @@ uint8_t level_medal_shot(uint8_t type) __z88dk_fastcall
             } else {
                 return 1;
             }
-        default: // レベル8以降はスコアのみ
+        default: // レベル8はスコアのみ
             return 1;
     }
 }
