@@ -147,8 +147,8 @@ uint8_t level_medal_laser(uint8_t type) __z88dk_fastcall
     }
 }
 
-// ショットによる追加メダル種別の決定
-uint8_t level_medal_shot(uint8_t type) __z88dk_fastcall
+// 誘爆による追加メダル種別の決定
+uint8_t level_medal_bomb(uint8_t type) __z88dk_fastcall
 {
     if (ET_MARINE_LR == type || ET_MARINE_RL == type) {
         return 0; // 潜水艦は常に回復を出す
@@ -191,8 +191,8 @@ uint8_t level_medal_shot(uint8_t type) __z88dk_fastcall
     }
 }
 
-// 誘爆による追加メダル種別の決定
-uint8_t level_medal_bomb(uint8_t type) __z88dk_fastcall
+// ショットによる追加メダル種別の決定
+uint8_t level_medal_shot(uint8_t type) __z88dk_fastcall
 {
     switch (GV->level) {
         case 1: // レベル1 は回復のみ
