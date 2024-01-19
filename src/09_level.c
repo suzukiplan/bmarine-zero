@@ -117,7 +117,7 @@ void level_proc(void) __z88dk_fastcall
                     add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
                 }
             }
-            if (10 < GV->enemies) {
+            if (200 < GV->enemies) {
                 vgs0_bgm_fadeout();
                 level_up();
             }
@@ -126,7 +126,7 @@ void level_proc(void) __z88dk_fastcall
             if (0x0F == (GV->frame & 0x0F)) {
                 add_enemy(ET_KANI, 248, 168);
             }
-            if (10 < GV->enemies) {
+            if (120 < GV->enemies) {
                 level_up();
             }
             break;
