@@ -19,6 +19,11 @@ void level_proc(void) __z88dk_fastcall
         if (0x60 == GV->levelFrame) {
             vgs0_fg_putstr(9, 14, 0x80, "LEVEL 0 START!");
             VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
+            if (5 == GV->level) {
+                // ナブラモードに遷移
+                vgs0_bgm_play(3);
+                GV->player.nabura = 1;
+            }
         }
         GV->levelFrame--;
         j = GV->levelFrame & 0x1F;
@@ -80,7 +85,18 @@ void level_proc(void) __z88dk_fastcall
                 add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
             }
             if (500 < GV->enemies) {
+                vgs0_bgm_fadeout();
                 level_up();
+            }
+            break;
+        case 5: // ナブラモード（遷移演出終了後から敵出現）
+            if (0 == GV->player.nabura) {
+                if (0 == (GV->frame & 0x7F)) {
+                    add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
+                }
+                if (0x0F == (GV->frame & 0x0F)) {
+                    add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
+                }
             }
             break;
     }
