@@ -211,7 +211,7 @@ void screen_effect_proc(void) __z88dk_fastcall
         if (GV->medal[i].flag) {
             if (0x20 != GV->medal[i].flag) {
                 if (1 == GV->medal[i].flag) {
-                    if (100 < GV->hit || GV->player.jmpKeep) {
+                    if (100 < GV->hit || GV->player.jmpKeep || GV->player.mode) {
                         GV->medal[i].vx.value = 0;
                         GV->medal[i].vy.value = 0;
                         GV->medal[i].flag = 0x10; // 自動収集
