@@ -17,23 +17,28 @@ void level_proc(void) __z88dk_fastcall
             return; // 敵のクリア待ち
         }
         if (0x60 == GV->levelFrame) {
+            GV->enemies = 0;
             vgs0_fg_putstr(9, 14, 0x80, "LEVEL 0 START!");
             VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
             if (5 == GV->level) {
                 // ナブラモードに遷移
                 vgs0_bgm_play(3);
                 GV->player.nabura = 1;
+            } else if (6 == GV->level) {
+                // ダークネスモードに遷移
+                vgs0_bgm_play(2);
+                GV->player.darkness = 1;
             }
         }
         GV->levelFrame--;
         j = GV->levelFrame & 0x1F;
         if (0 == j) {
-            for (i = 0; i < 14; i++) {
-                VGS0_ADDR_FG->attr[14][9 + i] = 0x00;
+            for (i = 0; i < 28; i++) {
+                VGS0_ADDR_FG->attr[14][2 + i] = 0x00;
             }
         } else if (0x10 == j) {
-            for (i = 0; i < 14; i++) {
-                VGS0_ADDR_FG->attr[14][9 + i] = 0x80;
+            for (i = 0; i < 28; i++) {
+                VGS0_ADDR_FG->attr[14][2 + i] = 0x80;
             }
         }
     }
@@ -42,7 +47,7 @@ void level_proc(void) __z88dk_fastcall
     switch (GV->level) {
         case 0: // 即座にレベルアップ
             level_up();
-            GV->level = 5;
+            GV->level = 5; // debug (初期レベル)
             break;
         case 1: // 潜水艦が左から現れる（単方向なら簡単なので出現量多め）
             if (0 == (GV->frame & 0x1F)) {
@@ -57,7 +62,7 @@ void level_proc(void) __z88dk_fastcall
                 add_enemy(ET_MARINE_LR, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
                 add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);
             }
-            if (180 < GV->enemies) {
+            if (100 < GV->enemies) {
                 level_up();
             }
             break;
@@ -69,7 +74,7 @@ void level_proc(void) __z88dk_fastcall
             if (0 == (GV->frame & 0x7F)) {
                 add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
             }
-            if (350 < GV->enemies) {
+            if (170 < GV->enemies) {
                 level_up();
             }
             break;
@@ -85,7 +90,7 @@ void level_proc(void) __z88dk_fastcall
                 add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
                 add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
             }
-            if (500 < GV->enemies) {
+            if (200 < GV->enemies) {
                 vgs0_bgm_fadeout();
                 level_up();
             }
@@ -99,7 +104,12 @@ void level_proc(void) __z88dk_fastcall
                     add_enemy(ET_FISH, 248, 92 + (get_random(&GV->ridx) & 0x3F));
                 }
             }
+            if (10 < GV->enemies) {
+                vgs0_bgm_fadeout();
+                level_up();
+            }
             break;
+        case 6: // 癒やしのカニ乱舞
     }
 
 #if 0

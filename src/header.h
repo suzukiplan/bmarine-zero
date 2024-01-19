@@ -80,6 +80,7 @@ typedef struct {
     uint8_t hp;         // 体力
     uint8_t chp;        // 現在の表示体力
     uint8_t nabura;     // ナブラ演出フラグ
+    uint8_t darkness;   // ダークネス演出フラグ
     uint8_t mode;       // 0: 通常モード, 1: ナブラモード
 } Player;
 

@@ -23,7 +23,7 @@ void move_player(void) __z88dk_fastcall
     uint8_t i;
     uint8_t pad = vgs0_joypad_get();
 
-    if (0 == GV->player.nabura) {
+    if (0 == GV->player.nabura && 0 == GV->player.darkness) {
         // 左右の加速度処理
         if (pad & VGS0_JOYPAD_LE) {
             if (-640 < GV->player.spd) {
@@ -40,7 +40,7 @@ void move_player(void) __z88dk_fastcall
         } else if (GV->player.spd < 0) {
             GV->player.spd += 64;
         }
-    } else {
+    } else if (GV->player.nabura) {
         // ナブラモードへの遷移演出
         GV->player.spd = 0;
         pad = 0;
@@ -48,8 +48,8 @@ void move_player(void) __z88dk_fastcall
             VGS0_ADDR_OAM[SP_JIKI].ptn = 0xDC;
             VGS0_ADDR_OAM[SP_JIKI + 1].ptn = 0x88;
             GV->player.nabura++;
-            vgs0_palette_set(0, 1, 20, 0, 170);
-            vgs0_palette_set(4, 8, 20, 0, 170);
+            vgs0_palette_set(0, 1, 3, 0, 19);
+            vgs0_palette_set(4, 8, 3, 0, 19);
         } else if (2 == GV->player.nabura) {
             if (0 == (GV->frame & 0x07)) {
                 if (0x8B == VGS0_ADDR_OAM[SP_JIKI + 1].ptn) {
@@ -60,8 +60,8 @@ void move_player(void) __z88dk_fastcall
                     VGS0_ADDR_OAM[SP_JIKI + 1].ptn++;
                 }
             }
-            vgs0_palette_set(0, 1, 40, 0, 170);
-            vgs0_palette_set(4, 8, 40, 0, 170);
+            vgs0_palette_set(0, 1, 6, 0, 14);
+            vgs0_palette_set(4, 8, 6, 0, 14);
         } else if (3 == GV->player.nabura) {
             if (0 == (GV->frame & 0x03)) {
                 if (GV->player.y.raw[1] - 8 == VGS0_ADDR_OAM[SP_TAIRYO].y) {
@@ -70,8 +70,8 @@ void move_player(void) __z88dk_fastcall
                     VGS0_ADDR_OAM[SP_TAIRYO].y--;
                 }
             }
-            vgs0_palette_set(0, 1, 60, 0, 170);
-            vgs0_palette_set(4, 8, 60, 0, 170);
+            vgs0_palette_set(0, 1, 10, 0, 10);
+            vgs0_palette_set(4, 8, 10, 0, 10);
         } else if (4 == GV->player.nabura) {
             if (0 == (GV->frame & 0x07)) {
                 if (0x0E == VGS0_ADDR_OAM[SP_TAIRYO].ptn) {
@@ -81,8 +81,58 @@ void move_player(void) __z88dk_fastcall
                     VGS0_ADDR_OAM[SP_TAIRYO].ptn += 2;
                 }
             }
-            vgs0_palette_set(0, 1, 80, 0, 170);
-            vgs0_palette_set(4, 8, 80, 0, 170);
+            vgs0_palette_set(0, 1, 16, 0, 6);
+            vgs0_palette_set(4, 8, 16, 0, 6);
+        }
+    } else {
+        // ダークネスモード演出
+        GV->player.spd = 0;
+        pad = 0;
+        if (1 == GV->player.darkness) {
+            GV->player.darkness++;
+            VGS0_ADDR_OAM[SP_TAIRYO].ptn = 0x0E;
+            vgs0_palette_set(0, 1, 12, 1, 8);
+            vgs0_palette_set(4, 8, 12, 1, 8);
+        } else if (2 == GV->player.darkness) {
+            if (0 == (GV->frame & 0x07)) {
+                if (0x00 == VGS0_ADDR_OAM[SP_TAIRYO].ptn) {
+                    GV->player.darkness++;
+                } else {
+                    VGS0_ADDR_OAM[SP_TAIRYO].ptn -= 2;
+                }
+            }
+            vgs0_palette_set(0, 1, 10, 3, 10);
+            vgs0_palette_set(4, 8, 10, 3, 10);
+        } else if (3 == GV->player.darkness) {
+            if (0 == (GV->frame & 0x03)) {
+                if (GV->player.y.raw[1] == VGS0_ADDR_OAM[SP_TAIRYO].y) {
+                    GV->player.darkness++;
+                    VGS0_ADDR_OAM[SP_TAIRYO].attr = 0x00;
+                } else {
+                    VGS0_ADDR_OAM[SP_TAIRYO].y++;
+                }
+            }
+            vgs0_palette_set(0, 1, 7, 5, 12);
+            vgs0_palette_set(4, 8, 7, 5, 12);
+        } else if (4 == GV->player.darkness) {
+            if (0 == (GV->frame & 0x07)) {
+                if (0x88 == VGS0_ADDR_OAM[SP_JIKI + 1].ptn) {
+                    GV->player.darkness++;
+                    VGS0_ADDR_OAM[SP_JIKI].ptn = 0x10;
+                    VGS0_ADDR_OAM[SP_JIKI + 1].ptn = 0x2F;
+                } else {
+                    VGS0_ADDR_OAM[SP_JIKI + 1].ptn--;
+                }
+            }
+            vgs0_palette_set(0, 1, 3, 6, 10);
+            vgs0_palette_set(4, 8, 3, 6, 10);
+        } else {
+            if (0 == (GV->frame & 0x07)) {
+                GV->player.darkness = 0;
+                GV->player.mode = 0;
+                vgs0_palette_set(0, 1, 3, 4, 8);
+                vgs0_palette_set(4, 8, 3, 4, 8);
+            }
         }
     }
 
