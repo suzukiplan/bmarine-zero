@@ -220,6 +220,12 @@ void render_hp(void) __z88dk_fastcall
         }
         return;
     }
+    uint8_t attr;
+    if (GV->player.hp < 32) {
+        attr = 0x8A;
+    } else {
+        attr = 0x86;
+    }
     uint8_t chp = GV->player.chp >> 1;
     j = 0;
     for (uint8_t i = 8; i <= 40; i += 8, j += 1) {
@@ -227,13 +233,13 @@ void render_hp(void) __z88dk_fastcall
             i = chp & 0x07;
             if (i) {
                 VGS0_ADDR_OAM[SP_HP + j].ptn = (7 - i) | 0xA0;
-                VGS0_ADDR_OAM[SP_HP + j].attr = 0x86;
+                VGS0_ADDR_OAM[SP_HP + j].attr = attr;
             } else {
                 VGS0_ADDR_OAM[SP_HP + j].attr = 0x00;
             }
             for (i = 0; i < j; i++) {
                 VGS0_ADDR_OAM[SP_HP + i].ptn = 0xA0;
-                VGS0_ADDR_OAM[SP_HP + i].attr = 0x86;
+                VGS0_ADDR_OAM[SP_HP + i].attr = attr;
             }
             for (i = j + 1; i < 5; i++) {
                 VGS0_ADDR_OAM[SP_HP + i].attr = 0x00;
