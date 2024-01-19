@@ -13,7 +13,7 @@ void level_proc(void) __z88dk_fastcall
 
     // レベルアップ処理
     if (0 != GV->levelFrame) {
-        if (GV->waitclear) {
+        if (0x60 == GV->levelFrame && GV->waitclear) {
             return; // 敵のクリア待ち
         }
         if (0x60 == GV->levelFrame) {
@@ -31,7 +31,6 @@ void level_proc(void) __z88dk_fastcall
                 VGS0_ADDR_FG->attr[14][9 + i] = 0x80;
             }
         }
-        return;
     }
 
     // レベル別の敵出現処理
