@@ -3,7 +3,7 @@
 static void level_up(void) __z88dk_fastcall
 {
     GV->level++;
-    GV->levelFrame = 0x60;
+    GV->levelFrame = 0xA0;
     GV->waitclear = 1; // 敵が消えるのを待つ
 }
 
@@ -13,13 +13,19 @@ void level_proc(void) __z88dk_fastcall
 
     // レベルアップ処理
     if (0 != GV->levelFrame) {
-        if (0x60 == GV->levelFrame && GV->waitclear) {
+        if (0xA0 == GV->levelFrame && GV->waitclear) {
             return; // 敵のクリア待ち
         }
-        if (0x60 == GV->levelFrame) {
+        if (0xA0 == GV->levelFrame) {
             GV->enemies = 0;
-            vgs0_fg_putstr(9, 14, 0x80, "LEVEL 0 START!");
-            VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
+            if (5 == GV->level) {
+                vgs0_fg_putstr(7, 14, 0x80, "NABURA MODE START!");
+            } else if (6 == GV->level) {
+                vgs0_fg_putstr(6, 14, 0x80, "INTO THE CRAB HOUSE!");
+            } else {
+                vgs0_fg_putstr(9, 14, 0x80, "LEVEL 0 START!");
+                VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
+            }
             if (5 == GV->level) {
                 // ナブラモードに遷移
                 vgs0_bgm_play(3);
