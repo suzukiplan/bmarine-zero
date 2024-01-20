@@ -1,6 +1,8 @@
 # WIP: Battle Marine for VGS-Zero
 
-![screen_title.png](screen_title.png) ![screen_gameplay.png](screen_gameplay.png)
+|Title|GamePlay|
+|:-:|:-:|
+|![screen_title.png](screen_title.png)|![screen_gameplay.png](screen_gameplay.png)|
 
 2013 年にスマートフォン向けゲームとしてリリース、その後 2019 年に [ファミコンに移植](https://github.com/suzukiplan/battle-marine-fc) されたあの「Battle Marine」（バトルマリーン）が [VGS-Zero](https://github.com/suzukiplan/vgszero) 対応ソフト第1弾として満を持して復活。
 
