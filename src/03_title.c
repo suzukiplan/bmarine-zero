@@ -236,6 +236,7 @@ void submain(uint8_t arg) __z88dk_fastcall
                 VGS0_ADDR_OAM[i].attr = 0x00;
             }
             vgs0_bg_putstr(2, 2, 0x80, "SC         0    HI         0");
+            vgs0_memset((uint16_t)GV->sc, 0, 8);
             score_print(VGS0_ADDR_BG);
             GV->player.x.value = 0x7400;
             GV->player.y.value = 0x4000;

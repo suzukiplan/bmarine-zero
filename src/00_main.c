@@ -14,17 +14,24 @@ void main(void)
     GV->hi[1] = 7;
     GV->hi[2] = 5;
 
-    // タイトル画面へ遷移
-    vgs0_bank0_switch(BANK_PRG0_0);
-    vgs0_bank1_switch(BANK_PRG0_1);
-    vgs0_bank2_switch(BANK_PRG0_2);
-    vgs0_bank3_switch(BANK_PRG0_3);
-    submain(0);
+    while (1) {
+        // タイトル画面へ遷移
+        vgs0_bank0_switch(BANK_PRG0_0);
+        vgs0_bank1_switch(BANK_PRG0_1);
+        vgs0_bank2_switch(BANK_PRG0_2);
+        vgs0_bank3_switch(BANK_PRG0_3);
+        submain(0);
 
-    // ゲームメインへ遷移
-    vgs0_bank0_switch(BANK_PRG1_0);
-    vgs0_bank1_switch(BANK_PRG1_1);
-    vgs0_bank2_switch(BANK_PRG1_2);
-    vgs0_bank3_switch(BANK_PRG1_3);
-    submain(0);
+        // ゲームメインへ遷移
+        vgs0_bank0_switch(BANK_PRG1_0);
+        vgs0_bank1_switch(BANK_PRG1_1);
+        vgs0_bank2_switch(BANK_PRG1_2);
+        vgs0_bank3_switch(BANK_PRG1_3);
+        submain(0);
+
+        // VRAM クリア
+        vgs0_memset(0x8000, 0x00, 0x4000);
+        vgs0_dma(BANK_PALETTE);
+        vgs0_memcpy((uint16_t)VGS0_ADDR_PALETTE, (uint16_t)VGS0_ADDR_CHARACTER, 512);
+    }
 }

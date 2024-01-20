@@ -23,9 +23,25 @@
 #define BANK_LASER2_SP 16 // レーザー装飾
 #define BANK_NABURA_SP 17 // ナブラステージ
 #define BANK_CATK 18      // 打ち返し弾
+#define BANK_BOMB00_SP 19 // 大爆発(0)
+#define BANK_BOMB01_SP 20 // 大爆発(1)
+#define BANK_BOMB02_SP 21 // 大爆発(2)
+#define BANK_BOMB03_SP 22 // 大爆発(3)
+#define BANK_BOMB04_SP 23 // 大爆発(4)
+#define BANK_BOMB05_SP 24 // 大爆発(5)
+#define BANK_BOMB06_SP 25 // 大爆発(6)
+#define BANK_BOMB07_SP 26 // 大爆発(7)
+#define BANK_BOMB08_SP 27 // 大爆発(8)
+#define BANK_BOMB09_SP 28 // 大爆発(9)
+#define BANK_BOMB10_SP 29 // 大爆発(10)
+#define BANK_BOMB11_SP 30 // 大爆発(11)
+#define BANK_BOMB12_SP 31 // 大爆発(12)
+#define BANK_BOMB13_SP 32 // 大爆発(13)
+#define BANK_BOMB14_SP 33 // 大爆発(14)
 
 // スプライトの初期位置
 #define SP_JIKIDMG 0    // 自機ダメージ (1)
+#define SP_BIGBOMB 0    // 大爆発 (1)
 #define SP_JIKI 1       // 自機 (2)
 #define SP_SHOTEFF 3    // ショット発射エフェクト (1)
 #define SP_HP 4         // 体力ゲージ (5)
@@ -84,6 +100,7 @@ typedef struct {
     uint8_t nabura;     // ナブラ演出フラグ
     uint8_t darkness;   // ダークネス演出フラグ
     uint8_t mode;       // 0: 通常モード, 1: ナブラモード
+    uint8_t dead;       // 死亡フラグ
 } Player;
 
 // プレイヤーショット

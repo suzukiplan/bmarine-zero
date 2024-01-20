@@ -53,7 +53,7 @@ void submain(uint8_t arg) __z88dk_fastcall
     vgs0_bgm_play(1);
 
     // メインループ
-    while (1) {
+    while (255 != GV->player.dead) {
         vgs0_wait_vsync();
         GV->frame++;
 

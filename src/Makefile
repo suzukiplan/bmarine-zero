@@ -36,6 +36,21 @@ CHR_FILES += sprite_laser.chr
 CHR_FILES += sprite_laser2.chr
 CHR_FILES += sprite_nabura.chr
 CHR_FILES += sprite_catk.chr
+CHR_FILES += sprite_bomb00.chr
+CHR_FILES += sprite_bomb01.chr
+CHR_FILES += sprite_bomb02.chr
+CHR_FILES += sprite_bomb03.chr
+CHR_FILES += sprite_bomb04.chr
+CHR_FILES += sprite_bomb05.chr
+CHR_FILES += sprite_bomb06.chr
+CHR_FILES += sprite_bomb07.chr
+CHR_FILES += sprite_bomb08.chr
+CHR_FILES += sprite_bomb09.chr
+CHR_FILES += sprite_bomb10.chr
+CHR_FILES += sprite_bomb11.chr
+CHR_FILES += sprite_bomb12.chr
+CHR_FILES += sprite_bomb13.chr
+CHR_FILES += sprite_bomb14.chr
 
 # sound effect
 WAV_FILES = se000_start.wav

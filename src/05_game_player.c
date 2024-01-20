@@ -20,8 +20,13 @@ static void update_player_position(void) __z88dk_fastcall
 
 void move_player(void) __z88dk_fastcall
 {
-    uint8_t i;
-    uint8_t pad = vgs0_joypad_get();
+    uint8_t i, j;
+    uint8_t pad;
+    if (GV->player.dead) {
+        pad = 0;
+    } else {
+        pad = vgs0_joypad_get();
+    }
 
     if (0 == GV->player.nabura && 0 == GV->player.darkness) {
         // 左右の加速度処理
@@ -264,6 +269,10 @@ void move_player(void) __z88dk_fastcall
             } else {
                 GV->smc.value = 0;
                 GV->player.hp = 0;
+                if (0 == GV->player.dead) {
+                    GV->player.dead = 1;
+                    vgs0_bgm_fadeout();
+                }
             }
         }
         GV->player.dmg--;
@@ -278,6 +287,30 @@ void move_player(void) __z88dk_fastcall
         } else {
             VGS0_ADDR_OAM[SP_JIKIDMG].attr = 0x00;
             GV->player.muteki = 60;
+        }
+    } else if (GV->player.dead) {
+        GV->player.muteki = 255;
+        VGS0_ADDR_OAM[SP_JIKI].attr = 0x00;
+        VGS0_ADDR_OAM[SP_JIKI + 1].attr = 0x00;
+        VGS0_ADDR_OAM[SP_TAIRYO].attr = 0x00;
+        if (1 == GV->player.dead) {
+            vgs0_oam_set(SP_BIGBOMB, GV->player.x.raw[1] - 36, GV->player.y.raw[1] - 40, 0x8B, 0x00, 11, 11);
+            VGS0_ADDR_OAM[SP_BIGBOMB].bank = BANK_BOMB00_SP;
+        }
+        if (GV->player.dead < 60) {
+            VGS0_ADDR_OAM[SP_BIGBOMB].bank = BANK_BOMB00_SP + (GV->player.dead >> 2);
+            GV->player.dead++;
+        } else if (GV->player.dead == 60) {
+            VGS0_ADDR_OAM[SP_BIGBOMB].attr = 0x00;
+            for (i = 0; i < 2; i++) {
+                for (j = 0; j < 10; j++) {
+                    VGS0_ADDR_FG->ptn[14 + i][11 + j] = 0xC0 + j + (i << 4);
+                    VGS0_ADDR_FG->attr[14 + i][11 + j] = 0x84;
+                }
+            }
+            GV->player.dead++;
+        } else if (GV->player.dead < 255) {
+            GV->player.dead++;
         }
     } else if (GV->player.muteki) {
         GV->player.muteki--;

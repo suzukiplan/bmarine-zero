@@ -259,7 +259,7 @@ void screen_effect_proc(void) __z88dk_fastcall
         if (GV->medal[i].flag) {
             if (0x20 != GV->medal[i].flag) {
                 if (1 == GV->medal[i].flag) {
-                    if (100 < GV->hit || GV->player.jmp || GV->player.mode) {
+                    if (0 == GV->player.dead && (100 < GV->hit || GV->player.jmp || GV->player.mode)) {
                         GV->medal[i].vx.value = 0;
                         GV->medal[i].vy.value = 0;
                         GV->medal[i].flag = 0x10; // 自動収集
@@ -275,20 +275,26 @@ void screen_effect_proc(void) __z88dk_fastcall
                         }
                     }
                 } else if (0x10 == GV->medal[i].flag) {
-                    uint8_t r = vgs0_angle(GV->medal[i].x.raw[1] + 8, GV->medal[i].y.raw[1] + 8, GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 8);
-                    GV->medal[i].vx.value = (uint16_t)((int8_t)vgs0_sin(r));
-                    GV->medal[i].vy.value = (uint16_t)((int8_t)vgs0_cos(r));
-                    GV->medal[i].vx.value += GV->medal[i].vx.value;
-                    GV->medal[i].vy.value += GV->medal[i].vy.value;
-                    GV->medal[i].vx.value += GV->medal[i].vx.value;
-                    GV->medal[i].vy.value += GV->medal[i].vy.value;
-                    if (0 == (GV->frame & 0x02)) {
-                        GV->medal[i].an += 2;
-                        GV->medal[i].an &= 0x1F;
-                        if (GV->medal[i].an < 0x10) {
-                            VGS0_ADDR_OAM[SP_MEDAL + i].ptn = GV->medal[i].an + 0x20;
-                        } else {
-                            VGS0_ADDR_OAM[SP_MEDAL + i].ptn = (GV->medal[i].an & 0x0F) + 0x40;
+                    if (GV->player.dead) {
+                        GV->medal[i].vx.value = 0;
+                        GV->medal[i].vy.value = 0;
+                        GV->medal[i].flag = 0x01; // 自動収集解除
+                    } else {
+                        uint8_t r = vgs0_angle(GV->medal[i].x.raw[1] + 8, GV->medal[i].y.raw[1] + 8, GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 8);
+                        GV->medal[i].vx.value = (uint16_t)((int8_t)vgs0_sin(r));
+                        GV->medal[i].vy.value = (uint16_t)((int8_t)vgs0_cos(r));
+                        GV->medal[i].vx.value += GV->medal[i].vx.value;
+                        GV->medal[i].vy.value += GV->medal[i].vy.value;
+                        GV->medal[i].vx.value += GV->medal[i].vx.value;
+                        GV->medal[i].vy.value += GV->medal[i].vy.value;
+                        if (0 == (GV->frame & 0x02)) {
+                            GV->medal[i].an += 2;
+                            GV->medal[i].an &= 0x1F;
+                            if (GV->medal[i].an < 0x10) {
+                                VGS0_ADDR_OAM[SP_MEDAL + i].ptn = GV->medal[i].an + 0x20;
+                            } else {
+                                VGS0_ADDR_OAM[SP_MEDAL + i].ptn = (GV->medal[i].an & 0x0F) + 0x40;
+                            }
                         }
                     }
                 }
@@ -306,7 +312,7 @@ void screen_effect_proc(void) __z88dk_fastcall
                     GV->hbuf[1].y = GV->medal[i].y.raw[1];
                     GV->hbuf[1].width = 16;
                     GV->hbuf[1].height = 16;
-                    if (vgs0_collision_check((uint16_t)GV->hbuf)) {
+                    if (0 == GV->player.dead && vgs0_collision_check((uint16_t)GV->hbuf)) {
                         vgs0_se_play(10);
                         GV->hkt = HIT_KEEP_TIME;
                         GV->medal[i].flag = 0x20;
