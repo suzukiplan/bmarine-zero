@@ -137,6 +137,24 @@ void add_medal(uint8_t type, uint8_t x, uint8_t y)
     GV->medalIndex &= 0x0F;
 }
 
+void add_catk(uint8_t x, uint8_t y)
+{
+    if (GV->catk[GV->catkIndex].flag) {
+        return;
+    }
+    GV->catk[GV->catkIndex].flag = 1;
+    GV->catk[GV->catkIndex].x.raw[1] = x;
+    GV->catk[GV->catkIndex].y.raw[1] = y;
+    uint8_t angle = vgs0_angle(x + 4, y + 4, GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 8);
+    GV->catk[GV->catkIndex].rx = vgs0_sin(angle);
+    GV->catk[GV->catkIndex].ry = vgs0_cos(angle);
+    angle >>= 5;
+    angle |= 0xF8;
+    vgs0_oam_set(SP_CATK + GV->catkIndex, x, y, 0x80, angle, 0, 0);
+    GV->catkIndex += 1;
+    GV->catkIndex &= 0x0F;
+}
+
 void screen_effect_proc(void) __z88dk_fastcall
 {
     uint8_t i;
@@ -205,6 +223,36 @@ void screen_effect_proc(void) __z88dk_fastcall
                 VGS0_ADDR_BG->attr[GV->bubble[i].y][GV->bubble[i].x] = 0x00;
             } else if (0 == (GV->bubble[i].flag & 0x03)) {
                 VGS0_ADDR_BG->ptn[GV->bubble[i].y][GV->bubble[i].x] += 1;
+            }
+        }
+        // 打ち返し弾
+        if (GV->catk[i].flag) {
+            GV->catk[i].vx.value += GV->catk[i].rx;
+            GV->catk[i].vy.value += GV->catk[i].ry;
+            GV->catk[i].x.value += vgs0_sdiv16((int16_t)GV->catk[i].vx.value, 13);
+            GV->catk[i].y.value += vgs0_sdiv16((int16_t)GV->catk[i].vy.value, 13);
+            if (248 < GV->catk[i].x.raw[1] || 192 < GV->catk[i].y.raw[1]) {
+                GV->catk[i].flag = 0;
+                GV->catk[i].vx.value = 0;
+                GV->catk[i].vy.value = 0;
+                VGS0_ADDR_OAM[SP_CATK + i].attr = 0x00;
+            } else {
+                VGS0_ADDR_OAM[SP_CATK + i].x = GV->catk[i].x.raw[1];
+                VGS0_ADDR_OAM[SP_CATK + i].y = GV->catk[i].y.raw[1];
+                if (0 == GV->player.dmg && 0 == GV->player.muteki) {
+                    GV->hbuf[0].x = GV->catk[i].x.raw[1] + 3;
+                    GV->hbuf[0].y = GV->catk[i].y.raw[1] + 3;
+                    GV->hbuf[0].width = 2;
+                    GV->hbuf[0].height = 2;
+                    GV->hbuf[1].x = GV->player.x.raw[1] + 10;
+                    GV->hbuf[1].y = GV->player.y.raw[1] + 8;
+                    GV->hbuf[1].width = 4;
+                    GV->hbuf[1].height = 4;
+                    if (vgs0_collision_check((uint16_t)GV->hbuf)) {
+                        GV->hit = 0;
+                        GV->player.dmg = 60;
+                    }
+                }
             }
         }
         // メダル

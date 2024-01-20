@@ -29,6 +29,7 @@
 #define SP_SHOTEFF 3    // ショット発射エフェクト (1)
 #define SP_HP 4         // 体力ゲージ (5)
 #define SP_SPRAY2 10    // うんこの軌道 (16)
+#define SP_CATK 26      // 打ち返し弾 (16)
 #define SP_LTOP 57      // レーザー発射口 (1)
 #define SP_LBOTTOM 58   // レーザー地面 (1)
 #define SP_LASER 59     // レーザー (1)
@@ -152,6 +153,17 @@ typedef struct {
     rect_t hit;     // 当たり判定
 } Enemy;
 
+// 打ち返し弾
+typedef struct {
+    uint8_t flag;   // 存在フラグ
+    var16_t x;      // X座標
+    var16_t y; // Y座標
+    int8_t rx; // sin
+    int8_t ry; // cos
+    var16_t vx; // 移動速度(X)
+    var16_t vy; // 移動速度(Y)
+} CounterAttack;
+
 // グローバル変数
 typedef struct {
     uint8_t hi[8];          // ハイスコア
@@ -187,6 +199,8 @@ typedef struct {
     uint8_t bubbleIndex;    // 泡 index
     Medal medal[16];        // 勲章
     uint8_t medalIndex;     // 勲章 index
+    CounterAttack catk[16]; // 打ち返し弾
+    uint8_t catkIndex;      // 打ち返し弾 index
     Enemy enemy[32];        // 敵
     uint8_t enemyIndex;     // 敵 index
     uint8_t espIndex;       // 敵スプライト index
@@ -219,6 +233,7 @@ void add_dust_air(uint8_t x, uint8_t y);
 void add_star(void) __z88dk_fastcall;
 void add_bubble(void)  __z88dk_fastcall;
 void add_medal(uint8_t type, uint8_t x, uint8_t y);
+void add_catk(uint8_t x, uint8_t y);
 void screen_effect_proc(void) __z88dk_fastcall;
 
 void add_enemy(uint8_t type, uint8_t x, uint8_t y);

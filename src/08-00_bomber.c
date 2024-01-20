@@ -36,6 +36,10 @@ void move_bomber(Enemy* enemy) __z88dk_fastcall
             }
         } else {
             enemy->flag = 0;
+            // レベル8以降は打ち返し弾を発射
+            if (8 <= GV->level) {
+                add_catk(enemy->x.raw[1] + 8, enemy->y.raw[1] + 8);
+            }
         }
     }
 }
