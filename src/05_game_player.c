@@ -75,8 +75,8 @@ void move_player(void) __z88dk_fastcall
                     VGS0_ADDR_OAM[SP_TAIRYO].y--;
                 }
             }
-            vgs0_palette_set(0, 1, 10, 0, 10);
-            vgs0_palette_set(4, 8, 10, 0, 10);
+            vgs0_palette_set(0, 1, 9, 0, 10);
+            vgs0_palette_set(4, 8, 9, 0, 10);
         } else if (4 == GV->player.nabura) {
             if (0 == (GV->frame & 0x07)) {
                 if (0x0E == VGS0_ADDR_OAM[SP_TAIRYO].ptn) {
@@ -86,8 +86,8 @@ void move_player(void) __z88dk_fastcall
                     VGS0_ADDR_OAM[SP_TAIRYO].ptn += 2;
                 }
             }
-            vgs0_palette_set(0, 1, 16, 0, 6);
-            vgs0_palette_set(4, 8, 16, 0, 6);
+            vgs0_palette_set(0, 1, 13, 0, 6);
+            vgs0_palette_set(4, 8, 13, 0, 6);
         }
     } else {
         // ダークネスモード演出
@@ -296,6 +296,7 @@ void move_player(void) __z88dk_fastcall
         if (1 == GV->player.dead) {
             vgs0_oam_set(SP_BIGBOMB, GV->player.x.raw[1] - 36, GV->player.y.raw[1] - 40, 0x8B, 0x00, 11, 11);
             VGS0_ADDR_OAM[SP_BIGBOMB].bank = BANK_BOMB00_SP;
+            vgs0_se_play(19);
         }
         if (GV->player.dead < 60) {
             VGS0_ADDR_OAM[SP_BIGBOMB].bank = BANK_BOMB00_SP + (GV->player.dead >> 2);
