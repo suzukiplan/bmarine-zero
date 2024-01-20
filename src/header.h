@@ -22,6 +22,7 @@
 #define BANK_LASER_SP 15  // レーザー
 #define BANK_LASER2_SP 16 // レーザー装飾
 #define BANK_NABURA_SP 17 // ナブラステージ
+#define BANK_CATK 18      // 打ち返し弾
 
 // スプライトの初期位置
 #define SP_JIKIDMG 0    // 自機ダメージ (1)

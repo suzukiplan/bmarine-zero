@@ -148,9 +148,9 @@ void add_catk(uint8_t x, uint8_t y)
     uint8_t angle = vgs0_angle(x + 4, y + 4, GV->player.x.raw[1] + 12, GV->player.y.raw[1] + 8);
     GV->catk[GV->catkIndex].rx = vgs0_sin(angle);
     GV->catk[GV->catkIndex].ry = vgs0_cos(angle);
-    angle >>= 5;
-    angle |= 0xF8;
+    angle >>= 3;
     vgs0_oam_set(SP_CATK + GV->catkIndex, x, y, 0x80, angle, 0, 0);
+    VGS0_ADDR_OAM[SP_CATK + GV->catkIndex].bank = BANK_CATK;
     GV->catkIndex += 1;
     GV->catkIndex &= 0x0F;
 }

@@ -35,6 +35,7 @@ CHR_FILES += sprite_medal.chr
 CHR_FILES += sprite_laser.chr
 CHR_FILES += sprite_laser2.chr
 CHR_FILES += sprite_nabura.chr
+CHR_FILES += sprite_catk.chr
 
 # sound effect
 WAV_FILES = se000_start.wav

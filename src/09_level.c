@@ -60,6 +60,7 @@ void level_proc(void) __z88dk_fastcall
     switch (GV->level) {
         case 0: // 即座にレベルアップ
             level_up();
+            GV->level = 8;
             break;
         case 1: // 潜水艦が左から現れる（単方向なら簡単なので出現量多め）
             if (0 == (GV->frame & 0x1F)) {
