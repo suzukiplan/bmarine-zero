@@ -60,7 +60,6 @@ void level_proc(void) __z88dk_fastcall
     switch (GV->level) {
         case 0: // 即座にレベルアップ
             level_up();
-            GV->level = 8; // debug (初期レベル)
             break;
         case 1: // 潜水艦が左から現れる（単方向なら簡単なので出現量多め）
             if (0 == (GV->frame & 0x1F)) {
@@ -87,7 +86,7 @@ void level_proc(void) __z88dk_fastcall
             if (0 == (GV->frame & 0x7F)) {
                 add_enemy(ET_BIRD, 248, 8 + (get_random(&GV->ridx) & 0x0F));
             }
-            if (170 < GV->enemies) {
+            if (150 < GV->enemies) {
                 level_up();
             }
             break;
@@ -145,7 +144,7 @@ void level_proc(void) __z88dk_fastcall
             if (0x1F == (GV->frame & 0x7F)) {
                 add_enemy(ET_KANI, 248, 168);
             }
-            if (7 == GV->level && 100 < GV->enemies) {
+            if (7 == GV->level && 666 < GV->enemies) {
                 vgs0_bgm_fadeout();
                 level_up();
             }
