@@ -72,6 +72,7 @@ WAV_FILES += se015_birddrop.wav
 WAV_FILES += se016_birdfall.wav
 WAV_FILES += se017_kanijump.wav
 WAV_FILES += se018_kanitama.wav
+WAV_FILES += se019_bigbomb.wav
 
 # background music
 BGM_FILES = song1.bgm
