@@ -10,7 +10,7 @@
 
 目指せ 999HIT!!
 
-## How to Use (WIP)
+## How to Use
 
 ### Required Hardware
 
