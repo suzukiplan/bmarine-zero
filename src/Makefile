@@ -100,6 +100,7 @@ LINK = sdcc ${COMMON_FLAGS} -Wl${VGSHOME}/lib/sdcc/vgs0.lib
 
 all: build
 	cd ${VGSHOME}/src/sdl2 && make
+	cp -p game.pkg ../image/game.pkg
 	${VGSHOME}/src/sdl2/vgs0 game.pkg
 
 build: game.pkg

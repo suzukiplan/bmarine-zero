@@ -311,6 +311,16 @@ void move_player(void) __z88dk_fastcall
             }
             GV->player.dead++;
         } else if (GV->player.dead < 255) {
+            if (192 <= GV->player.dead && 0 == (GV->player.dead & 0x03)) {
+                uint8_t ptn = (GV->player.dead - 192) >> 2;
+                ptn |= 0xE0;
+                for (i = 0; i < 32; i++) {
+                    for (j = 0; j < 32; j++) {
+                        VGS0_ADDR_FG->ptn[j][i] = ptn;
+                        VGS0_ADDR_FG->attr[j][i] = 0x82;
+                    }
+                }
+            }
             GV->player.dead++;
         }
     } else if (GV->player.muteki) {
