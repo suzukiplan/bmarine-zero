@@ -41,6 +41,7 @@ void level_proc(void) __z88dk_fastcall
         }
         if (0xA0 == GV->levelFrame) {
             GV->enemies = 0;
+            GV->ridx = 0;
             if (5 == GV->level) {
                 vgs0_fg_putstr(6, 14, 0x80, " NABURA MODE START! ");
             } else if (6 == GV->level) {
