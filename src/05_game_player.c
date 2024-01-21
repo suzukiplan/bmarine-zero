@@ -44,21 +44,20 @@ static void update_player_position(void) __z88dk_fastcall
 void move_player(void) __z88dk_fastcall
 {
     uint8_t i, j;
-    uint8_t pad;
     if (GV->player.dead) {
-        pad = 0;
+        GV->pad = 0;
     } else {
-        pad = vgs0_joypad_get();
+        GV->pad = vgs0_joypad_get();
     }
 
     if (0 == GV->player.nabura && 0 == GV->player.darkness) {
         // 左右の加速度処理
-        if (pad & VGS0_JOYPAD_LE) {
+        if (GV->pad & VGS0_JOYPAD_LE) {
             if (-640 < GV->player.spd) {
                 GV->player.spd -= 64;
             }
             VGS0_ADDR_OAM[SP_JIKI + 1].attr |= 0b01000000;
-        } else if (pad & VGS0_JOYPAD_RI) {
+        } else if (GV->pad & VGS0_JOYPAD_RI) {
             if (GV->player.spd < 640) {
                 GV->player.spd += 64;
             }
@@ -71,7 +70,7 @@ void move_player(void) __z88dk_fastcall
     } else if (GV->player.nabura) {
         // ナブラモードへの遷移演出
         GV->player.spd = 0;
-        pad = 0;
+        GV->pad = 0;
         if (1 == GV->player.nabura) {
             VGS0_ADDR_OAM[SP_JIKI].ptn = 0xDC;
             VGS0_ADDR_OAM[SP_JIKI + 1].ptn = 0x88;
@@ -115,7 +114,7 @@ void move_player(void) __z88dk_fastcall
     } else {
         // ダークネスモード演出
         GV->player.spd = 0;
-        pad = 0;
+        GV->pad = 0;
         if (1 == GV->player.darkness) {
             GV->player.darkness++;
             VGS0_ADDR_OAM[SP_TAIRYO].ptn = 0x0E;
@@ -165,7 +164,7 @@ void move_player(void) __z88dk_fastcall
     }
 
     // ジャンプ
-    if (pad & VGS0_JOYPAD_T1 && 0 == GV->player.laser) {
+    if (GV->pad & VGS0_JOYPAD_T1 && 0 == GV->player.laser) {
         if (0 == GV->player.jmpKeep && 0 == GV->player.jmp) {
             vgs0_se_play(4);
             GV->player.jmp = -299;
@@ -181,7 +180,7 @@ void move_player(void) __z88dk_fastcall
 
     // ショット発射
     if (0 == GV->player.laser && 0 == GV->player.dmg) {
-        if (pad & VGS0_JOYPAD_T2) {
+        if (GV->pad & VGS0_JOYPAD_T2) {
             if (0 == GV->player.shot) {
                 add_pshot(GV->player.x.raw[1] + 8, GV->player.y.value + 0x0B00);
                 GV->player.shot = 1;

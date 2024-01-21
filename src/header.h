@@ -216,6 +216,8 @@ typedef struct {
     var16_t smc;            // スコアに反映するメダル総数（最大体力で type 0 を取得すると上昇 & damage でリセット）
     var16_t smcPrev;        // 直前フレームのsmc（再描画判定用）
     uint8_t ridx;           // 乱数インデクス
+    uint8_t pad;            // パッド入力値
+    uint16_t replay;        // リプレイインデックス
     uint8_t frame;          // フレームカウンタ
     uint8_t level;          // レベル
     uint8_t levelFrame;     // レベル表示フレーム

@@ -109,5 +109,12 @@ void submain(uint8_t arg) __z88dk_fastcall
 
         // 王冠を表示
         render_crown();
+
+        // リプレイデータを記録（デモプレイの記録用）
+#if 1
+        *((uint8_t*)(0xA000 + GV->replay)) = GV->pad;
+        GV->replay++;
+        GV->replay &= 0x1FFF;
+#endif
     }
 }
