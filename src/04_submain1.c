@@ -25,9 +25,6 @@
 
 void submain(uint8_t arg) __z88dk_fastcall
 {
-    if (arg) {
-        return; // arg で別処理分岐（未実装）
-    }
     uint8_t i;
 
     // スコアと波をBGからFGに描き直す

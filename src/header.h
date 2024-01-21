@@ -61,6 +61,9 @@
 #define BANK_BOMB12_SP 31 // 大爆発(12)
 #define BANK_BOMB13_SP 32 // 大爆発(13)
 #define BANK_BOMB14_SP 33 // 大爆発(14)
+#define BANK_TITLE_FG 34  // タイトルロゴ
+#define BANK_BRAND1_SP 35 // ブランドロゴ
+#define BANK_BRAND2_SP 36 // ブランドロゴ（マスク）
 
 // スプライトの初期位置
 #define SP_JIKIDMG 0    // 自機ダメージ (1)

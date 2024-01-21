@@ -43,16 +43,17 @@ static const int8_t rasterTable[32] = {
     0, 0, -1, -1, -2, -2, -3, -3,
     -4, -4, -3, -3, -2, -2, -1, -1};
 
-void submain(uint8_t arg) __z88dk_fastcall
+void title2(void) __z88dk_fastcall
 {
-    if (arg) {
-        return; // arg で別処理分岐（未実装）  TODO: ゲームオーバー処理へココから分岐予定
-    }
+    vgs0_wait_vsync();
 
     // DPM を設定
     *VGS0_ADDR_BG_DPM = BANK_MAIN_BG;
     *VGS0_ADDR_FG_DPM = BANK_MAIN_FG;
     *VGS0_ADDR_SPRITE_DPM = BANK_MAIN_SP;
+
+    // ネームテーブル + OAMをクリア
+    vgs0_memset(0x8000, 0x00, 0x1800);
 
     // FGにタイトル描画
     uint8_t i, j;
@@ -77,9 +78,10 @@ void submain(uint8_t arg) __z88dk_fastcall
     vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
     score_print(VGS0_ADDR_FG);
     vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
-    vgs0_fg_putstr(7, 19, 0x80, "PRESS START BUTTON");
-    vgs0_fg_putstr(4, 23, 0x80, "@2013-2024 BY SUZUKIPLAN");
-    vgs0_fg_putstr(5, 22, 0x80, "PROGRAMMED BY Y.SUZUKI");
+
+    vgs0_fg_putstr(9, 19, 0x80, "> GAME START");
+    vgs0_fg_putstr(9, 21, 0x80, "  SCORE RANKING");
+    vgs0_fg_putstr(9, 23, 0x80, "  HOW TO PLAY");
 
     // BGを表示
     n = 0;
@@ -99,26 +101,48 @@ void submain(uint8_t arg) __z88dk_fastcall
         vgs0_oam_set(i, x, y, 0x82, i, 0, 0);
     }
 
-    // BGMを再生
-    vgs0_bgm_play(0);
-
     // ループ
     uint8_t a = 0;
     uint8_t sidx = 0;
     uint8_t start = 0;
+    uint8_t pad = 0;
+    uint8_t prevPad = 0xFF;
+    uint8_t menuCursor = 0;
     while (1) {
         a++;
         if (0 == start) {
             // STARTボタンが押されたかチェック
-            uint8_t pad = vgs0_joypad_get();
-            if (pad & VGS0_JOYPAD_ST) {
+            pad = vgs0_joypad_get();
+            if (0 != (pad & VGS0_JOYPAD_ST) && 0 == (prevPad & VGS0_JOYPAD_ST)) {
                 vgs0_bgm_fadeout();
                 vgs0_se_play(0);
                 start = 1;
                 for (i = 0; i < 32; i++) {
                     VGS0_ADDR_FG->attr[19][i] = 0x80;
                 }
+            } else {
+                uint8_t prevMenuCursor = menuCursor;
+                if (0 != (pad & VGS0_JOYPAD_UP) && 0 == (prevPad & VGS0_JOYPAD_UP)) {
+                    if (menuCursor) {
+                        menuCursor--;
+                    } else {
+                        menuCursor = 2;
+                    }
+                }
+                if (0 != (pad & VGS0_JOYPAD_DW) && 0 == (prevPad & VGS0_JOYPAD_DW)) {
+                    if (2 != menuCursor) {
+                        menuCursor++;
+                    } else {
+                        menuCursor = 0;
+                    }
+                }
+                if (menuCursor != prevMenuCursor) {
+                    VGS0_ADDR_FG->attr[19 + (prevMenuCursor << 1)][9] = 0x00;
+                    VGS0_ADDR_FG->attr[19 + (menuCursor << 1)][9] = 0x80;
+                    VGS0_ADDR_FG->ptn[19 + (menuCursor << 1)][9] = '>';
+                }
             }
+            prevPad = pad;
         } else {
             start += 1;
             if (56 == start) {
@@ -129,32 +153,6 @@ void submain(uint8_t arg) __z88dk_fastcall
                     VGS0_ADDR_FG->ptn[i][start] = 0x00;
                     VGS0_ADDR_FG->ptn[i][31 - start] = 0x00;
                 }
-            }
-        }
-
-        // PRESS START BUTTON を点滅
-        if (0 == start) {
-            switch (a & 0x3F) {
-                case 0:
-                    for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[19][i] = 0x80;
-                    }
-                    break;
-                case 24:
-                    for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[19][i] = 0x81;
-                    }
-                    break;
-                case 32:
-                    for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[19][i] = 0x00;
-                    }
-                    break;
-                case 56:
-                    for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[19][i] = 0x81;
-                    }
-                    break;
             }
         }
 
