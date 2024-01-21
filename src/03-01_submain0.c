@@ -32,6 +32,7 @@ void submain(uint8_t arg) __z88dk_fastcall
     // インカム待ち
     while (1) {
         vgs0_bgm_fadeout();
+        GV->demo = 1;
         if (0 != logo()) {
             vgs0_bgm_play(0);
             break;
@@ -44,5 +45,6 @@ void submain(uint8_t arg) __z88dk_fastcall
     }
 
     // メニュー
+    GV->demo = 0;
     title2();
 }

@@ -221,6 +221,7 @@ typedef struct {
     uint8_t frame;          // フレームカウンタ
     uint8_t level;          // レベル
     uint8_t levelFrame;     // レベル表示フレーム
+    uint8_t demo;           // デモフラグ
     uint16_t enemies;       // 敵出現総数カウンタ
     uint8_t waitclear;      // 画面から敵が履けるのを待つ
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
