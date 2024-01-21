@@ -23,12 +23,15 @@
  */
 #include "header.h"
 
-void main(void)
+static void init_vram(void)
 {
-    // パレット初期化
+    vgs0_memset(0x8000, 0x00, 0x4000);
     vgs0_dma(BANK_PALETTE);
     vgs0_memcpy((uint16_t)VGS0_ADDR_PALETTE, (uint16_t)VGS0_ADDR_CHARACTER, 512);
+}
 
+void main(void)
+{
     for (uint8_t i = 0; i < 8; i++) {
         GV->hi[i] = 0;
         GV->sc[i] = 0;
@@ -39,6 +42,7 @@ void main(void)
 
     while (1) {
         // タイトル画面へ遷移
+        init_vram();
         vgs0_bank0_switch(BANK_PRG0_0);
         vgs0_bank1_switch(BANK_PRG0_1);
         vgs0_bank2_switch(BANK_PRG0_2);
@@ -51,10 +55,5 @@ void main(void)
         vgs0_bank2_switch(BANK_PRG1_2);
         vgs0_bank3_switch(BANK_PRG1_3);
         submain(0);
-
-        // VRAM クリア
-        vgs0_memset(0x8000, 0x00, 0x4000);
-        vgs0_dma(BANK_PALETTE);
-        vgs0_memcpy((uint16_t)VGS0_ADDR_PALETTE, (uint16_t)VGS0_ADDR_CHARACTER, 512);
     }
 }
