@@ -114,7 +114,7 @@ void hit_print() __z88dk_fastcall
     }
 
     // ヒット数の減少を検出した場合、退避状態へ遷移
-    if (GV->hit < GV->hitlog) {
+    if (GV->hstat && GV->hit < GV->hitlog) {
         GV->hitlog = GV->hit;
         GV->hstat = 100;
     }
