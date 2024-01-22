@@ -166,7 +166,7 @@ void submain(uint8_t arg) __z88dk_fastcall
                     }
                 }
             }
-            if (88 == GV->demo) {
+            if (85 == GV->demo) {
                 return;
             }
         }
