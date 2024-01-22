@@ -246,6 +246,7 @@ uint8_t title1(void) __z88dk_fastcall
             logo++;
         } else if (29 == logo) {
             print_score_ranking();
+            vgs0_fg_putstr(4, 22, 0x80, "   PRESS START BUTTON   ");
             logo++;
             aa = 0;
         } else if (30 == logo) {

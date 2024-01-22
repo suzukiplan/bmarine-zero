@@ -257,6 +257,20 @@ typedef struct {
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 
+typedef struct {
+    uint8_t sc[8];
+    uint8_t name[4];
+    uint8_t lv[2];
+    uint8_t exist;
+    uint8_t reserved;
+} ScoreData;
+
+typedef struct {
+    uint8_t eyecatch[8];
+    ScoreData data[8];
+} ScoreRanking;
+#define SR ((ScoreRanking*)0xE000)
+
 // table宣言変数
 extern const uint16_t random[256];
 

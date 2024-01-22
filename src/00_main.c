@@ -32,10 +32,23 @@ static void init_vram(void)
 
 void main(void)
 {
-    for (uint8_t i = 0; i < 8; i++) {
-        GV->hi[i] = 9;
-        GV->sc[i] = 0;
+    // スコアランキングをロード
+    vgs0_load((uint8_t)SR, sizeof(ScoreRanking));
+    if ('B' != SR->eyecatch[0] || 'M' != SR->eyecatch[1] || '#' != SR->eyecatch[2] || 'S' != SR->eyecatch[3] || 'C' != SR->eyecatch[4] || 'O' != SR->eyecatch[5] || 'R' != SR->eyecatch[6] || 'E' != SR->eyecatch[7]) {
+        vgs0_memset((uint16_t)SR, 0x00, sizeof(ScoreRanking));
+        SR->eyecatch[0] = 'B';
+        SR->eyecatch[1] = 'M';
+        SR->eyecatch[2] = '#';
+        SR->eyecatch[3] = 'S';
+        SR->eyecatch[4] = 'C';
+        SR->eyecatch[5] = 'O';
+        SR->eyecatch[6] = 'R';
+        SR->eyecatch[7] = 'E';
     }
+
+    // グローバル変数を初期化
+    vgs0_memset((uint16_t)GV, 0x00, sizeof(GlobalVariables));
+    vgs0_memcpy((uint16_t)&GV->hi[0], (uint16_t)&SR->data[0].sc, 8);
 
     while (1) {
         // タイトル画面へ遷移
