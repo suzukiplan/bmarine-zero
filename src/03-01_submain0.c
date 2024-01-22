@@ -23,10 +23,6 @@
  */
 #include "header.h"
 
-uint8_t logo(void) __z88dk_fastcall;
-uint8_t title1(void) __z88dk_fastcall;
-void title2(void) __z88dk_fastcall;
-
 void submain(uint8_t arg) __z88dk_fastcall
 {
     // インカム待ち

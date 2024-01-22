@@ -263,6 +263,11 @@ extern const uint16_t random[256];
 // サブルーチン
 void submain(uint8_t arg) __z88dk_fastcall;
 
+uint8_t logo(void) __z88dk_fastcall;
+uint8_t title1(void) __z88dk_fastcall;
+void title2(void) __z88dk_fastcall;
+void print_score_ranking(void) __z88dk_fastcall;
+
 void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;
 void score_increment(uint8_t keta) __z88dk_fastcall;
