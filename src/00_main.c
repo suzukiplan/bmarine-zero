@@ -33,12 +33,9 @@ static void init_vram(void)
 void main(void)
 {
     for (uint8_t i = 0; i < 8; i++) {
-        GV->hi[i] = 0;
+        GV->hi[i] = 9;
         GV->sc[i] = 0;
     }
-    GV->hi[0] = 3;
-    GV->hi[1] = 7;
-    GV->hi[2] = 5;
 
     while (1) {
         // タイトル画面へ遷移
