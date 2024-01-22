@@ -51,6 +51,8 @@ void title2(void) __z88dk_fastcall
     *VGS0_ADDR_BG_DPM = BANK_MAIN_BG;
     *VGS0_ADDR_FG_DPM = BANK_MAIN_FG;
     *VGS0_ADDR_SPRITE_DPM = BANK_MAIN_SP;
+    *VGS0_ADDR_FG_SCROLL_X = 0;
+    *VGS0_ADDR_FG_SCROLL_Y = 0;
 
     // ネームテーブル + OAMをクリア
     vgs0_memset(0x8000, 0x00, 0x1800);
@@ -123,6 +125,7 @@ void title2(void) __z88dk_fastcall
             } else {
                 uint8_t prevMenuCursor = menuCursor;
                 if (0 != (pad & VGS0_JOYPAD_UP) && 0 == (prevPad & VGS0_JOYPAD_UP)) {
+                    vgs0_se_play(21);
                     if (menuCursor) {
                         menuCursor--;
                     } else {
@@ -130,6 +133,7 @@ void title2(void) __z88dk_fastcall
                     }
                 }
                 if (0 != (pad & VGS0_JOYPAD_DW) && 0 == (prevPad & VGS0_JOYPAD_DW)) {
+                    vgs0_se_play(21);
                     if (2 != menuCursor) {
                         menuCursor++;
                     } else {

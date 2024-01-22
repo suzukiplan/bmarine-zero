@@ -82,6 +82,9 @@ void score_calc(void) __z88dk_fastcall
 // 指定ケタ（0: 10の位, 7: 億の位）のスコアを加算
 void score_increment(uint8_t keta) __z88dk_fastcall
 {
+    if (GV->demo) {
+        return;
+    }
     GV->scoreAdded = 1;
     if (7 < keta) {
         for (uint8_t i = 0; i < 8; i++) {

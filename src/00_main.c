@@ -47,7 +47,11 @@ void main(void)
         vgs0_bank1_switch(BANK_PRG0_1);
         vgs0_bank2_switch(BANK_PRG0_2);
         vgs0_bank3_switch(BANK_PRG0_3);
-        submain(0);
+        if (GV->demoEnd) {
+            submain(1);
+        } else {
+            submain(0);
+        }
 
         // ゲームメインへ遷移
         vgs0_bank0_switch(BANK_PRG1_0);

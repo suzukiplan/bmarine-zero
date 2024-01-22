@@ -115,6 +115,8 @@ uint8_t title1(void) __z88dk_fastcall
     *VGS0_ADDR_BG_DPM = BANK_MAIN_BG;
     *VGS0_ADDR_FG_DPM = BANK_TITLE_FG;
     *VGS0_ADDR_SPRITE_DPM = BANK_MAIN_SP;
+    *VGS0_ADDR_FG_SCROLL_X = 0;
+    *VGS0_ADDR_FG_SCROLL_Y = 0;
 
     // ネームテーブル+OAMをクリア
     vgs0_memset(0x8000, 0x00, 0x1800);
@@ -145,6 +147,7 @@ uint8_t title1(void) __z88dk_fastcall
     uint8_t logo = 0;
     uint8_t f60 = 0;
     uint8_t sec = 0;
+    uint8_t ptn;
     *VGS0_ADDR_FG_SCROLL_Y = (uint8_t)-24;
     while (65 != logo) {
         // STARTボタンが押されたかチェック
@@ -162,7 +165,7 @@ uint8_t title1(void) __z88dk_fastcall
             sec++;
             if (sec == 12) {
                 logo = 12;
-            } else if (sec == 24) {
+            } else if (sec == 18) {
                 logo = 32;
             }
         }
@@ -285,7 +288,7 @@ uint8_t title1(void) __z88dk_fastcall
             logo++;
         } else if (49 <= logo) {
             if (0 == (a & 0x03)) {
-                uint8_t ptn = logo - 49;
+                ptn = logo - 49;
                 ptn |= 0xE0;
                 for (i = 0; i < 32; i++) {
                     for (j = 0; j < 32; j++) {
@@ -331,6 +334,66 @@ uint8_t title1(void) __z88dk_fastcall
             }
         }
         sidx++;
+    }
+
+    if (65 == logo) {
+        // デモプレイ準備
+        *VGS0_ADDR_BG_SCROLL_X = 0;
+        *VGS0_ADDR_BG_SCROLL_Y = 0;
+        for (i = 0; i < 32; i++) {
+            if (23 == i) {
+                for (j = 0; j < 32; j++) {
+                    VGS0_ADDR_BG->ptn[i][j] = 0x02 + (j & 1);
+                    VGS0_ADDR_BG->attr[i][j] = 0x83;
+                }
+            } else if (24 == i) {
+                for (j = 0; j < 32; j++) {
+                    VGS0_ADDR_BG->ptn[i][j] = 0x12 + (j & 1);
+                    VGS0_ADDR_BG->attr[i][j] = 0x83;
+                }
+            } else if (8 < i) {
+                for (j = 0; j < 32; j++) {
+                    VGS0_ADDR_BG->ptn[i][j] = 0x10;
+                    VGS0_ADDR_BG->attr[i][j] = 0x80;
+                }
+            } else {
+                for (j = 0; j < 32; j++) {
+                    VGS0_ADDR_BG->ptn[i][j] = 0x00;
+                }
+            }
+            VGS0_ADDR_OAM[i].attr = 0x00;
+        }
+        vgs0_bg_putstr(2, 2, 0x80, "SC         0    HI         0");
+        vgs0_memset((uint16_t)GV->sc, 0, 8);
+        score_print(VGS0_ADDR_BG);
+        GV->player.x.value = 0x7400;
+        GV->player.y.value = 0x4000;
+        vgs0_oam_set(0x00, GV->player.x.raw[1], GV->player.y.raw[1] + 8, 0x80, 0x80, 0, 0);
+        vgs0_oam_set(0x01, GV->player.x.raw[1] + 8, GV->player.y.raw[1] + 8, 0x80, 0x80, 0, 0);
+        vgs0_oam_set(0x02, GV->player.x.raw[1] + 16, GV->player.y.raw[1] + 8, 0x80, 0x80, 0, 0);
+        vgs0_oam_set(0x03, GV->player.x.raw[1], GV->player.y.raw[1], 0x80, 0x10, 0, 0);
+        vgs0_oam_set(0x04, GV->player.x.raw[1] + 8, GV->player.y.raw[1], 0x80, 0x11, 0, 0);
+        vgs0_oam_set(0x05, GV->player.x.raw[1] + 16, GV->player.y.raw[1], 0x80, 0x12, 0, 0);
+        vgs0_oam_set(0x06, GV->player.x.raw[1], GV->player.y.raw[1] + 8, 0x80, 0x20, 0, 0);
+        vgs0_oam_set(0x07, GV->player.x.raw[1] + 8, GV->player.y.raw[1] + 8, 0x80, 0x21, 0, 0);
+        vgs0_oam_set(0x08, GV->player.x.raw[1] + 16, GV->player.y.raw[1] + 8, 0x80, 0x22, 0, 0);
+        for (logo = 0; logo < 16; logo++) {
+            vgs0_wait_vsync();
+            ptn = 15 - logo;
+            ptn |= 0xE0;
+            for (i = 0; i < 32; i++) {
+                for (j = 0; j < 32; j++) {
+                    VGS0_ADDR_FG->ptn[j][i] = ptn;
+                    VGS0_ADDR_FG->attr[j][i] = 0x82;
+                }
+            }
+        }
+        vgs0_wait_vsync();
+        for (i = 0; i < 32; i++) {
+            for (j = 0; j < 32; j++) {
+                VGS0_ADDR_FG->attr[j][i] = 0x00;
+            }
+        }
     }
     return 0;
 }

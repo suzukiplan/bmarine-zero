@@ -64,6 +64,8 @@
 #define BANK_TITLE_FG 34  // タイトルロゴ
 #define BANK_BRAND1_SP 35 // ブランドロゴ
 #define BANK_BRAND2_SP 36 // ブランドロゴ（マスク）
+#define BANK_REPLAY_D 37  // リプレイ（ダミー）
+#define BANK_REPLAY4 38   // リプレイ（4面）
 
 // スプライトの初期位置
 #define SP_JIKIDMG 0    // 自機ダメージ (1)
@@ -222,6 +224,7 @@ typedef struct {
     uint8_t level;          // レベル
     uint8_t levelFrame;     // レベル表示フレーム
     uint8_t demo;           // デモフラグ
+    uint8_t demoEnd;        // デモ終了フラグ
     uint16_t enemies;       // 敵出現総数カウンタ
     uint8_t waitclear;      // 画面から敵が履けるのを待つ
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）

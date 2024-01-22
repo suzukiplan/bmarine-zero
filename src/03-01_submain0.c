@@ -30,21 +30,25 @@ void title2(void) __z88dk_fastcall;
 void submain(uint8_t arg) __z88dk_fastcall
 {
     // インカム待ち
-    while (1) {
-        vgs0_bgm_fadeout();
-        GV->demo = 1;
-        if (0 != logo()) {
+    if (0 == arg) {
+        while (1) {
+            vgs0_bgm_fadeout();
+            GV->demo = 1;
+            if (0 != logo()) {
+                vgs0_bgm_play(0);
+                break;
+            }
             vgs0_bgm_play(0);
-            break;
+            if (0 != title1()) {
+                break;
+            }
+            return;
         }
-        vgs0_bgm_play(0);
-        if (0 != title1()) {
-            break;
-        }
-        // TODO: デモへ遷移
     }
 
     // メニュー
     GV->demo = 0;
+    GV->demoEnd = 0;
+    vgs0_se_play(22);
     title2();
 }

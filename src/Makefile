@@ -80,6 +80,8 @@ WAV_FILES += se017_kanijump.wav
 WAV_FILES += se018_kanitama.wav
 WAV_FILES += se019_bigbomb.wav
 WAV_FILES += se020_suzukiplan.wav
+WAV_FILES += se021_cursor.wav
+WAV_FILES += se022_coin.wav
 
 # background music
 BGM_FILES = song1.bgm
@@ -132,8 +134,8 @@ clean:
 game.pkg: ${PROJECT}.rom bgm.dat se.dat
 	${MAKEPKG} -o game.pkg -r ${PROJECT}.rom -b bgm.dat -s se.dat
 
-${PROJECT}.rom: program0.bin program1.bin palette.bin ${CHR_FILES}
-	${MAKEROM} ${PROJECT}.rom program0.bin program1.bin palette.bin ${CHR_FILES}
+${PROJECT}.rom: program0.bin program1.bin palette.bin ${CHR_FILES} replay.dat
+	${MAKEROM} ${PROJECT}.rom program0.bin program1.bin palette.bin ${CHR_FILES} replay.dat
 
 program0.bin: ${PROGRAM0} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
 	${LINK} -o program0.ihx ${PROGRAM0}

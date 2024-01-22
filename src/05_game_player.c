@@ -44,7 +44,9 @@ static void update_player_position(void) __z88dk_fastcall
 void move_player(void) __z88dk_fastcall
 {
     uint8_t i, j;
-    if (GV->player.dead) {
+    if (GV->demo) {
+        GV->pad = *((uint8_t*)(0xA000 + GV->replay));
+    } else if (GV->player.dead) {
         GV->pad = 0;
     } else {
         GV->pad = vgs0_joypad_get();
