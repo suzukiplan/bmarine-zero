@@ -327,6 +327,9 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
     el += enemy->hit.x;
     uint8_t er = el;
     er += enemy->hit.width;
+    if (er < el) {
+        return;
+    }
     GV->hbuf[0].x = el;
     GV->hbuf[0].y = et;
     GV->hbuf[0].width = enemy->hit.width;
