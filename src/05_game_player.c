@@ -412,6 +412,9 @@ void move_player(void) __z88dk_fastcall
             if (32 == GV->player.lcnt) {
                 VGS0_ADDR_OAM[SP_LTOP].attr = 0x87;
                 VGS0_ADDR_OAM[SP_LBOTTOM].attr = 0xA7;
+                if (GV->st.laser != 0xFFFF) {
+                    GV->st.laser++;
+                }
             }
             GV->player.lhit = 1;
             VGS0_ADDR_OAM[SP_LASER].ptn = 8 + (GV->player.lcnt & 0x06);
