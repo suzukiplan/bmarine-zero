@@ -210,11 +210,27 @@ typedef struct {
     var16_t vy; // 移動速度(Y)
 } CounterAttack;
 
+// 戦績
+typedef struct {
+    uint16_t shot;     // ショットの総発射数
+    uint16_t miss;     // ショットを外した総数
+    uint16_t laser;    // レーザーの発射回数
+    uint16_t e[16];    // 敵（種別ごと）の総出現数
+    uint16_t d[16];    // 敵（種別ごと）の総破壊数
+    uint16_t medal[2]; // メダルの出現回数
+    uint16_t lost[2];  // メダルの取得漏れ数
+    uint16_t sup;      // スコア基礎点の上昇回数
+    uint16_t cure;     // 回復回数
+    uint16_t dmg;      // ダメージ回数
+    uint16_t maxhit;   // 最大コンボ数
+} Statistics;
+
 // グローバル変数
 typedef struct {
     uint8_t hi[8];          // ハイスコア
     uint8_t sc[8];          // スコア
     uint8_t sadd[8];        // 桁毎のスコア加算値
+    Statistics st;          // 戦績
     var16_t smc;            // スコアに反映するメダル総数（最大体力で type 0 を取得すると上昇 & damage でリセット）
     var16_t smcPrev;        // 直前フレームのsmc（再描画判定用）
     uint8_t ridx;           // 乱数インデクス
@@ -231,7 +247,6 @@ typedef struct {
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
     urect_t hbuf[2];        // 当たり判定用バッファ
     uint16_t hit;           // コンボ数
-    uint16_t maxhit;        // 最大コンボ数
     uint16_t hitlog;        // 直前フレームのコンボ数
     uint8_t hkt;            // コンボ数のキープフレーム数
     uint8_t hstat;          // コンボ数表示ステータス (0: 非表示, 1: 登場中, 2: 表示中, 3: 退避中)

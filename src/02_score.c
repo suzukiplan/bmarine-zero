@@ -123,12 +123,14 @@ void hit_print() __z88dk_fastcall
     if (GV->hitlog != GV->hit && 10 < GV->hit && GV->hstat < 100) {
         GV->hitlog = GV->hit;
         // 最大コンボを更新
-        if (GV->maxhit < GV->hit) {
-            GV->maxhit = GV->hit;
+        if (GV->st.maxhit < GV->hit) {
+            GV->st.maxhit = GV->hit;
         }
-        // カンスト対応
+        // カンスト対応 (表示上は 999, 内部的には 9999 まで記録)
         if (999 < GV->hit) {
-            GV->hit = 999;
+            if (9999 < GV->hit) {
+                GV->hit = 9999;
+            }
             VGS0_ADDR_OAM[SP_HIT].attr = 0x84;
             VGS0_ADDR_OAM[SP_HIT + 1].attr = 0x84;
             VGS0_ADDR_OAM[SP_HIT + 2].attr = 0x84;
