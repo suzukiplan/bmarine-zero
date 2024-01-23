@@ -319,4 +319,7 @@ void score_entry(void) __z88dk_fastcall
     SR->defaultName[1] = VGS0_ADDR_FG->ptn[11 + rank][9];
     SR->defaultName[2] = VGS0_ADDR_FG->ptn[11 + rank][10];
     vgs0_save((uint16_t)SR, sizeof(ScoreRanking));
+    while (0 != vgs0_joypad_get()) {
+        ;
+    }
 }
