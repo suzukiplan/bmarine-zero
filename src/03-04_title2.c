@@ -110,19 +110,36 @@ void title2(void) __z88dk_fastcall
     uint8_t pad = 0;
     uint8_t prevPad = 0xFF;
     uint8_t menuCursor = 0;
+    int8_t scroll = 0;
+    uint8_t scrollX = 0;
+    print_score_ranking(&GV->scr[1]);
+    vgs0_putstr(&GV->scr[1], 5, 22, 0x80, "PUSH BUTTON TO RETURN");
     while (1) {
         a++;
-        if (0 == start) {
-            // STARTボタンが押されたかチェック
+        if (0 == start && 0 == scroll) {
+            // START/A/Bボタンが押されたかチェック
             pad = vgs0_joypad_get();
-            if (0 != (pad & VGS0_JOYPAD_ST) && 0 == (prevPad & VGS0_JOYPAD_ST)) {
-                vgs0_bgm_fadeout();
-                vgs0_se_play(0);
-                start = 1;
-                for (i = 0; i < 32; i++) {
-                    VGS0_ADDR_FG->attr[19][i] = 0x80;
+            if (0 != (pad & VGS0_JOYPAD_ST) && 0 == (prevPad & VGS0_JOYPAD_ST) ||
+                0 != (pad & VGS0_JOYPAD_T1) && 0 == (prevPad & VGS0_JOYPAD_T1) ||
+                0 != (pad & VGS0_JOYPAD_T2) && 0 == (prevPad & VGS0_JOYPAD_T2)) {
+                if (2 == menuCursor) {
+                    if (32 == scrollX) {
+                        vgs0_se_play(24);
+                        scroll = -1;
+                    } else {
+                        vgs0_se_play(23);
+                        vgs0_memcpy((uint16_t)&GV->scr[0], (uint16_t)VGS0_ADDR_FG, sizeof(NameTable));
+                        scroll = 1;
+                    }
+                } else {
+                    vgs0_bgm_fadeout();
+                    vgs0_se_play(0);
+                    start = 1;
+                    for (i = 0; i < 32; i++) {
+                        VGS0_ADDR_FG->attr[19][i] = 0x80;
+                    }
                 }
-            } else {
+            } else if (0 == scrollX) {
                 uint8_t prevMenuCursor = menuCursor;
                 if (0 != (pad & VGS0_JOYPAD_UP) && 0 == (prevPad & VGS0_JOYPAD_UP)) {
                     vgs0_se_play(21);
@@ -153,6 +170,28 @@ void title2(void) __z88dk_fastcall
                 }
             }
             prevPad = pad;
+        } else if (0 < scroll) {
+            for (i = 3; i < 30; i++) {
+                vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->ptn[i][0], (uint16_t)&VGS0_ADDR_FG->ptn[i][1], 31);
+                vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->attr[i][0], (uint16_t)&VGS0_ADDR_FG->attr[i][1], 31);
+                VGS0_ADDR_FG->ptn[i][31] = GV->scr[1].ptn[i][scrollX];
+                VGS0_ADDR_FG->attr[i][31] = GV->scr[1].attr[i][scrollX];
+            }
+            scrollX++;
+            if (32 == scrollX) {
+                scroll = 0;
+            }
+        } else if (scroll < 0) {
+            scrollX--;
+            for (i = 3; i < 30; i++) {
+                if (31 != scrollX) {
+                    vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->ptn[i][0], (uint16_t)&GV->scr[0].ptn[i][scrollX], 31 - scrollX);
+                    vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->attr[i][0], (uint16_t)&GV->scr[0].attr[i][scrollX], 31 - scrollX);
+                }
+            }
+            if (0 == scrollX) {
+                scroll = 0;
+            }
         } else {
             start += 1;
             if (56 == start) {

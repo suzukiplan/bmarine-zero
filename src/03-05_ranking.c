@@ -1,36 +1,36 @@
 #include "header.h"
 
-static void put_score_data(uint8_t x, uint8_t y, uint8_t rank, uint8_t isMyRank, ScoreData* data)
+static void put_score_data(NameTable* namtbl, uint8_t x, uint8_t y, uint8_t rank, uint8_t isMyRank, ScoreData* data)
 {
     if (data->exist) {
-        vgs0_fg_putstr(x, y, isMyRank ? 0x80 : 0x81, "0  ***  **         00");
-        VGS0_ADDR_FG->ptn[y][x + 3] = data->name[0];
-        VGS0_ADDR_FG->ptn[y][x + 4] = data->name[1];
-        VGS0_ADDR_FG->ptn[y][x + 5] = data->name[2];
-        VGS0_ADDR_FG->ptn[y][x + 8] = data->lv[0];
-        VGS0_ADDR_FG->ptn[y][x + 9] = data->lv[1];
+        vgs0_putstr(namtbl, x, y, isMyRank ? 0x80 : 0x81, "0  ***  **         00");
+        namtbl->ptn[y][x + 3] = data->name[0];
+        namtbl->ptn[y][x + 4] = data->name[1];
+        namtbl->ptn[y][x + 5] = data->name[2];
+        namtbl->ptn[y][x + 8] = data->lv[0];
+        namtbl->ptn[y][x + 9] = data->lv[1];
         uint8_t show = 0;
         for (uint8_t j = 0; j < 8; j++) {
             if (0 == show && 0 != data->sc[7 - j]) {
                 show = 1;
             }
             if (show) {
-                VGS0_ADDR_FG->ptn[y][x + 12 + j] = '0' + data->sc[7 - j];
+                namtbl->ptn[y][x + 12 + j] = '0' + data->sc[7 - j];
             }
         }
     } else {
-        vgs0_fg_putstr(x, y, 0x81, "0  ***  **   NO ENTRY");
+        vgs0_putstr(namtbl, x, y, 0x81, "0  ***  **   NO ENTRY");
     }
-    VGS0_ADDR_FG->ptn[y][x] = '0' + rank;
+    namtbl->ptn[y][x] = '0' + rank;
 }
 
-void print_score_ranking(void) __z88dk_fastcall
+void print_score_ranking(NameTable* nametbl) __z88dk_fastcall
 {
-    vgs0_fg_putstr(9, 5, 0x80, "SCORE RANKING");
-    vgs0_fg_putstr(5, 8, 0x80, "#  NAM  LV  SCORE");
-    vgs0_fg_putstr(5, 9, 0x80, "-  ---  --  ---------");
+    vgs0_putstr(nametbl, 9, 5, 0x80, "SCORE RANKING");
+    vgs0_putstr(nametbl, 5, 8, 0x80, "#  NAM  LV  SCORE");
+    vgs0_putstr(nametbl, 5, 9, 0x80, "-  ---  --  ---------");
     for (uint8_t i = 0; i < 5; i++) {
-        put_score_data(5, 11 + (i << 1), i + 1, 1, &SR->data[i]);
+        put_score_data(nametbl, 5, 11 + (i << 1), i + 1, 1, &SR->data[i]);
     }
 }
 
@@ -140,7 +140,7 @@ void score_entry(void) __z88dk_fastcall
     vgs0_fg_putstr(5, 9, 0x80, "#  NAM  LV  SCORE");
     vgs0_fg_putstr(5, 10, 0x80, "-  ---  --  ---------");
     for (j = 0; j < 5; j++) {
-        put_score_data(5, 11 + j, j + 1, j == rank, &SR->data[j]);
+        put_score_data(VGS0_ADDR_FG, 5, 11 + j, j + 1, j == rank, &SR->data[j]);
     }
 
     VGS0_ADDR_BG->ptn[16][2] = 0x68;
