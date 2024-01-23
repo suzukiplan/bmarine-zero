@@ -82,9 +82,35 @@ void submain(uint8_t arg) __z88dk_fastcall
     }
 
     // メインループ
+    uint8_t paused = 0;
     while (255 != GV->player.dead) {
         vgs0_wait_vsync();
         GV->frame++;
+
+        // ポーズ
+        if (0 == demo && 0 == paused && 0 != (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+            vgs0_fg_putstr(11, 16, 0x80, "  PAUSE  ");
+            vgs0_se_play(26);
+            paused = 1;
+        } else if (1 == paused) {
+            if (0 == (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+                paused = 2;
+            }
+        } else if (2 == paused) {
+            if (0 != (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+                vgs0_fg_putstr(11, 16, 0x80, "         ");
+                paused = 3;
+            }
+        } else if (3 == paused) {
+            if (0 == (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+                vgs0_se_play(24);
+                paused = 0;
+            }
+        }
+        if (paused) {
+            GV->frame--;
+            continue;
+        }
 
         // デモプレイ中
         if (GV->demo) {

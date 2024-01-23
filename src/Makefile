@@ -86,6 +86,7 @@ WAV_FILES += se022_coin.wav
 WAV_FILES += se023_enter.wav
 WAV_FILES += se024_cancel.wav
 WAV_FILES += se025_register.wav
+WAV_FILES += se026_pause.wav
 
 # background music
 BGM_FILES = song1.bgm
