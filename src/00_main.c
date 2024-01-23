@@ -33,7 +33,7 @@ static void init_vram(void)
 void main(void)
 {
     // スコアランキングをロード
-    vgs0_load((uint8_t)SR, sizeof(ScoreRanking));
+    vgs0_load((uint16_t)SR, sizeof(ScoreRanking));
     if ('B' != SR->eyecatch[0] || 'M' != SR->eyecatch[1] || '#' != SR->eyecatch[2] || 'S' != SR->eyecatch[3] || 'C' != SR->eyecatch[4] || 'O' != SR->eyecatch[5] || 'R' != SR->eyecatch[6] || 'E' != SR->eyecatch[7]) {
         vgs0_memset((uint16_t)SR, 0x00, sizeof(ScoreRanking));
         SR->eyecatch[0] = 'B';
@@ -48,10 +48,10 @@ void main(void)
 
     // グローバル変数を初期化
     vgs0_memset((uint16_t)GV, 0x00, sizeof(GlobalVariables));
-    vgs0_memcpy((uint16_t)&GV->hi[0], (uint16_t)&SR->data[0].sc, 8);
 
     while (1) {
         // タイトル画面へ遷移
+        vgs0_memcpy((uint16_t)&GV->hi[0], (uint16_t)&SR->data[0].sc, 8);
         init_vram();
         vgs0_bank0_switch(BANK_PRG0_0);
         vgs0_bank1_switch(BANK_PRG0_1);
@@ -69,5 +69,15 @@ void main(void)
         vgs0_bank2_switch(BANK_PRG1_2);
         vgs0_bank3_switch(BANK_PRG1_3);
         submain(0);
+
+        // デモでなければスコアエントリーへ遷移
+        if (!GV->demoEnd) {
+            init_vram();
+            vgs0_bank0_switch(BANK_PRG0_0);
+            vgs0_bank1_switch(BANK_PRG0_1);
+            vgs0_bank2_switch(BANK_PRG0_2);
+            vgs0_bank3_switch(BANK_PRG0_3);
+            submain(2);
+        }
     }
 }

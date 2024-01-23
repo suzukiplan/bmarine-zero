@@ -83,6 +83,9 @@ WAV_FILES += se019_bigbomb.wav
 WAV_FILES += se020_suzukiplan.wav
 WAV_FILES += se021_cursor.wav
 WAV_FILES += se022_coin.wav
+WAV_FILES += se023_enter.wav
+WAV_FILES += se024_cancel.wav
+WAV_FILES += se025_register.wav
 
 # background music
 BGM_FILES = song1.bgm

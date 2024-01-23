@@ -267,6 +267,7 @@ typedef struct {
 
 typedef struct {
     uint8_t eyecatch[8];
+    uint8_t defaultName[4];
     ScoreData data[8];
 } ScoreRanking;
 #define SR ((ScoreRanking*)0xE000)
@@ -281,6 +282,7 @@ uint8_t logo(void) __z88dk_fastcall;
 uint8_t title1(void) __z88dk_fastcall;
 void title2(void) __z88dk_fastcall;
 void print_score_ranking(void) __z88dk_fastcall;
+void score_entry(void) __z88dk_fastcall;
 
 void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;

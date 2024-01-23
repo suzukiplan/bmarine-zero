@@ -25,6 +25,12 @@
 
 void submain(uint8_t arg) __z88dk_fastcall
 {
+    // スコアエントリー
+    if (2 == arg) {
+        score_entry();
+        return;
+    }
+
     // インカム待ち
     if (0 == arg) {
         while (1) {
