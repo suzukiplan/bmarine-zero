@@ -111,6 +111,11 @@ void score_entry(void) __z88dk_fastcall
         case 8:
             SR->data[rank].lv[0] = 'M';
             SR->data[rank].lv[1] = '+';
+            SR->extra = 1;
+            break;
+        case 9:
+            SR->data[rank].lv[0] = 'E';
+            SR->data[rank].lv[1] = 'X';
             break;
         default:
             SR->data[rank].lv[0] = '?';

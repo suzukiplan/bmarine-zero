@@ -82,8 +82,8 @@ void title2(void) __z88dk_fastcall
     vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
 
     vgs0_fg_putstr(9, 19, 0x80, "> GAME START");
-    vgs0_fg_putstr(9, 21, 0x80, "  SCORE RANKING");
-    vgs0_fg_putstr(9, 23, 0x80, "  HOW TO PLAY");
+    vgs0_fg_putstr(9, 21, SR->extra ? 0x80 : 0x81, "  EXTRA START");
+    vgs0_fg_putstr(9, 23, 0x80, "  SCORE RANKING");
 
     // BGを表示
     n = 0;
@@ -128,6 +128,9 @@ void title2(void) __z88dk_fastcall
                     vgs0_se_play(21);
                     if (menuCursor) {
                         menuCursor--;
+                        if (!SR->extra && 1 == menuCursor) {
+                            menuCursor--;
+                        }
                     } else {
                         menuCursor = 2;
                     }
@@ -136,6 +139,9 @@ void title2(void) __z88dk_fastcall
                     vgs0_se_play(21);
                     if (2 != menuCursor) {
                         menuCursor++;
+                        if (!SR->extra && 1 == menuCursor) {
+                            menuCursor++;
+                        }
                     } else {
                         menuCursor = 0;
                     }
@@ -150,6 +156,7 @@ void title2(void) __z88dk_fastcall
         } else {
             start += 1;
             if (56 == start) {
+                GV->extra = menuCursor;
                 break;
             }
             if (start < 16) {

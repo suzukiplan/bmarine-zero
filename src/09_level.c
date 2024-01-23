@@ -54,6 +54,10 @@ void level_proc(void) __z88dk_fastcall
                     vgs0_bgm_play(1);
                     vgs0_palette_set(0, 1, 3, 7, 14);
                     vgs0_palette_set(4, 8, 3, 7, 14);
+                } else if (9 == GV->level) {
+                    vgs0_fg_putstr(6, 14, 0x80, "    EXTRA START!    ");
+                    vgs0_palette_set(0, 1, 3, 7, 10);
+                    vgs0_palette_set(4, 8, 3, 7, 10);
                 } else {
                     vgs0_fg_putstr(6, 14, 0x80, "   LEVEL 0 START!   ");
                     VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
@@ -91,6 +95,8 @@ void level_proc(void) __z88dk_fastcall
             if (GV->demo) {
                 vgs0_dma(BANK_REPLAY4);
                 GV->level = 4;
+            } else if (GV->extra) {
+                GV->level = 9;
             }
             break;
         case 1: // 潜水艦が左から現れる（単方向なら簡単なので出現量多め）
@@ -163,6 +169,7 @@ void level_proc(void) __z88dk_fastcall
             break;
         case 7: // 全敵キャラが登場
         case 8: // レベル8は7と同じだが打ち返し弾あり
+        case 9: // レベル9は8と同じ（EXTRA MODE）
             if (0 == (GV->frame & 0x3F)) {
                 add_enemy(ET_MARINE_LR, 0, (get_random(&GV->ridx) & 0x3F) + 0x60);
                 add_enemy(ET_MARINE_RL, 255, (get_random(&GV->ridx) & 0x3F) + 0x60);

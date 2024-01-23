@@ -223,6 +223,7 @@ typedef struct {
     uint8_t frame;          // フレームカウンタ
     uint8_t level;          // レベル
     uint8_t levelFrame;     // レベル表示フレーム
+    uint8_t extra;          // extraフラグ
     uint8_t demo;           // デモフラグ
     uint8_t demoEnd;        // デモ終了フラグ
     uint16_t enemies;       // 敵出現総数カウンタ
@@ -268,6 +269,10 @@ typedef struct {
 typedef struct {
     uint8_t eyecatch[8];
     uint8_t defaultName[4];
+    uint8_t extra;
+    uint8_t reserved1;
+    uint8_t reserved2;
+    uint8_t reserved3;
     ScoreData data[8];
 } ScoreRanking;
 #define SR ((ScoreRanking*)0xE000)

@@ -36,6 +36,7 @@ void submain(uint8_t arg) __z88dk_fastcall
         while (1) {
             vgs0_bgm_fadeout();
             GV->demo = 1;
+            GV->extra = 0;
             if (0 != logo()) {
                 vgs0_bgm_play(0);
                 break;
@@ -50,6 +51,7 @@ void submain(uint8_t arg) __z88dk_fastcall
 
     // メニュー
     GV->demo = 0;
+    GV->extra = 0;
     GV->demoEnd = 0;
     vgs0_se_play(22);
     title2();
