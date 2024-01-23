@@ -28,6 +28,9 @@ void add_pshot(uint8_t x, uint16_t y)
     if (GV->shot[GV->shotIndex].flag) {
         return;
     }
+    if (0xFFFF != GV->st.shot) {
+        GV->st.shot++;
+    }
     vgs0_se_play(1);
     GV->shot[GV->shotIndex].flag = 1;
     GV->shot[GV->shotIndex].x = x;
@@ -64,6 +67,9 @@ void move_pshot(void) __z88dk_fastcall
                 add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
                 add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
                 add_dust_ground(GV->shot[i].x, GV->shot[i].y.raw[1] + 7);
+                if (0xFFFF != GV->st.miss) {
+                    GV->st.miss++;
+                }
             } else {
                 GV->shot[i].flag++;
                 VGS0_ADDR_OAM[j].y = GV->shot[i].y.raw[1];
