@@ -129,6 +129,8 @@ void show_result(void) __z88dk_fastcall
         "           ENSIGN           ",
         "O2",
         "  LIEUTENANT JUNIOR GRADE   ",
+        "O2",
+        "  LIEUTENANT JUNIOR GRADE+  ",
         "O3",
         "         LIEUTENANT         ",
         "O4",
