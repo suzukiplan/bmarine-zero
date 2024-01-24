@@ -64,8 +64,10 @@
 #define BANK_TITLE_FG 34  // タイトルロゴ
 #define BANK_BRAND1_SP 35 // ブランドロゴ
 #define BANK_BRAND2_SP 36 // ブランドロゴ（マスク）
-#define BANK_REPLAY_D 37  // リプレイ（ダミー）
-#define BANK_REPLAY4 38   // リプレイ（4面）
+#define BANK_RANK1_SP 37  // 階級 (1~16)
+#define BANK_RANK2_SP 38  // 階級 (17~26)
+#define BANK_REPLAY_D 39  // リプレイ（ダミー）
+#define BANK_REPLAY4 40   // リプレイ（4面）
 
 // スプライトの初期位置
 #define SP_JIKIDMG 0    // 自機ダメージ (1)
@@ -129,6 +131,7 @@ typedef struct {
     uint8_t darkness;   // ダークネス演出フラグ
     uint8_t mode;       // 0: 通常モード, 1: ナブラモード
     uint8_t dead;       // 死亡フラグ
+    uint8_t rank[2];    // ランク決定時の保持用
 } Player;
 
 // プレイヤーショット
@@ -278,8 +281,11 @@ typedef struct {
     uint8_t sc[8];
     uint8_t name[4];
     uint8_t lv[2];
+    uint8_t rank[2];
     uint8_t exist;
-    uint8_t reserved;
+    uint8_t reserved1;
+    uint8_t reserved2;
+    uint8_t reserved3;
 } ScoreData;
 
 typedef struct {
@@ -304,6 +310,7 @@ uint8_t title1(void) __z88dk_fastcall;
 void title2(void) __z88dk_fastcall;
 void print_score_ranking(NameTable* namtbl) __z88dk_fastcall;
 void score_entry(void) __z88dk_fastcall;
+void show_result(void) __z88dk_fastcall;
 
 void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;

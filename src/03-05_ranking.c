@@ -3,23 +3,25 @@
 static void put_score_data(NameTable* namtbl, uint8_t x, uint8_t y, uint8_t rank, uint8_t isMyRank, ScoreData* data)
 {
     if (data->exist) {
-        vgs0_putstr(namtbl, x, y, isMyRank ? 0x80 : 0x81, "0  ***  **         00");
+        vgs0_putstr(namtbl, x, y, isMyRank ? 0x80 : 0x81, "0  ***  **  **         00");
         namtbl->ptn[y][x + 3] = data->name[0];
         namtbl->ptn[y][x + 4] = data->name[1];
         namtbl->ptn[y][x + 5] = data->name[2];
         namtbl->ptn[y][x + 8] = data->lv[0];
         namtbl->ptn[y][x + 9] = data->lv[1];
+        namtbl->ptn[y][x + 12] = data->rank[0];
+        namtbl->ptn[y][x + 13] = data->rank[1];
         uint8_t show = 0;
         for (uint8_t j = 0; j < 8; j++) {
             if (0 == show && 0 != data->sc[7 - j]) {
                 show = 1;
             }
             if (show) {
-                namtbl->ptn[y][x + 12 + j] = '0' + data->sc[7 - j];
+                namtbl->ptn[y][x + 16 + j] = '0' + data->sc[7 - j];
             }
         }
     } else {
-        vgs0_putstr(namtbl, x, y, 0x81, "0  ***  **   NO ENTRY");
+        vgs0_putstr(namtbl, x, y, 0x81, "0  ***  **  **   NO ENTRY");
     }
     namtbl->ptn[y][x] = '0' + rank;
 }
@@ -27,10 +29,10 @@ static void put_score_data(NameTable* namtbl, uint8_t x, uint8_t y, uint8_t rank
 void print_score_ranking(NameTable* nametbl) __z88dk_fastcall
 {
     vgs0_putstr(nametbl, 9, 5, 0x80, "SCORE RANKING");
-    vgs0_putstr(nametbl, 5, 8, 0x80, "#  NAM  LV  SCORE");
-    vgs0_putstr(nametbl, 5, 9, 0x80, "-  ---  --  ---------");
+    vgs0_putstr(nametbl, 3, 8, 0x80, "#  NAM  LV  RK  SCORE");
+    vgs0_putstr(nametbl, 3, 9, 0x80, "-  ---  --  --  ---------");
     for (uint8_t i = 0; i < 5; i++) {
-        put_score_data(nametbl, 5, 11 + (i << 1), i + 1, 1, &SR->data[i]);
+        put_score_data(nametbl, 3, 11 + (i << 1), i + 1, 1, &SR->data[i]);
     }
 }
 
@@ -58,6 +60,10 @@ static uint8_t code_from_cursor(uint8_t cx, uint8_t cy)
 void score_entry(void) __z88dk_fastcall
 {
     uint8_t rank, i, j;
+    // 先にリザルトを表示
+    if (0 == GV->demo) {
+        show_result();
+    }
 
     // ランクインしているかチェック
     for (rank = 0; rank < 5; rank++) {
@@ -88,6 +94,8 @@ void score_entry(void) __z88dk_fastcall
         SR->data[rank].name[1] = ' ';
         SR->data[rank].name[2] = ' ';
     }
+    SR->data[rank].rank[0] = GV->player.rank[0];
+    SR->data[rank].rank[1] = GV->player.rank[1];
     switch (GV->level) {
         case 1:
         case 2:
@@ -137,10 +145,10 @@ void score_entry(void) __z88dk_fastcall
     vgs0_fg_putstr(11, 6, 0x80, "RANKED #0");
     VGS0_ADDR_FG->ptn[6][19] = '1' + rank;
 
-    vgs0_fg_putstr(5, 9, 0x80, "#  NAM  LV  SCORE");
-    vgs0_fg_putstr(5, 10, 0x80, "-  ---  --  ---------");
+    vgs0_fg_putstr(3, 9, 0x80, "#  NAM  LV  RK  SCORE");
+    vgs0_fg_putstr(3, 10, 0x80, "-  ---  --  --  ---------");
     for (j = 0; j < 5; j++) {
-        put_score_data(VGS0_ADDR_FG, 5, 11 + j, j + 1, j == rank, &SR->data[j]);
+        put_score_data(VGS0_ADDR_FG, 3, 11 + j, j + 1, j == rank, &SR->data[j]);
     }
 
     VGS0_ADDR_BG->ptn[16][2] = 0x68;
@@ -211,7 +219,7 @@ void score_entry(void) __z88dk_fastcall
         cy = 2;
     }
     vgs0_oam_set(0, 2 * 8 + 4 + (cx * 16), 17 * 8 - 1 + (cy * 16), 0x84, 0xD0, 2, 2); // cursor
-    vgs0_oam_set(1, 8 * 8 + 4 + (nx * 8), (11 + rank) * 8 - 1, 0x84, 0xE3, 0, 0);     // name cursor
+    vgs0_oam_set(1, 8 * 4 + 4 + (nx * 8), (11 + rank) * 8 - 1, 0x84, 0xE3, 0, 0);     // name cursor
 
     uint8_t pad;
     uint8_t prevPad = 0x00;
@@ -269,7 +277,7 @@ void score_entry(void) __z88dk_fastcall
             code = code_from_cursor(cx, cy);
             if (0x10 < code) {
                 vgs0_se_play(23);
-                VGS0_ADDR_FG->ptn[11 + rank][8 + nx] = code;
+                VGS0_ADDR_FG->ptn[11 + rank][6 + nx] = code;
                 if (2 == nx) {
                     cx = 12;
                     cy = 2;
@@ -295,29 +303,29 @@ void score_entry(void) __z88dk_fastcall
         if (backspace) {
             if (0 == nx) {
                 vgs0_se_play(24);
-                VGS0_ADDR_FG->ptn[11 + rank][8 + nx] = ' ';
+                VGS0_ADDR_FG->ptn[11 + rank][6 + nx] = ' ';
             } else {
-                if (' ' == VGS0_ADDR_FG->ptn[11 + rank][8 + nx]) {
+                if (' ' == VGS0_ADDR_FG->ptn[11 + rank][6 + nx]) {
                     nx--;
                     vgs0_se_play(24);
-                    VGS0_ADDR_FG->ptn[11 + rank][8 + nx] = ' ';
+                    VGS0_ADDR_FG->ptn[11 + rank][6 + nx] = ' ';
                 } else {
                     vgs0_se_play(24);
-                    VGS0_ADDR_FG->ptn[11 + rank][8 + nx] = ' ';
+                    VGS0_ADDR_FG->ptn[11 + rank][6 + nx] = ' ';
                 }
             }
         }
         VGS0_ADDR_OAM[0].x = 2 * 8 + 4 + (cx * 16);
         VGS0_ADDR_OAM[0].y = 17 * 8 - 1 + (cy * 16);
-        VGS0_ADDR_OAM[1].x = 8 * 8 + 4 + (nx * 8);
+        VGS0_ADDR_OAM[1].x = 6 * 8 + 4 + (nx * 8);
         prevPad = pad;
     }
-    SR->data[rank].name[0] = VGS0_ADDR_FG->ptn[11 + rank][8];
-    SR->data[rank].name[1] = VGS0_ADDR_FG->ptn[11 + rank][9];
-    SR->data[rank].name[2] = VGS0_ADDR_FG->ptn[11 + rank][10];
-    SR->defaultName[0] = VGS0_ADDR_FG->ptn[11 + rank][8];
-    SR->defaultName[1] = VGS0_ADDR_FG->ptn[11 + rank][9];
-    SR->defaultName[2] = VGS0_ADDR_FG->ptn[11 + rank][10];
+    SR->data[rank].name[0] = VGS0_ADDR_FG->ptn[11 + rank][6];
+    SR->data[rank].name[1] = VGS0_ADDR_FG->ptn[11 + rank][7];
+    SR->data[rank].name[2] = VGS0_ADDR_FG->ptn[11 + rank][8];
+    SR->defaultName[0] = SR->data[rank].name[0];
+    SR->defaultName[1] = SR->data[rank].name[1];
+    SR->defaultName[2] = SR->data[rank].name[2];
     vgs0_save((uint16_t)SR, sizeof(ScoreRanking));
     while (0 != vgs0_joypad_get()) {
         ;

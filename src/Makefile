@@ -11,6 +11,7 @@ PROGRAM0 += 03-02_logo.rel
 PROGRAM0 += 03-03_title1.rel
 PROGRAM0 += 03-04_title2.rel
 PROGRAM0 += 03-05_ranking.rel
+PROGRAM0 += 03-06_result.rel
 
 PROGRAM1 = ${COMMON_SRC}
 PROGRAM1 += 04_submain1.rel
@@ -58,6 +59,8 @@ CHR_FILES += sprite_bomb14.chr
 CHR_FILES += fg_title.chr
 CHR_FILES += sprite_suzukiplan1.chr
 CHR_FILES += sprite_suzukiplan2.chr
+CHR_FILES += sprite_rank1.chr
+CHR_FILES += sprite_rank2.chr
 
 # sound effect
 WAV_FILES = se000_start.wav
