@@ -75,7 +75,7 @@ static uint8_t put_percent(uint8_t x, uint8_t y, uint16_t n1, uint16_t n2)
 
 static void rank_up(int8_t* rank, uint8_t up, uint8_t limit)
 {
-    while (up && (*rank) < 25 && limit) {
+    while (up && (*rank) < 26 && limit) {
         (*rank)++;
         up--;
         limit--;
