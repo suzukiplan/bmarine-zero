@@ -166,14 +166,14 @@ void show_result(void) __z88dk_fastcall
     y += 2;
     vgs0_bg_putstr(2, y, 0x80, "     SHOTS FIRED:");
     put_number(20, y, GV->st.shot);
-    rank_up(&rank, GV->st.shot / 1000, 10);
+    rank_up(&rank, GV->st.shot / 1024, 10);
     vgs0_wait_vsync();
 
     y++;
     vgs0_bg_putstr(2, y, 0x80, "    MISSED SHOTS:");
     put_number(20, y, GV->st.miss);
     per = put_percent(26, y, GV->st.miss, GV->st.shot);
-    rank_down(&rank, per / 8);
+    rank_down(&rank, per / 5);
     vgs0_wait_vsync();
 
     y++;
@@ -197,7 +197,7 @@ void show_result(void) __z88dk_fastcall
         v32 = 65535;
     }
     uint16_t appearedEnemies = (uint16_t)v32;
-    rank_up(&rank, appearedEnemies / 256, 3);
+    rank_up(&rank, appearedEnemies / 512, 3);
     put_number(20, y, appearedEnemies);
     vgs0_wait_vsync();
 
@@ -212,7 +212,7 @@ void show_result(void) __z88dk_fastcall
     }
     put_number(20, y, (uint16_t)v32);
     per = put_percent(26, y, (uint16_t)v32, appearedEnemies);
-    rank_up(&rank, per / 16, 16);
+    rank_up(&rank, per / 20, 5);
     vgs0_wait_vsync();
 
     y++;
@@ -230,7 +230,7 @@ void show_result(void) __z88dk_fastcall
     }
     uint16_t appearedMedals = (uint16_t)v32;
     put_number(20, y, appearedMedals);
-    rank_up(&rank, appearedMedals / 256, 5);
+    rank_up(&rank, appearedMedals / 512, 5);
     vgs0_wait_vsync();
 
     y++;
@@ -242,7 +242,7 @@ void show_result(void) __z88dk_fastcall
     }
     put_number(20, y, (uint16_t)v32);
     per = put_percent(26, y, (uint16_t)v32, appearedMedals);
-    rank_down(&rank, per / 4);
+    rank_down(&rank, per / 2);
     vgs0_wait_vsync();
 
     y++;
