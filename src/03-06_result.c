@@ -212,7 +212,7 @@ void show_result(void) __z88dk_fastcall
     }
     put_number(20, y, (uint16_t)v32);
     per = put_percent(26, y, (uint16_t)v32, appearedEnemies);
-    rank_up(&rank, per / 20, 5);
+    rank_up(&rank, per / 13, 7);
     vgs0_wait_vsync();
 
     y++;
