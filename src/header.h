@@ -23,6 +23,12 @@
  */
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
+#define PUSH_MSG "PRESS ANY BUTTON"
+#define PUSH_MSG_X 8
+#define PUSH_MSG2 "    PRESS ANY BUTTON    "
+#define PUSH_MSG_X2 4
+#define ANY_BUTTON (VGS0_JOYPAD_ST | VGS0_JOYPAD_SE | VGS0_JOYPAD_T1 | VGS0_JOYPAD_T2)
+
 // ヒットの維持フレーム数
 #define HIT_KEEP_TIME 120
 

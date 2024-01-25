@@ -78,7 +78,7 @@ void submain(uint8_t arg) __z88dk_fastcall
         vgs0_bgm_play(1);
     } else {
         vgs0_fg_putstr(9, 14, 0x80, "DEMONSTRATION!");
-        vgs0_fg_putstr(7, 17, 0x80, "PRESS START BUTTON");
+        vgs0_fg_putstr(PUSH_MSG_X, 17, 0x80, PUSH_MSG);
     }
 
     // メインループ
@@ -114,7 +114,7 @@ void submain(uint8_t arg) __z88dk_fastcall
 
         // デモプレイ中
         if (GV->demo) {
-            if (vgs0_joypad_get() & VGS0_JOYPAD_ST) {
+            if (vgs0_joypad_get() & ANY_BUTTON) {
                 GV->demoEnd = 1;
                 return;
             }

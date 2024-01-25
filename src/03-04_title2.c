@@ -117,11 +117,9 @@ void title2(void) __z88dk_fastcall
     while (1) {
         a++;
         if (0 == start && 0 == scroll) {
-            // START/A/Bボタンが押されたかチェック
+            // ボタンが押されたかチェック
             pad = vgs0_joypad_get();
-            if (0 != (pad & VGS0_JOYPAD_ST) && 0 == (prevPad & VGS0_JOYPAD_ST) ||
-                0 != (pad & VGS0_JOYPAD_T1) && 0 == (prevPad & VGS0_JOYPAD_T1) ||
-                0 != (pad & VGS0_JOYPAD_T2) && 0 == (prevPad & VGS0_JOYPAD_T2)) {
+            if (0 != (pad & ANY_BUTTON) && 0 == (prevPad & ANY_BUTTON)) {
                 if (2 == menuCursor) {
                     if (32 == scrollX) {
                         vgs0_se_play(24);

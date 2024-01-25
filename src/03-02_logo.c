@@ -53,9 +53,9 @@ uint8_t logo(void) __z88dk_fastcall
     uint8_t a = 0;
     uint8_t pad;
     while (a < 180) {
-        // STARTボタンが押されたかチェック
+        // ボタンが押されたかチェック
         pad = vgs0_joypad_get();
-        if (0 != (pad & VGS0_JOYPAD_ST)) {
+        if (0 != (pad & ANY_BUTTON)) {
             vgs0_dma(BANK_PALETTE);
             vgs0_memcpy((uint16_t)VGS0_ADDR_PALETTE, (uint16_t)VGS0_ADDR_CHARACTER, 512);
             return 1;

@@ -271,9 +271,7 @@ void score_entry(void) __z88dk_fastcall
             }
             cx += mx;
             cy += my;
-        } else if ((0x00 == (prevPad & VGS0_JOYPAD_T1) && 0x00 != (pad & VGS0_JOYPAD_T1)) ||
-                   (0x00 == (prevPad & VGS0_JOYPAD_T2) && 0x00 != (pad & VGS0_JOYPAD_T2)) ||
-                   (0x00 == (prevPad & VGS0_JOYPAD_ST) && 0x00 != (pad & VGS0_JOYPAD_ST))) {
+        } else if ((0x00 == (prevPad & ANY_BUTTON) && 0x00 != (pad & ANY_BUTTON))) {
             code = code_from_cursor(cx, cy);
             if (0x10 < code) {
                 vgs0_se_play(23);
@@ -289,14 +287,6 @@ void score_entry(void) __z88dk_fastcall
             } else if (0x0F == code) {
                 vgs0_se_play(25);
                 break;
-            }
-        } else if (0x00 == (prevPad & VGS0_JOYPAD_SE) && 0x00 != (pad & VGS0_JOYPAD_SE)) {
-            if (cx != 11 || cy != 2) {
-                vgs0_se_play(21);
-                cx = 11;
-                cy = 2;
-            } else {
-                backspace = 1;
             }
         }
 

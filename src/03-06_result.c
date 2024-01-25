@@ -282,13 +282,13 @@ void show_result(void) __z88dk_fastcall
     vgs0_wait_vsync();
 
     y += 6;
-    vgs0_fg_putstr(7, y, 0x80, "PRESS START BUTTON");
+    vgs0_fg_putstr(PUSH_MSG_X, y, 0x80, PUSH_MSG);
 
     uint8_t aa = 0;
     uint8_t pad = 0;
     while (1) {
         pad = vgs0_joypad_get();
-        if (0 != (pad & VGS0_JOYPAD_ST)) {
+        if (0 != (pad & ANY_BUTTON)) {
             break;
         }
         aa++;
@@ -316,7 +316,7 @@ void show_result(void) __z88dk_fastcall
                 break;
         }
     }
-    while (0 != (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+    while (0 != (vgs0_joypad_get() & ANY_BUTTON)) {
         ;
     }
     vgs0_se_play(23);

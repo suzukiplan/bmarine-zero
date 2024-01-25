@@ -150,9 +150,9 @@ uint8_t title1(void) __z88dk_fastcall
     uint8_t ptn;
     *VGS0_ADDR_FG_SCROLL_Y = (uint8_t)-24;
     while (65 != logo) {
-        // STARTボタンが押されたかチェック
+        // ボタンが押されたかチェック
         uint8_t pad = vgs0_joypad_get();
-        if (0 != (pad & VGS0_JOYPAD_ST)) {
+        if (0 != (pad & ANY_BUTTON)) {
             vgs0_dma(BANK_PALETTE);
             vgs0_memcpy((uint16_t)VGS0_ADDR_PALETTE, (uint16_t)VGS0_ADDR_CHARACTER, 512);
             return 1;
@@ -208,7 +208,7 @@ uint8_t title1(void) __z88dk_fastcall
                 vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
                 score_print(VGS0_ADDR_FG);
                 vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
-                vgs0_fg_putstr(7, 19, 0x80, "PRESS START BUTTON");
+                vgs0_fg_putstr(PUSH_MSG_X, 19, 0x80, PUSH_MSG);
                 vgs0_fg_putstr(4, 23, 0x80, "@2013-2024 BY SUZUKIPLAN");
                 vgs0_fg_putstr(5, 22, 0x80, "PROGRAMMED BY Y.SUZUKI");
                 aa = 0;
@@ -246,7 +246,7 @@ uint8_t title1(void) __z88dk_fastcall
             logo++;
         } else if (29 == logo) {
             print_score_ranking(VGS0_ADDR_FG);
-            vgs0_fg_putstr(4, 22, 0x80, "   PRESS START BUTTON   ");
+            vgs0_fg_putstr(PUSH_MSG_X2, 22, 0x80, PUSH_MSG2);
             logo++;
             aa = 0;
         } else if (30 == logo) {
