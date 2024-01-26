@@ -44,6 +44,9 @@ static void put_number(uint8_t x, uint8_t y, uint16_t num)
 
 static uint8_t put_percent(uint8_t x, uint8_t y, uint16_t n1, uint16_t n2)
 {
+    if (0 == n2) {
+        return 0;
+    }
     uint8_t i;
     uint32_t v32 = 0;
     for (i = 0; i < 100; i++) {
