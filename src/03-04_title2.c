@@ -81,9 +81,10 @@ void title2(void) __z88dk_fastcall
     score_print(VGS0_ADDR_FG);
     vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
 
-    vgs0_fg_putstr(9, 19, 0x80, "> GAME START");
+    vgs0_fg_putstr(9, 19, 0x80, "  GAME START");
     vgs0_fg_putstr(9, 21, SR->extra ? 0x80 : 0x81, "  EXTRA START");
     vgs0_fg_putstr(9, 23, 0x80, "  SCORE RANKING");
+    VGS0_ADDR_FG->ptn[19 + (GV->menuCursor << 1)][9] = '>';
 
     // BGを表示
     n = 0;
@@ -109,7 +110,6 @@ void title2(void) __z88dk_fastcall
     uint8_t start = 0;
     uint8_t pad = 0;
     uint8_t prevPad = 0xFF;
-    uint8_t menuCursor = 0;
     int8_t scroll = 0;
     uint8_t scrollX = 0;
     print_score_ranking(&GV->scr[1]);
@@ -120,7 +120,7 @@ void title2(void) __z88dk_fastcall
             // ボタンが押されたかチェック
             pad = vgs0_joypad_get();
             if (0 != (pad & ANY_BUTTON) && 0 == (prevPad & ANY_BUTTON)) {
-                if (2 == menuCursor) {
+                if (2 == GV->menuCursor) {
                     if (32 == scrollX) {
                         vgs0_se_play(24);
                         scroll = -1;
@@ -138,33 +138,33 @@ void title2(void) __z88dk_fastcall
                     }
                 }
             } else if (0 == scrollX) {
-                uint8_t prevMenuCursor = menuCursor;
+                uint8_t prevMenuCursor = GV->menuCursor;
                 if (0 != (pad & VGS0_JOYPAD_UP) && 0 == (prevPad & VGS0_JOYPAD_UP)) {
                     vgs0_se_play(21);
-                    if (menuCursor) {
-                        menuCursor--;
-                        if (!SR->extra && 1 == menuCursor) {
-                            menuCursor--;
+                    if (GV->menuCursor) {
+                        GV->menuCursor--;
+                        if (!SR->extra && 1 == GV->menuCursor) {
+                            GV->menuCursor--;
                         }
                     } else {
-                        menuCursor = 2;
+                        GV->menuCursor = 2;
                     }
                 }
                 if (0 != (pad & VGS0_JOYPAD_DW) && 0 == (prevPad & VGS0_JOYPAD_DW)) {
                     vgs0_se_play(21);
-                    if (2 != menuCursor) {
-                        menuCursor++;
-                        if (!SR->extra && 1 == menuCursor) {
-                            menuCursor++;
+                    if (2 != GV->menuCursor) {
+                        GV->menuCursor++;
+                        if (!SR->extra && 1 == GV->menuCursor) {
+                            GV->menuCursor++;
                         }
                     } else {
-                        menuCursor = 0;
+                        GV->menuCursor = 0;
                     }
                 }
-                if (menuCursor != prevMenuCursor) {
+                if (GV->menuCursor != prevMenuCursor) {
                     VGS0_ADDR_FG->attr[19 + (prevMenuCursor << 1)][9] = 0x00;
-                    VGS0_ADDR_FG->attr[19 + (menuCursor << 1)][9] = 0x80;
-                    VGS0_ADDR_FG->ptn[19 + (menuCursor << 1)][9] = '>';
+                    VGS0_ADDR_FG->attr[19 + (GV->menuCursor << 1)][9] = 0x80;
+                    VGS0_ADDR_FG->ptn[19 + (GV->menuCursor << 1)][9] = '>';
                 }
             }
             prevPad = pad;
@@ -193,7 +193,7 @@ void title2(void) __z88dk_fastcall
         } else {
             start += 1;
             if (56 == start) {
-                GV->extra = menuCursor;
+                GV->extra = GV->menuCursor;
                 break;
             }
             if (start < 16) {

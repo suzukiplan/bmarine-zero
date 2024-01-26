@@ -280,6 +280,7 @@ typedef struct {
     uint8_t enemyIndex;     // 敵 index
     uint8_t espIndex;       // 敵スプライト index
     NameTable scr[2];       // スクロールバッファ
+    uint8_t menuCursor;     // メニューカーソル
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
 
