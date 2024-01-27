@@ -120,7 +120,7 @@ static void rank_down(int8_t* rank, uint8_t down)
 
 void show_result(void) __z88dk_fastcall
 {
-    uint8_t y = 1;
+    uint8_t y = 2;
     uint8_t per, i;
     int8_t satei;
     uint32_t v32;
@@ -193,9 +193,14 @@ void show_result(void) __z88dk_fastcall
     vgs0_wait_vsync();
 
     y += 2;
-    vgs0_bg_putstr(2, y, 0x80, "     SHOTS FIRED");
-    put_number(y, GV->st.shot);
-    satei = (int8_t)(GV->st.shot / 1024);
+    vgs0_bg_putstr(2, y, 0x80, "    ATTACK COUNT");
+    uint8_t attackCount = GV->st.shot;
+    attackCount += GV->st.laser << 4;
+    if (attackCount < GV->st.shot) {
+        attackCount = GV->st.shot;
+    }
+    put_number(y, attackCount);
+    satei = (int8_t)(attackCount / 1024);
     if (10 < satei) {
         satei = 10;
     }
@@ -210,11 +215,6 @@ void show_result(void) __z88dk_fastcall
     satei = per / 5;
     put_satei(y, -satei);
     rank_down(&rank, satei);
-    vgs0_wait_vsync();
-
-    y++;
-    vgs0_bg_putstr(2, y, 0x80, "     LASER FIRED");
-    put_number(y, GV->st.laser);
     vgs0_wait_vsync();
 
     y++;
