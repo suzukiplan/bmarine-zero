@@ -23,8 +23,9 @@
  */
 #include "header.h"
 
-static void put_number(uint8_t x, uint8_t y, uint16_t num)
+static void put_number(uint8_t y, uint16_t num)
 {
+    uint8_t x = 18;
     uint8_t n[5];
     uint8_t i;
     for (i = 4; i != 0xFF; i--) {
@@ -42,8 +43,9 @@ static void put_number(uint8_t x, uint8_t y, uint16_t num)
     }
 }
 
-static uint8_t put_percent(uint8_t x, uint8_t y, uint16_t n1, uint16_t n2)
+static uint8_t put_percent(uint8_t y, uint16_t n1, uint16_t n2)
 {
+    uint8_t x = 24;
     if (0 == n2) {
         return 0;
     }
@@ -56,6 +58,9 @@ static uint8_t put_percent(uint8_t x, uint8_t y, uint16_t n1, uint16_t n2)
     while (n2 <= v32) {
         n8++;
         v32 -= n2;
+    }
+    if (100 <= n8) {
+        n8 = 99;
     }
     uint8_t result = n8;
 
@@ -76,12 +81,32 @@ static uint8_t put_percent(uint8_t x, uint8_t y, uint16_t n1, uint16_t n2)
     return result;
 }
 
-static void rank_up(int8_t* rank, uint8_t up, uint8_t limit)
+static void put_satei(uint8_t y, int8_t satei)
 {
-    while (up && (*rank) < 26 && limit) {
+    uint8_t x = 28;
+    uint8_t n[3];
+
+    if (satei < 0) {
+        n[0] = '-';
+        n[1] = (uint8_t)(-satei);
+    } else {
+        n[0] = '+';
+        n[1] = (uint8_t)satei;
+    }
+    if (n[1] < 10) {
+        n[1] = '0' + n[1];
+    } else {
+        n[1] = 'A' + (n[1] - 10);
+    }
+    n[2] = 0x00;
+    vgs0_fg_putstr(x, y, 0x80, n);
+}
+
+static void rank_up(int8_t* rank, uint8_t up)
+{
+    while (up && (*rank) < 26) {
         (*rank)++;
         up--;
-        limit--;
     }
 }
 
@@ -97,6 +122,7 @@ void show_result(void) __z88dk_fastcall
 {
     uint8_t y = 1;
     uint8_t per, i;
+    int8_t satei;
     uint32_t v32;
     int8_t rank = (int8_t)GV->level - 1;
     const char* ranks[] = {
@@ -167,31 +193,43 @@ void show_result(void) __z88dk_fastcall
     vgs0_wait_vsync();
 
     y += 2;
-    vgs0_bg_putstr(2, y, 0x80, "     SHOTS FIRED:");
-    put_number(20, y, GV->st.shot);
-    rank_up(&rank, GV->st.shot / 1024, 10);
+    vgs0_bg_putstr(2, y, 0x80, "     SHOTS FIRED");
+    put_number(y, GV->st.shot);
+    satei = (int8_t)(GV->st.shot / 1024);
+    if (10 < satei) {
+        satei = 10;
+    }
+    put_satei(y, satei);
+    rank_up(&rank, satei);
     vgs0_wait_vsync();
 
     y++;
-    vgs0_bg_putstr(2, y, 0x80, "    MISSED SHOTS:");
-    put_number(20, y, GV->st.miss);
-    per = put_percent(26, y, GV->st.miss, GV->st.shot);
-    rank_down(&rank, per / 5);
+    vgs0_bg_putstr(2, y, 0x80, "    MISSED SHOTS");
+    put_number(y, GV->st.miss);
+    per = put_percent(y, GV->st.miss, GV->st.shot);
+    satei = per / 5;
+    put_satei(y, -satei);
+    rank_down(&rank, satei);
     vgs0_wait_vsync();
 
     y++;
-    vgs0_bg_putstr(2, y, 0x80, "     LASER FIRED:");
-    put_number(20, y, GV->st.laser);
+    vgs0_bg_putstr(2, y, 0x80, "     LASER FIRED");
+    put_number(y, GV->st.laser);
     vgs0_wait_vsync();
 
     y++;
-    vgs0_bg_putstr(2, y, 0x80, "   MAXIMUM COMBO:");
-    put_number(20, y, GV->st.maxhit);
-    rank_up(&rank, GV->st.maxhit / 100, 16);
+    vgs0_bg_putstr(2, y, 0x80, "   MAXIMUM COMBO");
+    put_number(y, GV->st.maxhit);
+    satei = (int8_t)(GV->st.maxhit / 100);
+    if (15 < satei) {
+        satei = 15;
+    }
+    put_satei(y, satei);
+    rank_up(&rank, satei);
     vgs0_wait_vsync();
 
     y += 2;
-    vgs0_bg_putstr(2, y, 0x80, "APPEARED ENEMIES:");
+    vgs0_bg_putstr(2, y, 0x80, "APPEARED ENEMIES");
     v32 = GV->st.e[ET_MARINE_LR];
     v32 += GV->st.e[ET_MARINE_RL];
     v32 += GV->st.e[ET_FISH];
@@ -200,12 +238,16 @@ void show_result(void) __z88dk_fastcall
         v32 = 65535;
     }
     uint16_t appearedEnemies = (uint16_t)v32;
-    rank_up(&rank, appearedEnemies / 512, 3);
-    put_number(20, y, appearedEnemies);
+    satei = (int8_t)(appearedEnemies / 512);
+    if (3 < satei) {
+        satei = 3;
+    }
+    rank_up(&rank, satei);
+    put_number(y, appearedEnemies);
     vgs0_wait_vsync();
 
     y++;
-    vgs0_bg_putstr(2, y, 0x80, "DEFEATED ENEMIES:");
+    vgs0_bg_putstr(2, y, 0x80, "DEFEATED ENEMIES");
     v32 = GV->st.d[ET_MARINE_LR];
     v32 += GV->st.d[ET_MARINE_RL];
     v32 += GV->st.d[ET_FISH];
@@ -213,51 +255,72 @@ void show_result(void) __z88dk_fastcall
     if (65536 <= v32) {
         v32 = 65535;
     }
-    put_number(20, y, (uint16_t)v32);
-    per = put_percent(26, y, (uint16_t)v32, appearedEnemies);
-    rank_up(&rank, per / 13, 7);
+    put_number(y, (uint16_t)v32);
+    per = put_percent(y, (uint16_t)v32, appearedEnemies);
+    satei = (int8_t)(per / 13);
+    put_satei(y, satei);
+    rank_up(&rank, satei);
     vgs0_wait_vsync();
 
     y++;
-    vgs0_bg_putstr(2, y, 0x80, "    DAMAGE COUNT:");
-    put_number(20, y, GV->st.dmg);
-    rank_down(&rank, GV->st.dmg / 4);
+    vgs0_bg_putstr(2, y, 0x80, "    DAMAGE COUNT");
+    put_number(y, GV->st.dmg);
+    satei = GV->st.dmg / 4;
+    put_satei(y, -satei);
+    rank_down(&rank, satei);
     vgs0_wait_vsync();
 
     y += 2;
-    vgs0_bg_putstr(2, y, 0x80, " APPEARED MEDALS:");
+    vgs0_bg_putstr(2, y, 0x80, " APPEARED MEDALS");
     v32 = GV->st.medal[0];
     v32 += GV->st.medal[1];
     if (65536 <= v32) {
         v32 = 65535;
     }
     uint16_t appearedMedals = (uint16_t)v32;
-    put_number(20, y, appearedMedals);
-    rank_up(&rank, appearedMedals / 512, 5);
+    put_number(y, appearedMedals);
+    satei = (int8_t)(appearedMedals / 512);
+    if (5 < satei) {
+        satei = 5;
+    }
+    put_satei(y, satei);
+    rank_up(&rank, satei);
     vgs0_wait_vsync();
 
     y++;
-    vgs0_bg_putstr(2, y, 0x80, "     LOST MEDALS:");
+    vgs0_bg_putstr(2, y, 0x80, "     LOST MEDALS");
     v32 = GV->st.lost[0];
     v32 += GV->st.lost[1];
     if (65536 <= v32) {
         v32 = 65535;
     }
-    put_number(20, y, (uint16_t)v32);
-    per = put_percent(26, y, (uint16_t)v32, appearedMedals);
-    rank_down(&rank, per / 2);
+    put_number(y, (uint16_t)v32);
+    per = put_percent(y, (uint16_t)v32, appearedMedals);
+    satei = per / 2;
+    if (15 < satei) {
+        satei = 15;
+    }
+    put_satei(y, -satei);
+    rank_down(&rank, satei);
     vgs0_wait_vsync();
 
     y++;
-    vgs0_bg_putstr(2, y, 0x80, "      CURE TIMES:");
-    put_number(20, y, GV->st.cure);
-    rank_down(&rank, GV->st.cure / 256);
+    vgs0_bg_putstr(2, y, 0x80, "      CURE TIMES");
+    put_number(y, GV->st.cure);
+    satei = (int8_t)(GV->st.cure / 256);
+    put_satei(y, -satei);
+    rank_down(&rank, satei);
     vgs0_wait_vsync();
 
     y++;
-    vgs0_bg_putstr(2, y, 0x80, "   BASE POINT UP:");
-    rank_up(&rank, GV->st.sup / 256, 16);
-    put_number(20, y, GV->st.sup);
+    vgs0_bg_putstr(2, y, 0x80, "   BASE POINT UP");
+    satei = GV->st.sup / 256;
+    if (15 < satei) {
+        satei = 15;
+    }
+    put_satei(y, satei);
+    rank_up(&rank, satei);
+    put_number(y, GV->st.sup);
 
     // ランクをレベル未満にはしない
     if (rank < (int8_t)GV->level - 1) {
