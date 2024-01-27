@@ -244,6 +244,7 @@ void show_result(void) __z88dk_fastcall
     }
     rank_up(&rank, satei);
     put_number(y, appearedEnemies);
+    put_satei(y, satei);
     vgs0_wait_vsync();
 
     y++;
