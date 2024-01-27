@@ -194,7 +194,7 @@ void show_result(void) __z88dk_fastcall
 
     y += 2;
     vgs0_bg_putstr(2, y, 0x80, "    ATTACK COUNT");
-    uint8_t attackCount = GV->st.shot;
+    uint16_t attackCount = GV->st.shot;
     attackCount += GV->st.laser << 4;
     if (attackCount < GV->st.shot) {
         attackCount = GV->st.shot;
