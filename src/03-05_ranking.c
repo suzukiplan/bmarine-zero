@@ -36,6 +36,52 @@ void print_score_ranking(NameTable* nametbl) __z88dk_fastcall
     }
 }
 
+static void put_num999(NameTable* nametbl, uint8_t x, uint8_t y, uint16_t n)
+{
+    if (999 < n) {
+        n = 999;
+    }
+    uint8_t k[4];
+    k[3] = 0x00;
+    k[2] = (uint8_t)vgs0_mod16(n, 10);
+    n = vgs0_div16(n, 10);
+    k[1] = (uint8_t)vgs0_mod16(n, 10);
+    n = vgs0_div16(n, 10);
+    k[0] = (uint8_t)n;
+    uint8_t notZero = 0;
+    for (uint8_t i = 0; i < 3; i++) {
+        if (k[i]) {
+            notZero = 1;
+        }
+        if (0 == k[i] && !notZero && i != 2) {
+            k[i] = ' ';
+        } else {
+            k[i] = '0' + k[i];
+        }
+    }
+    vgs0_putstr(nametbl, x, y, 0x80, k);
+}
+
+void print_rank_history(NameTable* nametbl) __z88dk_fastcall
+{
+    vgs0_putstr(nametbl, 7, 5, 0x80, "YOUR RANKS HISTORY");
+    vgs0_putstr(nametbl, 1, 7, 0x80, "E1 999, E8 999, O2 999, O8 999");
+    vgs0_putstr(nametbl, 1, 9, 0x80, "E2 999, E9 999, O2+999, O9 999");
+    vgs0_putstr(nametbl, 1, 11, 0x80, "E3 999, W1 999, O3 999, OA 999");
+    vgs0_putstr(nametbl, 1, 13, 0x80, "E4 999, W2 999, O4 999, OB 999");
+    vgs0_putstr(nametbl, 1, 15, 0x80, "E5 999, W3 999, O5 999");
+    vgs0_putstr(nametbl, 1, 17, 0x80, "E6 999, W4 999, O6 999");
+    vgs0_putstr(nametbl, 1, 19, 0x80, "E7 999, W5 999, O7 999");
+    for (uint8_t i = 0; i < 7; i++) {
+        put_num999(nametbl, 4, 7 + (i << 1), SR->ranks[i]);
+        put_num999(nametbl, 12, 7 + (i << 1), SR->ranks[7 + i]);
+        put_num999(nametbl, 20, 7 + (i << 1), SR->ranks[14 + i]);
+        if (i < 4) {
+            put_num999(nametbl, 28, 7 + (i << 1), SR->ranks[21 + i]);
+        }
+    }
+}
+
 static int8_t compare_score(uint8_t* sc1, uint8_t* sc2)
 {
     for (uint8_t i = 0; i < 8; i++) {
@@ -72,6 +118,7 @@ void score_entry(void) __z88dk_fastcall
         }
     }
     if (5 == rank) {
+        vgs0_save((uint16_t)SR, sizeof(ScoreRanking));
         return; // 残念、ランク外
     }
 

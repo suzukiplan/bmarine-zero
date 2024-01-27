@@ -279,7 +279,6 @@ typedef struct {
     Enemy enemy[32];        // 敵
     uint8_t enemyIndex;     // 敵 index
     uint8_t espIndex;       // 敵スプライト index
-    NameTable scr[2];       // スクロールバッファ
     uint8_t menuCursor;     // メニューカーソル
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
@@ -303,6 +302,7 @@ typedef struct {
     uint8_t reserved2;
     uint8_t reserved3;
     ScoreData data[8];
+    uint16_t ranks[32];
 } ScoreRanking;
 #define SR ((ScoreRanking*)0xE000)
 
@@ -316,6 +316,7 @@ uint8_t logo(void) __z88dk_fastcall;
 uint8_t title1(void) __z88dk_fastcall;
 void title2(void) __z88dk_fastcall;
 void print_score_ranking(NameTable* namtbl) __z88dk_fastcall;
+void print_rank_history(NameTable* nametbl) __z88dk_fastcall;
 void score_entry(void) __z88dk_fastcall;
 void show_result(void) __z88dk_fastcall;
 

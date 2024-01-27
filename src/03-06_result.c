@@ -341,6 +341,9 @@ void show_result(void) __z88dk_fastcall
     ptn += (rank & 0x07) << 5;
     vgs0_oam_set(0, 96, (y << 3) + 12, 0x87, ptn, 7, 1);
     VGS0_ADDR_OAM[0].bank = bank;
+    if (0xFFFF != SR->ranks[rank]) {
+        SR->ranks[rank]++;
+    }
     rank <<= 1;
     vgs0_bg_putstr(21, y, 0x80, ranks[rank]);
     vgs0_bg_putstr(2, y + 4, 0x80, ranks[rank | 1]);

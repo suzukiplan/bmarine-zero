@@ -110,24 +110,30 @@ void title2(void) __z88dk_fastcall
     uint8_t start = 0;
     uint8_t pad = 0;
     uint8_t prevPad = 0xFF;
-    int8_t scroll = 0;
     uint8_t scrollX = 0;
-    print_score_ranking(&GV->scr[1]);
-    vgs0_putstr(&GV->scr[1], 5, 22, 0x80, "PUSH BUTTON TO RETURN");
+    uint8_t page = 0;
+    NameTable* scr = (NameTable*)0xA000;
+    print_score_ranking(&scr[1]);
+    print_rank_history(&scr[2]);
+    vgs0_putstr(&scr[1], 6, 22, 0x80, "PUSH BUTTON TO NEXT");
+    vgs0_putstr(&scr[2], 6, 22, 0x80, "PUSH BUTTON TO NEXT");
     while (1) {
         a++;
-        if (0 == start && 0 == scroll) {
+        if (0 == start && 0 == scrollX) {
             // ボタンが押されたかチェック
             pad = vgs0_joypad_get();
             if (0 != (pad & ANY_BUTTON) && 0 == (prevPad & ANY_BUTTON)) {
                 if (2 == GV->menuCursor) {
-                    if (32 == scrollX) {
-                        vgs0_se_play(24);
-                        scroll = -1;
+                    vgs0_se_play(23);
+                    scrollX = 1;
+                    if (0 == page) {
+                        page++;
+                        vgs0_memcpy((uint16_t)&scr[0], (uint16_t)VGS0_ADDR_FG, sizeof(NameTable));
                     } else {
-                        vgs0_se_play(23);
-                        vgs0_memcpy((uint16_t)&GV->scr[0], (uint16_t)VGS0_ADDR_FG, sizeof(NameTable));
-                        scroll = 1;
+                        page++;
+                        if (3 == page) {
+                            page = 0;
+                        }
                     }
                 } else {
                     vgs0_bgm_fadeout();
@@ -137,7 +143,7 @@ void title2(void) __z88dk_fastcall
                         VGS0_ADDR_FG->attr[19][i] = 0x80;
                     }
                 }
-            } else if (0 == scrollX) {
+            } else if (0 == page) {
                 uint8_t prevMenuCursor = GV->menuCursor;
                 if (0 != (pad & VGS0_JOYPAD_UP) && 0 == (prevPad & VGS0_JOYPAD_UP)) {
                     vgs0_se_play(21);
@@ -168,28 +174,15 @@ void title2(void) __z88dk_fastcall
                 }
             }
             prevPad = pad;
-        } else if (0 < scroll) {
+        } else if (0 < scrollX) {
             for (i = 3; i < 30; i++) {
                 vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->ptn[i][0], (uint16_t)&VGS0_ADDR_FG->ptn[i][1], 31);
                 vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->attr[i][0], (uint16_t)&VGS0_ADDR_FG->attr[i][1], 31);
-                VGS0_ADDR_FG->ptn[i][31] = GV->scr[1].ptn[i][scrollX];
-                VGS0_ADDR_FG->attr[i][31] = GV->scr[1].attr[i][scrollX];
+                VGS0_ADDR_FG->ptn[i][31] = scr[page].ptn[i][scrollX];
+                VGS0_ADDR_FG->attr[i][31] = scr[page].attr[i][scrollX];
             }
             scrollX++;
-            if (32 == scrollX) {
-                scroll = 0;
-            }
-        } else if (scroll < 0) {
-            scrollX--;
-            for (i = 3; i < 30; i++) {
-                if (31 != scrollX) {
-                    vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->ptn[i][0], (uint16_t)&GV->scr[0].ptn[i][scrollX], 31 - scrollX);
-                    vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->attr[i][0], (uint16_t)&GV->scr[0].attr[i][scrollX], 31 - scrollX);
-                }
-            }
-            if (0 == scrollX) {
-                scroll = 0;
-            }
+            scrollX &= 0x1F;
         } else {
             start += 1;
             if (56 == start) {
