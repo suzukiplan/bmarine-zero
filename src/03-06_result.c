@@ -325,8 +325,8 @@ void show_result(void) __z88dk_fastcall
     rank_up(&rank, satei);
     put_number(y, GV->st.sup);
 
-    // スコア1000万点未満の場合は少佐以上に昇進不可（大尉止まり）
-    if (17 < rank && 0 == GV->sc[7] && 0 == GV->sc[6]) {
+    // スコア1000万点未満 または レベル8未満 の場合は少佐以上に昇進不可（大尉止まり）
+    if (17 < rank && 0 == GV->sc[7] && 0 == GV->sc[6] && GV->level < 8) {
         rank = 17;
     }
 
