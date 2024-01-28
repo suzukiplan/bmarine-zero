@@ -104,7 +104,7 @@ static void put_satei(uint8_t y, int8_t satei)
 
 static void rank_up(int8_t* rank, uint8_t up)
 {
-    while (up && (*rank) < 26) {
+    while (up && (*rank) < 25) {
         (*rank)++;
         up--;
     }
