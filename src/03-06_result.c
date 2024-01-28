@@ -212,7 +212,7 @@ void show_result(void) __z88dk_fastcall
     vgs0_bg_putstr(2, y, 0x80, "    MISSED SHOTS");
     put_number(y, GV->st.miss);
     per = put_percent(y, GV->st.miss, GV->st.shot);
-    satei = per / 5;
+    satei = per < 3 ? 0 : per - 2;
     put_satei(y, -satei);
     rank_down(&rank, satei);
     vgs0_wait_vsync();
