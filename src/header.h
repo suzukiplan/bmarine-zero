@@ -23,6 +23,12 @@
  */
 #include "../vgszero/lib/sdcc/vgs0lib.h"
 
+#define PUSH_MSG "PRESS ANY BUTTON"
+#define PUSH_MSG_X 8
+#define PUSH_MSG2 "    PRESS ANY BUTTON    "
+#define PUSH_MSG_X2 4
+#define ANY_BUTTON (VGS0_JOYPAD_ST | VGS0_JOYPAD_SE | VGS0_JOYPAD_T1 | VGS0_JOYPAD_T2)
+
 // ヒットの維持フレーム数
 #define HIT_KEEP_TIME 120
 
@@ -61,6 +67,13 @@
 #define BANK_BOMB12_SP 31 // 大爆発(12)
 #define BANK_BOMB13_SP 32 // 大爆発(13)
 #define BANK_BOMB14_SP 33 // 大爆発(14)
+#define BANK_TITLE_FG 34  // タイトルロゴ
+#define BANK_BRAND1_SP 35 // ブランドロゴ
+#define BANK_BRAND2_SP 36 // ブランドロゴ（マスク）
+#define BANK_RANK1_SP 37  // 階級 (1~16)
+#define BANK_RANK2_SP 38  // 階級 (17~26)
+#define BANK_REPLAY_D 39  // リプレイ（ダミー）
+#define BANK_REPLAY4 40   // リプレイ（4面）
 
 // スプライトの初期位置
 #define SP_JIKIDMG 0    // 自機ダメージ (1)
@@ -124,6 +137,7 @@ typedef struct {
     uint8_t darkness;   // ダークネス演出フラグ
     uint8_t mode;       // 0: 通常モード, 1: ナブラモード
     uint8_t dead;       // 死亡フラグ
+    uint8_t rank[2];    // ランク決定時の保持用
 } Player;
 
 // プレイヤーショット
@@ -205,23 +219,43 @@ typedef struct {
     var16_t vy; // 移動速度(Y)
 } CounterAttack;
 
+// 戦績
+typedef struct {
+    uint16_t shot;     // ショットの総発射数
+    uint16_t miss;     // ショットを外した総数
+    uint16_t laser;    // レーザーの発射回数
+    uint16_t e[16];    // 敵（種別ごと）の総出現数
+    uint16_t d[16];    // 敵（種別ごと）の総破壊数
+    uint16_t medal[2]; // メダルの出現回数
+    uint16_t lost[2];  // メダルの取得漏れ数
+    uint16_t sup;      // スコア基礎点の上昇回数
+    uint16_t cure;     // 回復回数
+    uint16_t dmg;      // ダメージ回数
+    uint16_t maxhit;   // 最大コンボ数
+} Statistics;
+
 // グローバル変数
 typedef struct {
     uint8_t hi[8];          // ハイスコア
     uint8_t sc[8];          // スコア
     uint8_t sadd[8];        // 桁毎のスコア加算値
+    Statistics st;          // 戦績
     var16_t smc;            // スコアに反映するメダル総数（最大体力で type 0 を取得すると上昇 & damage でリセット）
     var16_t smcPrev;        // 直前フレームのsmc（再描画判定用）
     uint8_t ridx;           // 乱数インデクス
+    uint8_t pad;            // パッド入力値
+    uint16_t replay;        // リプレイインデックス
     uint8_t frame;          // フレームカウンタ
     uint8_t level;          // レベル
     uint8_t levelFrame;     // レベル表示フレーム
+    uint8_t extra;          // extraフラグ
+    uint8_t demo;           // デモフラグ
+    uint8_t demoEnd;        // デモ終了フラグ
     uint16_t enemies;       // 敵出現総数カウンタ
     uint8_t waitclear;      // 画面から敵が履けるのを待つ
     uint8_t scoreAdded;     // スコア加算フラグ（再描画判定用）
     urect_t hbuf[2];        // 当たり判定用バッファ
     uint16_t hit;           // コンボ数
-    uint16_t maxhit;        // 最大コンボ数
     uint16_t hitlog;        // 直前フレームのコンボ数
     uint8_t hkt;            // コンボ数のキープフレーム数
     uint8_t hstat;          // コンボ数表示ステータス (0: 非表示, 1: 登場中, 2: 表示中, 3: 退避中)
@@ -245,14 +279,46 @@ typedef struct {
     Enemy enemy[32];        // 敵
     uint8_t enemyIndex;     // 敵 index
     uint8_t espIndex;       // 敵スプライト index
+    uint8_t menuCursor;     // メニューカーソル
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
+
+typedef struct {
+    uint8_t sc[8];
+    uint8_t name[4];
+    uint8_t lv[2];
+    uint8_t rank[2];
+    uint8_t exist;
+    uint8_t reserved1;
+    uint8_t reserved2;
+    uint8_t reserved3;
+} ScoreData;
+
+typedef struct {
+    uint8_t eyecatch[8];
+    uint8_t defaultName[4];
+    uint8_t extra;
+    uint8_t reserved1;
+    uint8_t reserved2;
+    uint8_t reserved3;
+    ScoreData data[8];
+    uint16_t ranks[32];
+} ScoreRanking;
+#define SR ((ScoreRanking*)0xE000)
 
 // table宣言変数
 extern const uint16_t random[256];
 
 // サブルーチン
 void submain(uint8_t arg) __z88dk_fastcall;
+
+uint8_t logo(void) __z88dk_fastcall;
+uint8_t title1(void) __z88dk_fastcall;
+void title2(void) __z88dk_fastcall;
+void print_score_ranking(NameTable* namtbl) __z88dk_fastcall;
+void print_rank_history(NameTable* nametbl) __z88dk_fastcall;
+void score_entry(void) __z88dk_fastcall;
+void show_result(void) __z88dk_fastcall;
 
 void score_calc(void) __z88dk_fastcall;
 void score_print(NameTable* nam) __z88dk_fastcall;

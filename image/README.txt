@@ -1,11 +1,11 @@
 ================================================================================
-Battle Marine for VGS-Zero - version β1
+Battle Marine for VGS-Zero
 
 Copyright ©2013-2014 SUZUKIPLAN
 Programmed By Y.Suzuki https://github.com/suzukiplan
 ================================================================================
 
-この度は「Battle Marine for VGS-Zero - version β1」をダウンロードいただき誠にありがとうございます。
+この度は「Battle Marine for VGS-Zero」をダウンロードいただき誠にありがとうございます。
 本書は本ゲームの遊び方などを記載していますので、プレイ前にご一読ください。
 
 （目次）

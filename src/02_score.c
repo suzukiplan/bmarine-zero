@@ -82,6 +82,9 @@ void score_calc(void) __z88dk_fastcall
 // 指定ケタ（0: 10の位, 7: 億の位）のスコアを加算
 void score_increment(uint8_t keta) __z88dk_fastcall
 {
+    if (GV->demo) {
+        return;
+    }
     GV->scoreAdded = 1;
     if (7 < keta) {
         for (uint8_t i = 0; i < 8; i++) {
@@ -111,7 +114,7 @@ void hit_print() __z88dk_fastcall
     }
 
     // ヒット数の減少を検出した場合、退避状態へ遷移
-    if (GV->hit < GV->hitlog) {
+    if (GV->hstat && GV->hit < GV->hitlog) {
         GV->hitlog = GV->hit;
         GV->hstat = 100;
     }
@@ -120,12 +123,14 @@ void hit_print() __z88dk_fastcall
     if (GV->hitlog != GV->hit && 10 < GV->hit && GV->hstat < 100) {
         GV->hitlog = GV->hit;
         // 最大コンボを更新
-        if (GV->maxhit < GV->hit) {
-            GV->maxhit = GV->hit;
+        if (GV->st.maxhit < GV->hit) {
+            GV->st.maxhit = GV->hit;
         }
-        // カンスト対応
+        // カンスト対応 (表示上は 999, 内部的には 9999 まで記録)
         if (999 < GV->hit) {
-            GV->hit = 999;
+            if (9999 < GV->hit) {
+                GV->hit = 9999;
+            }
             VGS0_ADDR_OAM[SP_HIT].attr = 0x84;
             VGS0_ADDR_OAM[SP_HIT + 1].attr = 0x84;
             VGS0_ADDR_OAM[SP_HIT + 2].attr = 0x84;
@@ -143,7 +148,7 @@ void hit_print() __z88dk_fastcall
             } else {
                 VGS0_ADDR_OAM[SP_HIT].attr = 0x84;
                 VGS0_ADDR_OAM[SP_HIT].ptn = hitptn[vgs0_div16(hit, 100)];
-                hit = vgs0_mod(hit, 100);
+                hit = vgs0_mod16(hit, 100);
             }
             // 10の位のパターン更新
             if (GV->hit < 10) {

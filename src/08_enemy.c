@@ -243,6 +243,11 @@ void add_enemy(uint8_t type, uint8_t x, uint8_t y)
         GV->enemies++;
     }
 
+    // 種別毎の敵出現数をインクリメント
+    if (GV->st.e[type] != 0xFFFF) {
+        GV->st.e[type]++;
+    }
+
     // テーブルに初期値を設定
     enemy->flag = 1;
     enemy->type = type;
@@ -327,6 +332,9 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
     el += enemy->hit.x;
     uint8_t er = el;
     er += enemy->hit.width;
+    if (er < el) {
+        return;
+    }
     GV->hbuf[0].x = el;
     GV->hbuf[0].y = et;
     GV->hbuf[0].width = enemy->hit.width;
@@ -339,6 +347,9 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
             GV->hbuf[1].width = 16;
             GV->hbuf[1].height = 128;
             if (vgs0_collision_check((uint16_t)GV->hbuf)) {
+                if (GV->st.d[enemy->type] != 0xFFFF) {
+                    GV->st.d[enemy->type]++;
+                }
                 add_medal(level_medal_laser(enemy->type), el + (er - el - 16) / 2, et + (eb - et - 16) / 2);
                 erase_enemy(enemy);
                 add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
@@ -356,6 +367,9 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
             GV->hbuf[1].x = shot->x;
             GV->hbuf[1].y = shot->y.raw[1];
             if (vgs0_collision_check((uint16_t)GV->hbuf)) {
+                if (GV->st.d[enemy->type] != 0xFFFF) {
+                    GV->st.d[enemy->type]++;
+                }
                 if (0 != enemy->type) {
                     add_medal(level_medal_shot(enemy->type), el + (er - el - 16) / 2, et + (eb - et - 16) / 2);
                     erase_enemy(enemy);
@@ -379,6 +393,9 @@ static void check_hit_pshot(Enemy* enemy) __z88dk_fastcall
             GV->hit = 0;
             GV->player.dmg = 60;
             GV->player.dmgsrc = enemy->type;
+            if (GV->st.dmg != 0xFFFF) {
+                GV->st.dmg++;
+            }
             if (ET_BOMBER != enemy->type) {
                 erase_enemy(enemy);
                 add_enemy(ET_BOMBER, el + (er - el - 24) / 2, et + (eb - et - 24) / 2);
@@ -406,6 +423,9 @@ static void check_hit_bomb(Enemy* bomb) __z88dk_fastcall
             GV->hbuf[1].width = enemy->hit.width;
             GV->hbuf[1].height = enemy->hit.height;
             if (vgs0_collision_check((uint16_t)GV->hbuf)) {
+                if (GV->st.d[enemy->type] != 0xFFFF) {
+                    GV->st.d[enemy->type]++;
+                }
                 add_medal(level_medal_bomb(enemy->type), GV->hbuf[1].x + (GV->hbuf[1].width - 16) / 2, GV->hbuf[1].y + (GV->hbuf[1].height - 16) / 2);
                 erase_enemy(enemy);
                 add_enemy(ET_BOMBER, GV->hbuf[1].x + (GV->hbuf[1].width - 24) / 2, GV->hbuf[1].y + (GV->hbuf[1].height - 24) / 2);

@@ -145,6 +145,9 @@ void add_bubble(void) __z88dk_fastcall
 void add_medal(uint8_t type, uint8_t x, uint8_t y)
 {
     if (GV->medal[GV->medalIndex].flag) return;
+    if (GV->st.medal[type] != 0xFFFF) {
+        GV->st.medal[type]++;
+    }
     vgs0_memset((uint16_t)&GV->medal[GV->medalIndex], 0, sizeof(Medal));
     GV->medal[GV->medalIndex].flag = 1;
     GV->medal[GV->medalIndex].type = type;
@@ -324,6 +327,9 @@ void screen_effect_proc(void) __z88dk_fastcall
                 GV->medal[i].x.value += GV->medal[i].vx.value;
                 GV->medal[i].y.value += GV->medal[i].vy.value;
                 if (192 < GV->medal[i].y.raw[1] && GV->medal[i].y.raw[1] < 248) {
+                    if (GV->st.lost[GV->medal[i].type] != 0xFFFF) {
+                        GV->st.lost[GV->medal[i].type]++;
+                    }
                     GV->medal[i].flag = 0;
                     VGS0_ADDR_OAM[SP_MEDAL + i].attr = 0x00;
                 } else {
@@ -344,11 +350,17 @@ void screen_effect_proc(void) __z88dk_fastcall
                         if (0 == GV->medal[i].type) {
                             if (GV->player.hp < 80) {
                                 GV->player.hp++;
+                                if (GV->st.cure != 0xFFFF) {
+                                    GV->st.cure++;
+                                }
                             } else {
                                 // メダル基礎得点上昇
                                 GV->smc.value++;
                                 if (0 == GV->smc.value) {
                                     GV->smc.value = 0xFFFF;
+                                }
+                                if (GV->st.sup != 0xFFFF) {
+                                    GV->st.sup++;
                                 }
                             }
                         } else {

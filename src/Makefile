@@ -6,10 +6,15 @@ COMMON_SRC += 01_tables.rel
 COMMON_SRC += 02_score.rel
 
 PROGRAM0 = ${COMMON_SRC}
-PROGRAM0 += 03_title.rel
+PROGRAM0 += 03-01_submain0.rel
+PROGRAM0 += 03-02_logo.rel
+PROGRAM0 += 03-03_title1.rel
+PROGRAM0 += 03-04_title2.rel
+PROGRAM0 += 03-05_ranking.rel
+PROGRAM0 += 03-06_result.rel
 
 PROGRAM1 = ${COMMON_SRC}
-PROGRAM1 += 04_game.rel
+PROGRAM1 += 04_submain1.rel
 PROGRAM1 += 05_game_player.rel
 PROGRAM1 += 06_game_pshot.rel
 PROGRAM1 += 07_game_effect.rel
@@ -51,6 +56,11 @@ CHR_FILES += sprite_bomb11.chr
 CHR_FILES += sprite_bomb12.chr
 CHR_FILES += sprite_bomb13.chr
 CHR_FILES += sprite_bomb14.chr
+CHR_FILES += fg_title.chr
+CHR_FILES += sprite_suzukiplan1.chr
+CHR_FILES += sprite_suzukiplan2.chr
+CHR_FILES += sprite_rank1.chr
+CHR_FILES += sprite_rank2.chr
 
 # sound effect
 WAV_FILES = se000_start.wav
@@ -73,6 +83,13 @@ WAV_FILES += se016_birdfall.wav
 WAV_FILES += se017_kanijump.wav
 WAV_FILES += se018_kanitama.wav
 WAV_FILES += se019_bigbomb.wav
+WAV_FILES += se020_suzukiplan.wav
+WAV_FILES += se021_cursor.wav
+WAV_FILES += se022_coin.wav
+WAV_FILES += se023_enter.wav
+WAV_FILES += se024_cancel.wav
+WAV_FILES += se025_register.wav
+WAV_FILES += se026_pause.wav
 
 # background music
 BGM_FILES = song1.bgm
@@ -125,8 +142,8 @@ clean:
 game.pkg: ${PROJECT}.rom bgm.dat se.dat
 	${MAKEPKG} -o game.pkg -r ${PROJECT}.rom -b bgm.dat -s se.dat
 
-${PROJECT}.rom: program0.bin program1.bin palette.bin ${CHR_FILES}
-	${MAKEROM} ${PROJECT}.rom program0.bin program1.bin palette.bin ${CHR_FILES}
+${PROJECT}.rom: program0.bin program1.bin palette.bin ${CHR_FILES} replay.dat
+	${MAKEROM} ${PROJECT}.rom program0.bin program1.bin palette.bin ${CHR_FILES} replay.dat
 
 program0.bin: ${PROGRAM0} ${VGSHOME}/lib/sdcc/vgs0.lib ${VGSHOME}/lib/sdcc/vgs0lib.h
 	${LINK} -o program0.ihx ${PROGRAM0}

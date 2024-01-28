@@ -43,16 +43,19 @@ static const int8_t rasterTable[32] = {
     0, 0, -1, -1, -2, -2, -3, -3,
     -4, -4, -3, -3, -2, -2, -1, -1};
 
-void submain(uint8_t arg) __z88dk_fastcall
+void title2(void) __z88dk_fastcall
 {
-    if (arg) {
-        return; // arg で別処理分岐（未実装）  TODO: ゲームオーバー処理へココから分岐予定
-    }
+    vgs0_wait_vsync();
 
     // DPM を設定
     *VGS0_ADDR_BG_DPM = BANK_MAIN_BG;
     *VGS0_ADDR_FG_DPM = BANK_MAIN_FG;
     *VGS0_ADDR_SPRITE_DPM = BANK_MAIN_SP;
+    *VGS0_ADDR_FG_SCROLL_X = 0;
+    *VGS0_ADDR_FG_SCROLL_Y = 0;
+
+    // ネームテーブル + OAMをクリア
+    vgs0_memset(0x8000, 0x00, 0x1800);
 
     // FGにタイトル描画
     uint8_t i, j;
@@ -77,9 +80,11 @@ void submain(uint8_t arg) __z88dk_fastcall
     vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
     score_print(VGS0_ADDR_FG);
     vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
-    vgs0_fg_putstr(7, 19, 0x80, "PRESS START BUTTON");
-    vgs0_fg_putstr(4, 23, 0x80, "@2013-2024 BY SUZUKIPLAN");
-    vgs0_fg_putstr(5, 22, 0x80, "PROGRAMMED BY Y.SUZUKI");
+
+    vgs0_fg_putstr(9, 19, 0x80, "  GAME START");
+    vgs0_fg_putstr(9, 21, SR->extra ? 0x80 : 0x81, "  EXTRA START");
+    vgs0_fg_putstr(9, 23, 0x80, "  SCORE RANKING");
+    VGS0_ADDR_FG->ptn[19 + (GV->menuCursor << 1)][9] = '>';
 
     // BGを表示
     n = 0;
@@ -99,29 +104,89 @@ void submain(uint8_t arg) __z88dk_fastcall
         vgs0_oam_set(i, x, y, 0x82, i, 0, 0);
     }
 
-    // BGMを再生
-    vgs0_bgm_play(0);
-
     // ループ
     uint8_t a = 0;
     uint8_t sidx = 0;
     uint8_t start = 0;
+    uint8_t pad = 0;
+    uint8_t prevPad = 0xFF;
+    uint8_t scrollX = 0;
+    uint8_t page = 0;
+    NameTable* scr = (NameTable*)0xA000;
+    print_score_ranking(&scr[1]);
+    print_rank_history(&scr[2]);
+    vgs0_putstr(&scr[1], 6, 22, 0x80, "PUSH BUTTON TO NEXT");
+    vgs0_putstr(&scr[2], 6, 22, 0x80, "PUSH BUTTON TO NEXT");
     while (1) {
         a++;
-        if (0 == start) {
-            // STARTボタンが押されたかチェック
-            uint8_t pad = vgs0_joypad_get();
-            if (pad & VGS0_JOYPAD_ST) {
-                vgs0_bgm_fadeout();
-                vgs0_se_play(0);
-                start = 1;
-                for (i = 0; i < 32; i++) {
-                    VGS0_ADDR_FG->attr[19][i] = 0x80;
+        if (0 == start && 0 == scrollX) {
+            // ボタンが押されたかチェック
+            pad = vgs0_joypad_get();
+            if (0 != (pad & ANY_BUTTON) && 0 == (prevPad & ANY_BUTTON)) {
+                if (2 == GV->menuCursor) {
+                    vgs0_se_play(23);
+                    scrollX = 1;
+                    if (0 == page) {
+                        page++;
+                        vgs0_memcpy((uint16_t)&scr[0], (uint16_t)VGS0_ADDR_FG, sizeof(NameTable));
+                    } else {
+                        page++;
+                        if (3 == page) {
+                            page = 0;
+                        }
+                    }
+                } else {
+                    vgs0_bgm_fadeout();
+                    vgs0_se_play(0);
+                    start = 1;
+                    for (i = 0; i < 32; i++) {
+                        VGS0_ADDR_FG->attr[19][i] = 0x80;
+                    }
+                }
+            } else if (0 == page) {
+                uint8_t prevMenuCursor = GV->menuCursor;
+                if (0 != (pad & VGS0_JOYPAD_UP) && 0 == (prevPad & VGS0_JOYPAD_UP)) {
+                    vgs0_se_play(21);
+                    if (GV->menuCursor) {
+                        GV->menuCursor--;
+                        if (!SR->extra && 1 == GV->menuCursor) {
+                            GV->menuCursor--;
+                        }
+                    } else {
+                        GV->menuCursor = 2;
+                    }
+                }
+                if (0 != (pad & VGS0_JOYPAD_DW) && 0 == (prevPad & VGS0_JOYPAD_DW)) {
+                    vgs0_se_play(21);
+                    if (2 != GV->menuCursor) {
+                        GV->menuCursor++;
+                        if (!SR->extra && 1 == GV->menuCursor) {
+                            GV->menuCursor++;
+                        }
+                    } else {
+                        GV->menuCursor = 0;
+                    }
+                }
+                if (GV->menuCursor != prevMenuCursor) {
+                    VGS0_ADDR_FG->attr[19 + (prevMenuCursor << 1)][9] = 0x00;
+                    VGS0_ADDR_FG->attr[19 + (GV->menuCursor << 1)][9] = 0x80;
+                    VGS0_ADDR_FG->ptn[19 + (GV->menuCursor << 1)][9] = '>';
                 }
             }
+            prevPad = pad;
+        } else if (0 < scrollX) {
+            for (i = 3; i < 30; i++) {
+                vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->ptn[i][0], (uint16_t)&VGS0_ADDR_FG->ptn[i][1], 31);
+                vgs0_memcpy((uint16_t)&VGS0_ADDR_FG->attr[i][0], (uint16_t)&VGS0_ADDR_FG->attr[i][1], 31);
+                VGS0_ADDR_FG->ptn[i][31] = scr[page].ptn[i][scrollX];
+                VGS0_ADDR_FG->attr[i][31] = scr[page].attr[i][scrollX];
+            }
+            scrollX++;
+            scrollX &= 0x1F;
         } else {
             start += 1;
             if (56 == start) {
+                GV->extra = GV->menuCursor;
                 break;
             }
             if (start < 16) {
@@ -129,32 +194,6 @@ void submain(uint8_t arg) __z88dk_fastcall
                     VGS0_ADDR_FG->ptn[i][start] = 0x00;
                     VGS0_ADDR_FG->ptn[i][31 - start] = 0x00;
                 }
-            }
-        }
-
-        // PRESS START BUTTON を点滅
-        if (0 == start) {
-            switch (a & 0x3F) {
-                case 0:
-                    for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[19][i] = 0x80;
-                    }
-                    break;
-                case 24:
-                    for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[19][i] = 0x81;
-                    }
-                    break;
-                case 32:
-                    for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[19][i] = 0x00;
-                    }
-                    break;
-                case 56:
-                    for (i = 0; i < 32; i++) {
-                        VGS0_ADDR_FG->attr[19][i] = 0x81;
-                    }
-                    break;
             }
         }
 

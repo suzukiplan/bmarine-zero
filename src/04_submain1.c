@@ -25,10 +25,7 @@
 
 void submain(uint8_t arg) __z88dk_fastcall
 {
-    if (arg) {
-        return; // arg で別処理分岐（未実装）
-    }
-    uint8_t i;
+    uint8_t i, j;
 
     // スコアと波をBGからFGに描き直す
     vgs0_fg_putstr(2, 2, 0x80, "SC         0    HI         0");
@@ -41,11 +38,17 @@ void submain(uint8_t arg) __z88dk_fastcall
     }
 
     // ハイスコア以外のグローバル変数を初期化
+    uint8_t demo = GV->demo;
+    uint8_t extra = GV->extra;
+    uint8_t menuCursor = GV->menuCursor;
     vgs0_memset(0xC000 + 8, 0x00, sizeof(GlobalVariables) - 8);
     GV->player.x.value = 0x7400;
     GV->player.y.value = 0x4000;
     GV->player.hp = 80;
     GV->player.chp = 0;
+    GV->demo = demo;
+    GV->extra = extra;
+    GV->menuCursor = menuCursor;
 
     // OAMを初期化
     vgs0_memset((uint16_t)VGS0_ADDR_OAM, 0x00, sizeof(OAM) * 256);
@@ -73,12 +76,76 @@ void submain(uint8_t arg) __z88dk_fastcall
     }
     render_hp();
 
-    vgs0_bgm_play(1);
+    if (0 == GV->demo) {
+        vgs0_bgm_play(1);
+    } else {
+        vgs0_fg_putstr(9, 14, 0x80, "DEMONSTRATION!");
+        vgs0_fg_putstr(PUSH_MSG_X, 17, 0x80, PUSH_MSG);
+    }
 
     // メインループ
+    uint8_t paused = 0;
     while (255 != GV->player.dead) {
         vgs0_wait_vsync();
         GV->frame++;
+
+        // ポーズ
+        if (0 == demo && 0 == paused && 0 != (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+            vgs0_fg_putstr(11, 16, 0x80, "  PAUSE  ");
+            vgs0_se_play(26);
+            paused = 1;
+        } else if (1 == paused) {
+            if (0 == (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+                paused = 2;
+            }
+        } else if (2 == paused) {
+            if (0 != (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+                vgs0_fg_putstr(11, 16, 0x80, "         ");
+                paused = 3;
+            }
+        } else if (3 == paused) {
+            if (0 == (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+                vgs0_se_play(24);
+                paused = 0;
+            }
+        }
+        if (paused) {
+            GV->frame--;
+            continue;
+        }
+
+        // デモプレイ中
+        if (GV->demo) {
+            if (vgs0_joypad_get() & ANY_BUTTON) {
+                GV->demoEnd = 1;
+                return;
+            }
+            if (GV->demo < 16) {
+                switch (GV->frame & 0x3F) {
+                    case 0:
+                        for (i = 7; i < 25; i++) {
+                            VGS0_ADDR_FG->attr[17][i] = 0x80;
+                        }
+                        break;
+                    case 24:
+                        for (i = 7; i < 25; i++) {
+                            VGS0_ADDR_FG->attr[17][i] = 0x81;
+                        }
+                        break;
+                    case 32:
+                        for (i = 7; i < 25; i++) {
+                            VGS0_ADDR_FG->attr[17][i] = 0x00;
+                        }
+                        GV->demo++;
+                        break;
+                    case 56:
+                        for (i = 7; i < 25; i++) {
+                            VGS0_ADDR_FG->attr[17][i] = 0x81;
+                        }
+                        break;
+                }
+            }
+        }
 
         // 敵出現制御
         level_proc();
@@ -112,5 +179,33 @@ void submain(uint8_t arg) __z88dk_fastcall
 
         // 王冠を表示
         render_crown();
+
+        // デモから抜ける
+        if (16 <= GV->demo) {
+            if (16 == GV->demo) {
+                vgs0_bgm_fadeout();
+            }
+            GV->demo++;
+            if (24 <= GV->demo) {
+                uint8_t ptn = (GV->demo - 24) >> 2;
+                ptn |= 0xE0;
+                for (i = 0; i < 32; i++) {
+                    for (j = 0; j < 32; j++) {
+                        VGS0_ADDR_FG->ptn[j][i] = ptn;
+                        VGS0_ADDR_FG->attr[j][i] = 0x82;
+                    }
+                }
+            }
+            if (85 == GV->demo) {
+                return;
+            }
+        }
+
+        // リプレイデータを記録（デモプレイの記録用）
+#if 1
+        *((uint8_t*)(0xA000 + GV->replay)) = GV->pad;
+        GV->replay++;
+        GV->replay &= 0x1FFF;
+#endif
     }
 }

@@ -23,27 +23,45 @@
  */
 #include "header.h"
 
-void main(void)
+static void init_vram(void)
 {
-    // パレット初期化
+    vgs0_memset(0x8000, 0x00, 0x4000);
     vgs0_dma(BANK_PALETTE);
     vgs0_memcpy((uint16_t)VGS0_ADDR_PALETTE, (uint16_t)VGS0_ADDR_CHARACTER, 512);
+}
 
-    for (uint8_t i = 0; i < 8; i++) {
-        GV->hi[i] = 0;
-        GV->sc[i] = 0;
+void main(void)
+{
+    // スコアランキングをロード
+    vgs0_load((uint16_t)SR, sizeof(ScoreRanking));
+    if ('B' != SR->eyecatch[0] || 'M' != SR->eyecatch[1] || '#' != SR->eyecatch[2] || 'S' != SR->eyecatch[3] || 'C' != SR->eyecatch[4] || 'O' != SR->eyecatch[5] || 'R' != SR->eyecatch[6] || 'E' != SR->eyecatch[7]) {
+        vgs0_memset((uint16_t)SR, 0x00, sizeof(ScoreRanking));
+        SR->eyecatch[0] = 'B';
+        SR->eyecatch[1] = 'M';
+        SR->eyecatch[2] = '#';
+        SR->eyecatch[3] = 'S';
+        SR->eyecatch[4] = 'C';
+        SR->eyecatch[5] = 'O';
+        SR->eyecatch[6] = 'R';
+        SR->eyecatch[7] = 'E';
     }
-    GV->hi[0] = 3;
-    GV->hi[1] = 7;
-    GV->hi[2] = 5;
+
+    // グローバル変数を初期化
+    vgs0_memset((uint16_t)GV, 0x00, sizeof(GlobalVariables));
 
     while (1) {
         // タイトル画面へ遷移
+        vgs0_memcpy((uint16_t)&GV->hi[0], (uint16_t)&SR->data[0].sc, 8);
+        init_vram();
         vgs0_bank0_switch(BANK_PRG0_0);
         vgs0_bank1_switch(BANK_PRG0_1);
         vgs0_bank2_switch(BANK_PRG0_2);
         vgs0_bank3_switch(BANK_PRG0_3);
-        submain(0);
+        if (GV->demoEnd) {
+            submain(1);
+        } else {
+            submain(0);
+        }
 
         // ゲームメインへ遷移
         vgs0_bank0_switch(BANK_PRG1_0);
@@ -52,9 +70,14 @@ void main(void)
         vgs0_bank3_switch(BANK_PRG1_3);
         submain(0);
 
-        // VRAM クリア
-        vgs0_memset(0x8000, 0x00, 0x4000);
-        vgs0_dma(BANK_PALETTE);
-        vgs0_memcpy((uint16_t)VGS0_ADDR_PALETTE, (uint16_t)VGS0_ADDR_CHARACTER, 512);
+        // デモでなければスコアエントリーへ遷移
+        if (!GV->demoEnd) {
+            init_vram();
+            vgs0_bank0_switch(BANK_PRG0_0);
+            vgs0_bank1_switch(BANK_PRG0_1);
+            vgs0_bank2_switch(BANK_PRG0_2);
+            vgs0_bank3_switch(BANK_PRG0_3);
+            submain(2);
+        }
     }
 }
