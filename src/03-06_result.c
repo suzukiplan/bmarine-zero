@@ -212,6 +212,7 @@ void show_result(void) __z88dk_fastcall
     vgs0_bg_putstr(2, y, 0x80, "    MISSED SHOTS");
     put_number(y, GV->st.miss);
     per = put_percent(y, GV->st.miss, GV->st.shot);
+    uint8_t missRate = per;
     satei = per < 3 ? 0 : per - 2;
     put_satei(y, -satei);
     rank_down(&rank, satei);
@@ -297,6 +298,7 @@ void show_result(void) __z88dk_fastcall
     }
     put_number(y, (uint16_t)v32);
     per = put_percent(y, (uint16_t)v32, appearedMedals);
+    uint8_t lostRate = per;
     satei = per / 2;
     if (15 < satei) {
         satei = 15;
@@ -322,6 +324,31 @@ void show_result(void) __z88dk_fastcall
     put_satei(y, satei);
     rank_up(&rank, satei);
     put_number(y, GV->st.sup);
+
+    // スコア1000万点未満の場合は少佐以上に昇進不可（大尉止まり）
+    if (17 < rank && 0 == GV->sc[7] && 0 == GV->sc[6]) {
+        rank = 17;
+    }
+
+    // コンボ数400HIT未満は中佐以上に昇進不可（少佐止まり）
+    if (18 < rank && GV->st.maxhit < 400) {
+        rank = 18;
+    }
+
+    // ミス率3%以上は大佐以上に昇進不可（中佐止まり）
+    if (19 < rank && 3 <= missRate) {
+        rank = 19;
+    }
+
+    // メダル取得漏れ1%以上は将官に昇進不可（大佐止まり）
+    if (20 < rank && 0 != lostRate) {
+        rank = 20;
+    }
+
+    // コンボ数999HIT未満は元帥に昇進不可（大将止まり）
+    if (24 < rank && GV->st.maxhit < 999) {
+        rank = 24;
+    }
 
     // ランクをレベル未満にはしない
     if (rank < (int8_t)GV->level - 1) {
