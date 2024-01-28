@@ -148,7 +148,7 @@ void hit_print() __z88dk_fastcall
             } else {
                 VGS0_ADDR_OAM[SP_HIT].attr = 0x84;
                 VGS0_ADDR_OAM[SP_HIT].ptn = hitptn[vgs0_div16(hit, 100)];
-                hit = vgs0_mod(hit, 100);
+                hit = vgs0_mod16(hit, 100);
             }
             // 10の位のパターン更新
             if (GV->hit < 10) {
