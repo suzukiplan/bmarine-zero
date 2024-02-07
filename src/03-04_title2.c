@@ -86,12 +86,13 @@ void title2(void) __z88dk_fastcall
     vgs0_fg_putstr(9, 20, SR->extra ? 0x80 : 0x81, "  EXTRA START");
     vgs0_fg_putstr(9, 21, 0x80, "  SCORE RANKING");
     vgs0_fg_putstr(9, 22, 0x80, "  EXIT");
+    VGS0_ADDR_FG->ptn[19 + GV->menuCursor][9] = '>';
 #else
     vgs0_fg_putstr(9, 19, 0x80, "  GAME START");
     vgs0_fg_putstr(9, 21, SR->extra ? 0x80 : 0x81, "  EXTRA START");
     vgs0_fg_putstr(9, 23, 0x80, "  SCORE RANKING");
-#endif
     VGS0_ADDR_FG->ptn[19 + (GV->menuCursor << 1)][9] = '>';
+#endif
 
     // BGを表示
     n = 0;
