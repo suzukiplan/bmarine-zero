@@ -1,5 +1,7 @@
 # Battle Marine for VGS-Zero
 
+Landing page: [https://suzukiplan.github.io/bmarine-zero/](https://suzukiplan.github.io/bmarine-zero/)
+
 |Title|GamePlay|
 |:-:|:-:|
 |![screen_title.png](screen_title.png)|![screen_gameplay.png](screen_gameplay.png)|
