@@ -1,0 +1,207 @@
+<html lang="en">
+<head prefix="og: http://ogp.me/ns#">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=2,viewport-fit=cover">
+<meta property=”og:title” content="BATTLE MARINE"/>
+<meta property=”og:description” content="SHOOT 'EM UP! Battle Marine is a simple naval barrage STG. A barrage of intense shots! Shoot 'em up! Shoot 'em up! Chain bombs with detonation, powerful laser sweeps, and jumps to collect medals! Enjoy a RETRO but NEW and exhilarating STG experience!" />
+<meta property=”og:url” content="https://suzukiplan.github.io/bmarine-zero/"/>
+<meta property=”og:image” content="https://suzukiplan.github.io/bmarine-zero/share.png" />
+<meta property=”og:type” content="website" />
+<meta property=”og:site_name” content="BATTLE MARINE"/>
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="suzukiplan" />
+<meta name="twitter:title" content="BATTLE MARINE" />
+<meta name="twitter:description" content="SHOOT 'EM UP! Battle Marine is a simple naval barrage STG. A barrage of intense shots! Shoot 'em up! Shoot 'em up! Chain bombs with detonation, powerful laser sweeps, and jumps to collect medals! Enjoy a RETRO but NEW and exhilarating STG experience!" />
+<meta name="twitter:image" content="https://suzukiplan.github.io/bmarine-zero/share.png" />
+<link rel="stylesheet" href="index.css">
+</head>
+<body background="bg.png">
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdm2ESibTX2RriY97ZTHOHK5M53d6MJ9c",
+    authDomain: "battle-marine.firebaseapp.com",
+    projectId: "battle-marine",
+    storageBucket: "battle-marine.appspot.com",
+    messagingSenderId: "643414140861",
+    appId: "1:643414140861:web:e8a724e1af1dcb45b554d4",
+    measurementId: "G-Y2NEWXGMX1"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+<h1>
+<img src="title.png"/><br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8Z9oH1riXmA?si=4aAUCa0bTlXXKsRF" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br>
+Coming Soon!<br>
+<a>Steam for Windows</a>
+</h1>
+
+<p><a>SHOOT 'EM UP! Battle Marine is a simple naval barrage STG. A barrage of intense shots! Shoot 'em up! Shoot 'em up! Chain bombs with detonation, powerful laser sweeps, and jumps to collect medals! Enjoy a RETRO but NEW and exhilarating STG experience!</a></p>
+
+<h2>Overview</h2>
+<p>
+    Battle Marine is a simple naval barrage STG.<br>
+    Enjoy a somewhat retro yet new and exhilarating game experience by firing a barrage of shots, inducing explosions, sweeping with powerful lasers, and automatically collecting medals (recovery and score) by jumping.<br>
+    Destroying enemies consecutively within a certain time frame will result in a HIT combo. Aim for 999 HITs!<br>
+    Your rank will be assessed according to the results of your play. Aim for the rank of FLEET ADMIRAL!
+</p>
+
+<h2>Controls</h2>
+
+<p>
+    This game can be played with a USB-connected gamepad (both XInput and DirectInput compatible) or keyboard.<br>
+    <img src="joypad.png"><br>
+    Use the cursor keys to move left and right, press B to shoot, and A to jump.<br>
+    Press and hold the B button to charge the laser, and release it when the charge is maxed out to fire the laser.<br>
+    Press A briefly for small jumps and long for large jumps.<br>
+    Button assignments can be freely customized in the Key Config menu.<br>
+    <br>
+    NOTE: The USB-connected gamepad may not be recognized properly in some environments.<br>
+    In this case, disabling SteamInput in the Controller Settings of Battle Marine in the Steam may help.</pre>
+</p>
+
+<h2>Keyboard Controls</h2>
+
+<ul>
+    <li><b>Cursor key:</b> D-Pad (Can be changed in the key configuration)</li>
+    <li><b>X key:</b> A button (Can be changed in the key configuration)</li>
+    <li><b>Z key:</b> B button (Can be changed in the key configuration)</li>
+    <li><b>Space key:</b> START button (Can be changed in the key configuration)</li>
+    <li><b>ESC key:</b> SELECT button (Can be changed in the key configuration)</li>
+    <li><b>CTRL+X:</b> Exit the game (CTRL+Q, CTRL+C also work)</li>
+    <li><b>Alt+Enter:</b> Toggle full screen (CTRL+F also work)</li>
+    <li><b>CTRL+A:</b> Toggle screen aspect mode</li>
+    <li><b>CTRL+I:</b> Key configuration for the XInput</li>
+    <li><b>CTRL+D:</b> Key configuration for the DirectInput</li>
+    <li><b>CTRL+K:</b> Key configuration for the Keyboard</li>
+</ul>
+
+<h2>Detailed Gameplay</h2>
+
+<ul>
+<li>When you destroy an enemy, a green or red medal will appear.</li>
+<li>Taking the green medal will restore your LIFE.</li>
+<li>Your score will increase if you take a red medal.</li>
+<li>If you keep defeating enemies within a certain time (120 frames), your combo will increase and medals will be collected automatically when you reach 100 HITs or more.</li>
+<li>Medals are also automatically collected by jumping.</li>
+<li>You are invincible during the laser (after the firing motion is complete).</li>
+<li>Unlike normal STGs, explosions also have hit points.</li>
+<li>If you keep collecting green medals while your LIFE is full, the red medal's base points will continue to increase.</li>
+<li>The number of crowns at the bottom of the screen will increase for every 16 green medals you take while your LIFE is full.</li>
+<li>The maximum number of crowns displayed is 30 (480 green medals), but the maximum number of crowns is 4,095 (65,535 green medals).</li>
+<li>When you collide with enemy bullets, your LIFE will be reduced and the number of crowns will be strongly reduced.</li>
+<li>With the exception of some enemies (crabs), red medals will appear when enemies are killed by lasers.</li>
+<li>Obtaining a medal also resets the combo duration to 120 frames</li>
+</ul>
+
+<h2>Try it for FREE</h2>
+
+<p>The Steam version of Battle Marine is only available for a fee, but if you have a Raspberry Pi Zero 2W you can try the <a target=_blank href="https://github.com/suzukiplan/bmarine-zero">Raspberry Pi version</a> for FREE.<br>
+If you like the Raspberry Pi version, please consider purchasing the Steam version.</p>
+
+<h2>Video distribution, etc.</h2>
+
+<p>There are no restrictions on the distribution of this game on TV, YouTube, or other video distribution sites.<br>
+Of course, there are no restrictions on monetization.<br>
+There is no need to contact the author prior to or after the event.<br>
+Similarly, there are no restrictions on publishing screenshots in magazines, web media, social media, etc.</p>
+
+<h2>Support</h2>
+
+<ul>
+<li>Twitter: <a target=_blank href="https://twitter.com/suzukiplan">https://twitter.com/suzukiplan</a></li>
+<li>GitHub: <a target=_blank href="https://github.com/suzukiplan/bmarine-zero/issues">https://github.com/suzukiplan/bmarine-zero/issues</a></li>
+</ul>
+
+<h2>About VGS-Zero</h2>
+
+<p>This game is made with the SDK called VGS-Zero.<br>
+<a target=_blank href="https://github.com/suzukiplan/vgszero">https://github.com/suzukiplan/vgszero</a></br>
+VGS-Zero is a virtual game machine with a powerful 16MHz Z80 CPU, old-fashioned VDP (Video Display Processor) and VGS (chip-tuned sound system).<br>
+If you want to develop games like Battle Marine, please try to develop games with VGS-Zero.<br>
+<br>
+NOTE: currently the Windows version of VGS-Zero is a special license (not OSS)<br>
+SUZUKIPLAN is considering future OSS, because SUZUKIPLAN loves OSS.</p>
+
+<h2>Using OSS</h2>
+
+<ul>
+<li>PicoJSON - a C++ JSON parser / serializer</li>
+    <ul>
+        <li><a target=_blank href="https://github.com/kazuho/picojson">https://github.com/kazuho/picojson</a></li>
+        <li>Copyright (c) 2009-2010 Cybozu Labs, Inc.</li>
+        <li>Copyright (c) 2011-2015 Kazuho Oku</li>
+    </ul>
+<li>SUZUKI PLAN - Z80 Emulator</li>
+    <ul>
+        <li><a target=_blank href="https://github.com/suzukiplan/z80">https://github.com/suzukiplan/z80</a></li>
+        <li>Copyright (c) 2019, Yoji Suzuki</li>
+    </ul>
+</ul>
+
+<h3>PicoJSON - a C++ JSON parser / serializer</h3>
+
+<pre>Copyright 2009-2010 Cybozu Labs, Inc.
+Copyright 2011-2014 Kazuho Oku
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.</pre>
+
+<h3>SUZUKI PLAN - Z80 Emulator</h3>
+
+<pre>The MIT License (MIT)
+
+Copyright (c) 2019 Yoji Suzuki.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</pre>
+
+</body>
+</html>

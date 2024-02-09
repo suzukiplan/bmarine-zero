@@ -1,0 +1,118 @@
+body {
+    padding: 10px;
+    background-color: #000000;
+}
+
+#float-box {
+    overflow: hidden;
+}
+  
+#float-box img {
+    float: left;
+    max-width: 45%;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: bold;
+    padding: 16px;
+    margin-bottom: 1em;
+    color: #ffffff;
+    background: #1c1948;
+    text-align: center;
+    max-width: 100%;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    padding: 16px;
+    margin-bottom: 1em;
+    color: #ffffff;
+    background: #1c1948;
+    text-align: center;
+    max-width: 100%;
+}
+
+h3 {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 16px;
+    margin-bottom: 1em;
+    border-radius: 10px;
+    background: #ffffff;
+    text-align: center;
+    max-width: 100%;
+}
+
+p {
+    margin: 2rem auto;
+    padding: 1rem 1rem;
+    width: 90%;
+    font-size: 1rem;
+    color: #fafafa;
+    border: 4px solid #c0c0c0;
+    border-radius: 8px;
+    line-height: 1.6;
+    border-left-style: 0.01rem;
+    text-align: left;
+    text-indent: 0rem;
+    max-width: 80%;
+}
+
+a {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e0c020;
+    text-decoration: none;
+}
+
+pre {
+    margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    max-width: 80%;
+    align-items: center;
+    white-space: pre;           /* CSS 2.0 */
+    white-space: pre-wrap;      /* CSS 2.1 */
+    white-space: pre-line;      /* CSS 3.0 */
+    white-space: -pre-wrap;     /* Opera 4-6 */
+    white-space: -o-pre-wrap;   /* Opera 7 */
+    white-space: -moz-pre-wrap; /* Mozilla */
+    white-space: -hp-pre-wrap;  /* HP Printers */
+    word-wrap: break-word;      /* IE 5+ */
+}
+
+img {
+    max-width: 100%;
+    height: atuo;
+}
+
+iframe {
+    margin: 0px;
+    max-width: 100%;
+    height: atuo;
+}
+
+ul {
+    margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    width: 90%;
+    font-size: 1rem;
+    color: #fafafa;
+    border: 4px solid #c0c0c0;
+    border-radius: 8px;
+    line-height: 1.6;
+    border-left-style: 0.01rem;
+    text-align: left;
+    text-indent: 0rem;
+    max-width: 80%;
+}
