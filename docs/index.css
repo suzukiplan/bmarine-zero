@@ -29,5 +29,50 @@ h3 {
     padding: 10px 30px;
     margin-bottom: 1em;
     border-radius: 10px;
-    background: #ffdeca;
+    background: #ffffff;
+}
+
+p {
+    margin: 2rem auto;
+    padding: 1rem 1rem;
+    width: 90%;
+    font-size: 1rem;
+    color: #fafafa;
+    background-color: #00000A;
+    border: 4px solid #c0c0c0;
+    border-radius: 8px;
+    line-height: 1.6;
+    border-left-style: 0.01rem;
+    text-align: left;
+    text-indent: 0rem;
+}
+
+a {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e0c020;
+    text-decoration: none;
+}
+
+pre {
+    margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+ul {
+    margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    width: 90%;
+    font-size: 1rem;
+    color: #fafafa;
+    background-color: #00000A;
+    border: 4px solid #c0c0c0;
+    border-radius: 8px;
+    line-height: 1.6;
+    border-left-style: 0.01rem;
+    text-align: left;
+    text-indent: 0rem;
 }
