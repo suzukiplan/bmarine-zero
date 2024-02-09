@@ -19,9 +19,9 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 h1 {
-    font-size: 40px;
+    font-size: 32px;
     font-weight: bold;
-    padding: 30px 40px;
+    padding: 16px;
     margin-bottom: 1em;
     color: #ffffff;
     background: #271c19;
@@ -30,9 +30,9 @@ h1 {
 }
 
 h2 {
-    font-size: 35px;
+    font-size: 28px;
     font-weight: bold;
-    padding: 20px 30px;
+    padding: 16px;
     margin-bottom: 1em;
     color: #ffffff;
     background: #55423d;
@@ -40,9 +40,9 @@ h2 {
 }
 
 h3 {
-    font-size: 30px;
+    font-size: 24px;
     font-weight: bold;
-    padding: 10px 30px;
+    padding: 16px;
     margin-bottom: 1em;
     border-radius: 10px;
     background: #ffffff;
@@ -87,7 +87,7 @@ img {
 }
 
 iframe {
-    margin: 10px;
+    margin: 0px;
     max-width: 100%;
     height: atuo;
 }
