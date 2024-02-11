@@ -58,6 +58,8 @@ void level_proc(void) __z88dk_fastcall
                     vgs0_fg_putstr(6, 14, 0x80, "    EXTRA START!    ");
                     vgs0_palette_set(0, 1, 3, 7, 10);
                     vgs0_palette_set(4, 8, 3, 7, 10);
+                } else if (10 == GV->level) {
+                    vgs0_fg_putstr(6, 14, 0x80, "AND SO TO THE LEGEND");
                 } else {
                     vgs0_fg_putstr(6, 14, 0x80, "   LEVEL 0 START!   ");
                     VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
@@ -186,6 +188,16 @@ void level_proc(void) __z88dk_fastcall
             if (7 == GV->level && 666 < GV->enemies) {
                 vgs0_bgm_fadeout();
                 level_up();
+            } else if (8 == GV->level && 999 < GV->enemies) {
+                vgs0_bgm_fadeout();
+                level_up();
+                level_up();
+            }
+            break;
+        case 10: // 自爆
+            if (0 == GV->player.dmg) {
+                GV->player.dmg = 60;
+                GV->player.dmgsrc = ET_MARINE_LR;
             }
             break;
     }
