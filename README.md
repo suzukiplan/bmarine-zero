@@ -1,6 +1,6 @@
 # Battle Marine for VGS-Zero
 
-Landing page: [https://suzukiplan.github.io/bmarine-zero/](https://suzukiplan.github.io/bmarine-zero/)
+Landing page: [https://battle-marine.web.app/](https://battle-marine.web.app/)
 
 |Title|GamePlay|
 |:-:|:-:|
