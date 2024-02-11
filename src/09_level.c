@@ -59,7 +59,7 @@ void level_proc(void) __z88dk_fastcall
                     vgs0_palette_set(0, 1, 3, 7, 10);
                     vgs0_palette_set(4, 8, 3, 7, 10);
                 } else if (10 == GV->level) {
-                    vgs0_fg_putstr(6, 14, 0x80, "AND SO TO THE LEGEND");
+                    vgs0_fg_putstr(6, 17, 0x80, "AND SO TO THE LEGEND");
                 } else {
                     vgs0_fg_putstr(6, 14, 0x80, "   LEVEL 0 START!   ");
                     VGS0_ADDR_FG->ptn[14][15] = '0' + GV->level;
@@ -76,7 +76,7 @@ void level_proc(void) __z88dk_fastcall
             }
         }
         GV->levelFrame--;
-        if (0 == GV->demo) {
+        if (0 == GV->demo && 10 != GV->level) {
             j = GV->levelFrame & 0x1F;
             if (0 == j) {
                 for (i = 0; i < 20; i++) {
@@ -195,7 +195,7 @@ void level_proc(void) __z88dk_fastcall
             }
             break;
         case 10: // 自爆
-            if (0 == GV->player.dmg) {
+            if (0 == GV->player.dmg && 0 < GV->player.hp) {
                 GV->player.dmg = 60;
                 GV->player.dmgsrc = ET_MARINE_LR;
             }
