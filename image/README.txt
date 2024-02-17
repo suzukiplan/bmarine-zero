@@ -1,7 +1,8 @@
 ================================================================================
 Battle Marine for VGS-Zero
+https://battle-marine.web.app/
 
-Copyright ©2013-2014 SUZUKIPLAN
+Copyright ©2013-2024 SUZUKIPLAN
 Programmed By Y.Suzuki https://github.com/suzukiplan
 ================================================================================
 
@@ -97,6 +98,7 @@ https://github.com/suzukiplan/vgszero/tree/master/tools/joypad
 ================================================================================
 【8】サポート
 ================================================================================
+- 製品サイト: https://battle-marine.web.app/
 - サポートサイト: https://github.com/suzukiplan/bmarine-zero
 - 作者連絡先: https://twitter.com/suzukiplan
 

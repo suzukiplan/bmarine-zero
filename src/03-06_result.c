@@ -178,6 +178,8 @@ void show_result(void) __z88dk_fastcall
         "          ADMIRAL           ",
         "OB",
         "       FLEET ADMIRAL        ",
+        "??",
+        "      LEGENDARY SEAMAN      ",
     };
 
     vgs0_memset(0x8000, 0x00, 0x1800);
@@ -354,6 +356,12 @@ void show_result(void) __z88dk_fastcall
     if (rank < (int8_t)GV->level - 1) {
         rank = (int8_t)GV->level - 1;
     }
+
+    // レベル10到達なら無条件で伝説の水兵にする
+    if (10 <= GV->level) {
+        rank = 26;
+    }
+
     for (i = 0; i < 44; i++) {
         vgs0_wait_vsync();
     }

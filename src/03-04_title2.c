@@ -81,10 +81,18 @@ void title2(void) __z88dk_fastcall
     score_print(VGS0_ADDR_FG);
     vgs0_fg_putstr(11, 16, 0x80, "- KAISEN -");
 
+#ifdef STEAM
+    vgs0_fg_putstr(9, 19, 0x80, "  GAME START");
+    vgs0_fg_putstr(9, 20, SR->extra ? 0x80 : 0x81, "  EXTRA START");
+    vgs0_fg_putstr(9, 21, 0x80, "  SCORE RANKING");
+    vgs0_fg_putstr(9, 22, 0x80, "  EXIT");
+    VGS0_ADDR_FG->ptn[19 + GV->menuCursor][9] = '>';
+#else
     vgs0_fg_putstr(9, 19, 0x80, "  GAME START");
     vgs0_fg_putstr(9, 21, SR->extra ? 0x80 : 0x81, "  EXTRA START");
     vgs0_fg_putstr(9, 23, 0x80, "  SCORE RANKING");
     VGS0_ADDR_FG->ptn[19 + (GV->menuCursor << 1)][9] = '>';
+#endif
 
     // BGを表示
     n = 0;
@@ -153,12 +161,20 @@ void title2(void) __z88dk_fastcall
                             GV->menuCursor--;
                         }
                     } else {
+#ifdef STEAM
+                        GV->menuCursor = 3;
+#else
                         GV->menuCursor = 2;
+#endif
                     }
                 }
                 if (0 != (pad & VGS0_JOYPAD_DW) && 0 == (prevPad & VGS0_JOYPAD_DW)) {
                     vgs0_se_play(21);
+#ifdef STEAM
+                    if (3 != GV->menuCursor) {
+#else
                     if (2 != GV->menuCursor) {
+#endif
                         GV->menuCursor++;
                         if (!SR->extra && 1 == GV->menuCursor) {
                             GV->menuCursor++;
@@ -168,9 +184,15 @@ void title2(void) __z88dk_fastcall
                     }
                 }
                 if (GV->menuCursor != prevMenuCursor) {
+#ifdef STEAM
+                    VGS0_ADDR_FG->attr[19 + prevMenuCursor][9] = 0x00;
+                    VGS0_ADDR_FG->attr[19 + GV->menuCursor][9] = 0x80;
+                    VGS0_ADDR_FG->ptn[19 + GV->menuCursor][9] = '>';
+#else
                     VGS0_ADDR_FG->attr[19 + (prevMenuCursor << 1)][9] = 0x00;
                     VGS0_ADDR_FG->attr[19 + (GV->menuCursor << 1)][9] = 0x80;
                     VGS0_ADDR_FG->ptn[19 + (GV->menuCursor << 1)][9] = '>';
+#endif
                 }
             }
             prevPad = pad;
@@ -272,6 +294,9 @@ void title2(void) __z88dk_fastcall
             }
         }
         if (40 == start) {
+            if (3 == GV->menuCursor) {
+                vgs0_exit();
+            }
             *VGS0_ADDR_BG_SCROLL_X = 0;
             *VGS0_ADDR_BG_SCROLL_Y = 0;
             for (i = 0; i < 32; i++) {

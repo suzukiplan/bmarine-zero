@@ -70,14 +70,14 @@ void print_rank_history(NameTable* nametbl) __z88dk_fastcall
     vgs0_putstr(nametbl, 1, 11, 0x80, "E3 999, W1 999, O2+999, O9 999");
     vgs0_putstr(nametbl, 1, 13, 0x80, "E4 999, W2 999, O3 999, OA 999");
     vgs0_putstr(nametbl, 1, 15, 0x80, "E5 999, W3 999, O4 999, OB 999");
-    vgs0_putstr(nametbl, 1, 17, 0x80, "E6 999, W4 999, O5 999");
+    vgs0_putstr(nametbl, 1, 17, 0x80, "E6 999, W4 999, O5 999, ?? 999");
     vgs0_putstr(nametbl, 1, 19, 0x80, "E7 999, W5 999, O6 999");
     for (uint8_t i = 0; i < 7; i++) {
         uint8_t y = 7 + (i << 1);
         put_num999(nametbl, 4, y, SR->ranks[i]);
         put_num999(nametbl, 12, y, SR->ranks[7 + i]);
         put_num999(nametbl, 20, y, SR->ranks[14 + i]);
-        if (i < 5) {
+        if (i < 6) {
             put_num999(nametbl, 28, 7 + (i << 1), SR->ranks[21 + i]);
         }
     }
