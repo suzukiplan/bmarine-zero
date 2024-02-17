@@ -12,7 +12,11 @@ Landing page: [https://battle-marine.web.app/](https://battle-marine.web.app/)
 
 目指せ 999HIT!!
 
-## How to Use
+## How to Use (Steam for Windows)
+
+[Steam版](https://battle-marine.web.app/) の購入をご検討ください。
+
+## How to Use (RapberryPi Zero 2W)
 
 ### Required Hardware
 
