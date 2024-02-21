@@ -1,3 +1,30 @@
+html {
+    scroll-behavior: smooth;
+}
+.pagetop {
+    height: 50px;
+    width: 50px;
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    background: #fff;
+    border: solid 2px #000;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    box-shadow: 0 4px 6px rgb(0 0 0 / 30%);
+}
+
+.pagetop__arrow {
+    height: 10px;
+    width: 10px;
+    border-top: 3px solid #000;
+    border-right: 3px solid #000;
+    transform: translateY(20%) rotate(-45deg);
+}
+
 body {
     padding: 10px;
     background-color: #000000;
@@ -67,7 +94,7 @@ p {
 }
 
 a {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #e0c020;
     text-decoration: none;
