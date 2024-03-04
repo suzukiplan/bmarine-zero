@@ -36,6 +36,20 @@ void print_score_ranking(NameTable* nametbl) __z88dk_fastcall
     }
 }
 
+void print_friend_ranking(NameTable* nametbl) __z88dk_fastcall
+{
+    vgs0_putstr(nametbl, 6, 5, 0x80, "FRIEND SCORE RANKING");
+    vgs0_putstr(nametbl, 2, 8, 0x80, "RANK  SCORE     NAME");
+    vgs0_putstr(nametbl, 2, 9, 0x80, "----- --------- ------------");
+    for (uint8_t i = 0; i < 10; i++) {
+        if (FR->line[i][0]) {
+            vgs0_putstr(nametbl, 2, 10 + i, '*' == FR->line[i][0] ? 0x81 : 0x80, FR->line[i]);
+        } else {
+            vgs0_putstr(nametbl, 2, 10 + i, 0x81, "***** ********* ************");
+        }
+    }
+}
+
 static void put_num999(NameTable* nametbl, uint8_t x, uint8_t y, uint16_t n)
 {
     if (999 < n) {

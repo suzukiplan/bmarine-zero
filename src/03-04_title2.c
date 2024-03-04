@@ -125,6 +125,10 @@ void title2(void) __z88dk_fastcall
     print_rank_history(&scr[2]);
     vgs0_putstr(&scr[1], 6, 22, 0x80, "PUSH BUTTON TO NEXT");
     vgs0_putstr(&scr[2], 6, 22, 0x80, "PUSH BUTTON TO NEXT");
+#ifdef STEAM
+    print_friend_ranking(&scr[3]);
+    vgs0_putstr(&scr[3], 6, 22, 0x80, "PUSH BUTTON TO NEXT");
+#endif
     while (1) {
         a++;
         if (0 == start && 0 == scrollX) {
@@ -139,7 +143,11 @@ void title2(void) __z88dk_fastcall
                         vgs0_memcpy((uint16_t)&scr[0], (uint16_t)VGS0_ADDR_FG, sizeof(NameTable));
                     } else {
                         page++;
+#ifdef STEAM
+                        if (4 == page) {
+#else
                         if (3 == page) {
+#endif
                             page = 0;
                         }
                     }

@@ -23,7 +23,7 @@
  */
 #include "header.h"
 
-void submain(uint8_t arg) __z88dk_fastcall
+int submain(uint8_t arg) __z88dk_fastcall
 {
     uint8_t i, j;
 
@@ -41,7 +41,7 @@ void submain(uint8_t arg) __z88dk_fastcall
     uint8_t demo = GV->demo;
     uint8_t extra = GV->extra;
     uint8_t menuCursor = GV->menuCursor;
-    vgs0_memset(0xC000 + 8, 0x00, sizeof(GlobalVariables) - 8);
+    vgs0_memset(0xC000 + 8, 0x00, sizeof(GlobalVariables));
     GV->player.x.value = 0x7400;
     GV->player.y.value = 0x4000;
     GV->player.hp = 80;
@@ -49,6 +49,10 @@ void submain(uint8_t arg) __z88dk_fastcall
     GV->demo = demo;
     GV->extra = extra;
     GV->menuCursor = menuCursor;
+    GV->tail[0] = 'T';
+    GV->tail[1] = 'A';
+    GV->tail[2] = 'I';
+    GV->tail[3] = 'L';
 
     // OAMを初期化
     vgs0_memset((uint16_t)VGS0_ADDR_OAM, 0x00, sizeof(OAM) * 256);
@@ -85,28 +89,59 @@ void submain(uint8_t arg) __z88dk_fastcall
 
     // メインループ
     uint8_t paused = 0;
+    uint8_t pauseCursor = 0;
+    uint8_t pad = 0;
+    uint8_t prevPad = 0;
+    uint8_t needRestart = 0;
     while (255 != GV->player.dead) {
         vgs0_wait_vsync();
+        prevPad = pad;
+        pad = vgs0_joypad_get();
         GV->frame++;
 
         // ポーズ
-        if (0 == demo && 0 == paused && 0 != (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+        if (0 == demo && 0 == paused && 0 != (pad & VGS0_JOYPAD_ST)) {
             vgs0_fg_putstr(11, 16, 0x80, "  PAUSE  ");
+            vgs0_fg_putstr(11, 18, 0x80, " >RESUME ");
+            vgs0_fg_putstr(11, 19, 0x80, "  RESTART");
+            VGS0_ADDR_OAM[SP_PAUSE].x = 12 * 8;
+            VGS0_ADDR_OAM[SP_PAUSE].y = 15 * 8;
+            VGS0_ADDR_OAM[SP_PAUSE].ptn = 0x20;
+            VGS0_ADDR_OAM[SP_PAUSE].attr = 0x89;
+            VGS0_ADDR_OAM[SP_PAUSE].bank = BANK_CATK;
+            VGS0_ADDR_OAM[SP_PAUSE].widthMinus1 = 9;
+            VGS0_ADDR_OAM[SP_PAUSE].heightMinus1 = 4;
             vgs0_se_play(26);
             paused = 1;
+            pauseCursor = 0;
         } else if (1 == paused) {
-            if (0 == (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+            if (0 == (pad & VGS0_JOYPAD_ST)) {
                 paused = 2;
             }
         } else if (2 == paused) {
-            if (0 != (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
+            if (0 != (pad & VGS0_JOYPAD_ST) || 0 != (pad & VGS0_JOYPAD_T1) || 0 != (pad & VGS0_JOYPAD_T2)) {
                 vgs0_fg_putstr(11, 16, 0x80, "         ");
+                vgs0_fg_putstr(11, 18, 0x80, "         ");
+                vgs0_fg_putstr(11, 19, 0x80, "         ");
+                VGS0_ADDR_OAM[SP_PAUSE].attr = 0x00;
                 paused = 3;
+            } else if ((0 == (prevPad & VGS0_JOYPAD_UP) && 0 != (pad & VGS0_JOYPAD_UP)) || (0 == (prevPad & VGS0_JOYPAD_DW) && 0 != (pad & VGS0_JOYPAD_DW))) {
+                VGS0_ADDR_FG->ptn[18 + pauseCursor][12] = ' ';
+                pauseCursor = 1 - pauseCursor;
+                VGS0_ADDR_FG->ptn[18 + pauseCursor][12] = '>';
+                vgs0_se_play(21);
             }
         } else if (3 == paused) {
-            if (0 == (vgs0_joypad_get() & VGS0_JOYPAD_ST)) {
-                vgs0_se_play(24);
-                paused = 0;
+            if (0 == pad) {
+                if (0 == pauseCursor) {
+                    vgs0_se_play(24);
+                    paused = 0;
+                } else {
+                    vgs0_bgm_fadeout();
+                    vgs0_se_play(0);
+                    needRestart = 1;
+                    break;
+                }
             }
         }
         if (paused) {
@@ -116,9 +151,9 @@ void submain(uint8_t arg) __z88dk_fastcall
 
         // デモプレイ中
         if (GV->demo) {
-            if (vgs0_joypad_get() & ANY_BUTTON) {
+            if (pad & ANY_BUTTON) {
                 GV->demoEnd = 1;
-                return;
+                return 0;
             }
             if (GV->demo < 16) {
                 switch (GV->frame & 0x3F) {
@@ -197,7 +232,7 @@ void submain(uint8_t arg) __z88dk_fastcall
                 }
             }
             if (85 == GV->demo) {
-                return;
+                return 0;
             }
         }
 
@@ -208,4 +243,51 @@ void submain(uint8_t arg) __z88dk_fastcall
         GV->replay &= 0x1FFF;
 #endif
     }
+
+    if (needRestart) {
+        while (1) {
+            vgs0_wait_vsync();
+            needRestart += 1;
+            if (16 <= needRestart && 0 == (needRestart & 0x03)) {
+                uint8_t ptn = (needRestart - 16) >> 2;
+                ptn |= 0xE0;
+                for (i = 0; i < 32; i++) {
+                    for (j = 0; j < 32; j++) {
+                        VGS0_ADDR_FG->ptn[j][i] = ptn;
+                        VGS0_ADDR_FG->attr[j][i] = 0x82;
+                    }
+                }
+            }
+            if (88 == needRestart) {
+                vgs0_memcpy((uint16_t)&GV->hi[0], (uint16_t)&SR->data[0].sc, 8);
+                vgs0_memset((uint16_t)GV->sc, 0, 8);
+                vgs0_memset((uint16_t)VGS0_ADDR_OAM, 0, sizeof(OAM) * 256);
+                for (i = 0; i < 32; i++) {
+                    if (23 == i) {
+                        for (j = 0; j < 32; j++) {
+                            VGS0_ADDR_BG->ptn[i][j] = 0x02 + (j & 1);
+                            VGS0_ADDR_BG->attr[i][j] = 0x83;
+                        }
+                    } else if (24 == i) {
+                        for (j = 0; j < 32; j++) {
+                            VGS0_ADDR_BG->ptn[i][j] = 0x12 + (j & 1);
+                            VGS0_ADDR_BG->attr[i][j] = 0x83;
+                        }
+                    } else if (8 < i) {
+                        for (j = 0; j < 32; j++) {
+                            VGS0_ADDR_BG->ptn[i][j] = 0x10;
+                            VGS0_ADDR_BG->attr[i][j] = 0x80;
+                        }
+                    } else {
+                        for (j = 0; j < 32; j++) {
+                            VGS0_ADDR_BG->ptn[i][j] = 0x00;
+                        }
+                    }
+                    VGS0_ADDR_OAM[i].attr = 0x00;
+                }
+                return 1;
+            }
+        }
+    }
+    return 0;
 }

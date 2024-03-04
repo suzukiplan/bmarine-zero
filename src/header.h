@@ -83,6 +83,7 @@
 #define SP_HP 4         // 体力ゲージ (5)
 #define SP_SPRAY2 10    // うんこの軌道 (16)
 #define SP_CATK 26      // 打ち返し弾 (16)
+#define SP_PAUSE 56     // ポーズの背景
 #define SP_LTOP 57      // レーザー発射口 (1)
 #define SP_LBOTTOM 58   // レーザー地面 (1)
 #define SP_LASER 59     // レーザー (1)
@@ -280,8 +281,14 @@ typedef struct {
     uint8_t enemyIndex;     // 敵 index
     uint8_t espIndex;       // 敵スプライト index
     uint8_t menuCursor;     // メニューカーソル
+    uint8_t tail[4];        // RAMの目印
 } GlobalVariables;
 #define GV ((GlobalVariables*)0xC000)
+
+typedef struct {
+    uint8_t line[10][32];
+} FriendRanking;
+#define FR ((FriendRanking*)0xD000)
 
 typedef struct {
     uint8_t sc[8];
@@ -310,13 +317,14 @@ typedef struct {
 extern const uint16_t random[256];
 
 // サブルーチン
-void submain(uint8_t arg) __z88dk_fastcall;
+int submain(uint8_t arg) __z88dk_fastcall;
 
 uint8_t logo(void) __z88dk_fastcall;
 uint8_t title1(void) __z88dk_fastcall;
 void title2(void) __z88dk_fastcall;
 void print_score_ranking(NameTable* namtbl) __z88dk_fastcall;
 void print_rank_history(NameTable* nametbl) __z88dk_fastcall;
+void print_friend_ranking(NameTable* namtbl) __z88dk_fastcall;
 void score_entry(void) __z88dk_fastcall;
 void show_result(void) __z88dk_fastcall;
 

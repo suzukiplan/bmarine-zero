@@ -48,6 +48,10 @@ void main(void)
 
     // グローバル変数を初期化
     vgs0_memset((uint16_t)GV, 0x00, sizeof(GlobalVariables));
+    GV->tail[0] = 'T';
+    GV->tail[1] = 'A';
+    GV->tail[2] = 'I';
+    GV->tail[3] = 'L';
 
     while (1) {
         // タイトル画面へ遷移
@@ -68,7 +72,9 @@ void main(void)
         vgs0_bank1_switch(BANK_PRG1_1);
         vgs0_bank2_switch(BANK_PRG1_2);
         vgs0_bank3_switch(BANK_PRG1_3);
-        submain(0);
+        while (0 != submain(0)) {
+            ; // restart
+        }
 
         // デモでなければスコアエントリーへ遷移
         if (!GV->demoEnd) {
