@@ -23,12 +23,12 @@
  */
 #include "header.h"
 
-void submain(uint8_t arg) __z88dk_fastcall
+int submain(uint8_t arg) __z88dk_fastcall
 {
     // スコアエントリー
     if (2 == arg) {
         score_entry();
-        return;
+        return 0;
     }
 
     // インカム待ち
@@ -45,7 +45,7 @@ void submain(uint8_t arg) __z88dk_fastcall
             if (0 != title1()) {
                 break;
             }
-            return;
+            return 0;
         }
     }
 
@@ -55,4 +55,5 @@ void submain(uint8_t arg) __z88dk_fastcall
     GV->demoEnd = 0;
     vgs0_se_play(22);
     title2();
+    return 0;
 }
